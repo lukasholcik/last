@@ -107,7 +107,13 @@ These are **our proposed controls**, informed by the examples, not a list of doc
 
 Start with the outline from above, then the bottom in side view, then the upper surface.
 The top-view outline is not necessarily the same as the bottom perimeter, sometimes called the featherline.
-We need to define which curve we mean before attaching dimensions or handles to it.
+You chose the outer silhouette seen from above for the first experiment. The bottom perimeter remains separate.
+
+After inspecting the images, the independent review recommended starting with meaningful locations
+(heel, waist, ball, and toe) joined by curves, rather than arbitrary control points.
+Separate side distances can determine total width; local curve adjustments shape the spaces between locations.
+These are our modelling suggestions, not a reconstruction of the products' hidden algorithms.
+A numeric script producing SVG is the recommended first test, before interactive Blender editing.
 
 Other useful ideas are separate reference/last values, asymmetric sides, paired views,
 sections to help build the upper surface, clearly marked edited/fixed regions, and deliberate edit/update actions.

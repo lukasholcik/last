@@ -1,3 +1,7 @@
 # Keep project documentation tracked despite global ignore rules.
 !/docs/
 !/docs/**
+
+# Generated prototype outputs and Python caches.
+/output/
+__pycache__/

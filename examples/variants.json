@@ -1,0 +1,9 @@
+{
+  "description": "Made-up single-input design experiments — not measured foot data or fit models.",
+  "variants": [
+    {"name": "wider_lateral_ball", "input": "lateral_ball_width", "value": 54},
+    {"name": "narrower_medial_toe", "input": "medial_toe_width", "value": 27},
+    {"name": "forward_medial_ball", "input": "medial_ball_y", "value": 185},
+    {"name": "narrower_lateral_ball", "input": "lateral_ball_width", "value": 42}
+  ]
+}

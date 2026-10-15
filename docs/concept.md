@@ -3,7 +3,8 @@
 A last is the solid form that a shoe is made around. It is not simply a copy of a foot:
 its shape also depends on the shoe we want to make, its materials, and how it is put together.
 
-This is a working discussion document, not a finished implementation plan. No app code yet.
+This is a working discussion document, not a finished implementation plan.
+The approved first prototype now generates a numeric top outline and SVG diagrams; interactive editing and 3D come later.
 Below, **agreed** means decided, **recommended** means a suggestion, and **still to decide** means an open question.
 
 ## What we're aiming for — agreed
@@ -21,6 +22,9 @@ Below, **agreed** means decided, **recommended** means a suggestion, and **still
   Do not replace these with separate rear and forefoot sole-stack heights.
 - Work first on the foot/last outline seen from above, then the elevation and bottom seen from the side,
   then the upper surface, which is likely the hardest part. Arch shaping can come later if needed.
+- The first outline is the outer silhouette seen from above, not the edge of the last's bottom.
+- Name every point and line, including reference lines and curve handles, so the diagram and code use the same terms.
+- Make generated diagrams available as rendered images for visual review, not just SVG source.
 - Treat toe labels as starting presets: you can adjust between “round”, “almond”, and “pointed”.
 - Keep shoe construction in the discussion; it affects what shape will work.
 
@@ -51,7 +55,7 @@ Show which numbers are calculated and what they depend on; never change recorded
 
 You asked to start with example measurements based on averages rather than your own foot.
 Until we choose a named dataset describing a particular group of people, call these **made-up example measurements**,
-not true population averages. We have not chosen any values yet.
+not true population averages. `examples/baseline.json` now supplies made-up design values for the first prototype.
 Even if an example fills a field called “foot width”, label it as an example, not a real observation.
 
 **Recommended:** try a starting example, a wider forefoot, a higher instep, and different toe arrangements.
@@ -74,7 +78,7 @@ These are candidate inputs, not a shopping list of measurements you need to take
 | Bottom | Useful foot observations, if available | The bottom curve and shape |
 | Local details | Usually not separate foot measurements | Small curve adjustments |
 
-**Recommended:** use millimetres and always show the units; this is not yet a mandatory choice.
+The first prototype uses millimetres and records the units explicitly.
 Before modelling, agree what each number means and how point positions are written:
 where we measure from, which direction is forward, and which is up.
 For example, everyone should interpret “width at this point” the same way.
@@ -101,7 +105,15 @@ not a required display; how to check the space still needs defining.
 
 ## Numbers, curves, and dragging
 
-**Recommended:** use a Blender Python add-on that builds a mesh from saved numbers and curve controls.
+**Agreed first experiment:** generate an SVG outline from numbers, without interactive editing.
+This lets us check the shape rules before building editing tools or a 3D surface.
+The first version uses mm, named cubic curves, one rounded toe style, and independently positioned ball regions.
+Side widths are distances from the centre line at each side's own forward position;
+their sum is not a single section width when those positions differ.
+Handles and full section widths are calculated, not separate editable numbers.
+See [README](../README.md) for commands, shape assumptions, and curve-based checks to 0.1 mm.
+
+**Possible later step:** use a Blender Python add-on that builds a mesh from saved numbers and curve controls.
 Attach controls to named regions such as the heel or toe, relative to the guiding shape,
 not to vertex numbers that may change when the mesh is rebuilt.
 Keep those editable controls; the output mesh alone is not the saved design.
@@ -146,8 +158,8 @@ Research about posture does not provide that formula. How elevation and the bott
 9. Consider a standalone app only if experience shows Blender is not enough.
 
 See [software research](software-research.md) for existing tools, image examples, and suggested top-outline controls.
-The outline seen from above and the edge of the last's bottom are not necessarily the same curve;
-we still need to choose exactly which outline each control describes.
+The first outline describes the outer silhouette seen from above. The edge of the last's bottom is a separate curve,
+to be defined later; do not treat the silhouette as a sole outline.
 
 You can print example shapes earlier to test printing or dimensions, without claiming personal fit.
 Printing material, process, orientation, splitting/removal, and construction are still to decide.

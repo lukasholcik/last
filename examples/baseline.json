@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "units": "mm",
+  "description": "Made-up design dimensions for testing, not measurements or population averages.",
+  "design": {
+    "length": 250,
+    "medial_heel_y": 30,
+    "medial_heel_width": 28,
+    "lateral_heel_y": 30,
+    "lateral_heel_width": 29,
+    "medial_waist_y": 100,
+    "medial_waist_width": 29,
+    "lateral_waist_y": 100,
+    "lateral_waist_width": 32,
+    "medial_ball_y": 175,
+    "medial_ball_width": 46,
+    "lateral_ball_y": 165,
+    "lateral_ball_width": 48,
+    "medial_toe_y": 220,
+    "medial_toe_width": 33,
+    "lateral_toe_y": 220,
+    "lateral_toe_width": 31
+  }
+}
