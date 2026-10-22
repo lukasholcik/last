@@ -1,0 +1,13 @@
+{
+  "schema_version": 2,
+  "units": "mm",
+  "description": "Made-up designed bottom guide; not foot measurements or ballet-flat defaults.",
+  "design": {
+    "heel_height": 8,
+    "toe_spring": 10,
+    "seat_projected_length": 50,
+    "seat_inclination_deg": 2,
+    "contact_forward": 175,
+    "forepart_blend_length": 10
+  }
+}

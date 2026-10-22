@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Last / Guide workbench</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/styles.css">
+  <script type="importmap">{"imports":{"three":"/vendor/three/build/three.module.js","three/addons/":"/vendor/three/examples/jsm/"}}</script>
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="masthead"><a class="wordmark" href="/" aria-label="Last workbench home">Last<span> / </span></a><div><h1>Guide workbench</h1><p>Numbers first. Shape in view.</p></div><span class="edition">LOCAL EXPERIMENT · MM</span></header>
+  <main class="workbench">
+    <nav class="mobile-nav" aria-label="Workbench sections"><a href="#views">Inspect guides</a><a href="#controls">Edit dimensions ↓</a></nav>
+    <aside class="controls" id="controls">
+      <div class="control-heading"><span class="eyebrow">DESIGN INPUTS</span><h2>Make a change.</h2><p>Made-up design values—not foot measurements.</p></div>
+      <form id="design-form" novalidate aria-label="Design dimensions">
+        <fieldset id="inputs" disabled><legend class="sr-only">Top and bottom design dimensions</legend><div id="fields"><p class="loading">Loading the example…</p></div></fieldset>
+        <div class="form-actions"><button class="primary" id="rebuild" type="submit" disabled>Rebuild guides <span aria-hidden="true">↗</span></button><button id="reset" type="button" disabled>Reset to example</button><a class="back-to-views" href="#views">Back to guides ↑</a><p>No autosave. Changes stay in this page.</p></div>
+      </form>
+    </aside>
+    <section class="workspace" id="views" aria-label="Geometry inspection">
+      <div class="state-bar" id="state-bar" data-state="loading"><span class="state-dot" aria-hidden="true"></span><div><strong id="state-title" role="status" aria-live="polite">Loading example</strong><p id="state-detail">Geometry is calculated locally by the Python model.</p></div></div>
+      <div id="error" class="error" role="alert" tabindex="-1" hidden></div>
+      <section class="drawing-panel">
+        <div class="panel-heading"><div><span class="eyebrow">01 / ALIGNED VIEWS</span><h2>One forward direction.</h2></div><label class="toggle"><input id="construction" type="checkbox"> Show named controls</label></div>
+        <div class="legend"><span class="top-key">Outer top silhouette</span><span class="bottom-key">Longitudinal bottom guide</span><span class="scale-note">Equal axis scales · no height exaggeration</span></div>
+        <p class="view-state" data-view-state>No geometry yet.</p>
+        <div class="drawing-scroll"><svg id="drawing" role="img" aria-label="Aligned top silhouette and bottom guide, forward to the right"></svg></div>
+        <div class="drawing-footer"><p>Rear → toe along calculated y · top: medial −x above, lateral +x below · side: z up</p><p>Width stations follow distance along the bottom guide. This is our prototype correspondence—not a physical foot-reshaping rule.</p><output id="selection">Show named controls, then select a point to inspect its model name.</output></div>
+      </section>
+      <section class="spatial-panel">
+        <div class="panel-heading"><div><span class="eyebrow">02 / SPATIAL REFERENCE</span><h2>Guides, not a surface.</h2></div><button id="fit-view" type="button" disabled>Reset / fit view</button></div>
+        <p class="spatial-notice">Reference guides only—not a 3D last.</p><p class="view-state" data-view-state>No geometry yet.</p>
+        <div id="scene" class="scene" aria-label="Rotatable 3D reference guides"><p id="scene-message">Loading the local 3D viewer…</p></div>
+        <div class="drawing-footer"><p>Drag to rotate · wheel or pinch to zoom · right-drag to pan</p><details><summary>What is placed in 3D?</summary><p>The top silhouette is drawn at z = 0; the bottom guide at x = 0. These are display placements only. Width-station y positions are calculated from distances along the bottom guide using our prototype correspondence, not a vendor or anatomy formula. Top height is unknown, and the bottom guide is not an anatomical centreline. There is no joining surface, bottom boundary or width transfer. Heel-height experiments are not validated high-heel geometry; seat inclination stays user-controlled.</p></details></div>
+      </section>
+      <section class="verification"><div><span class="eyebrow">03 / NUMERIC CHECKS</span><h2>Check the result.</h2></div><div id="metrics" class="metrics"><p>Rebuild to inspect curve-based measurements.</p></div><details id="report-details"><summary>Inspect checks and derived sections <span id="check-count"></span></summary><p id="report-state">No current report.</p><div id="reports"></div></details><p class="limitations">A passing software check is not a fit claim. These are reference curves—not a foot, sole edge, bottom surface or printable last. Joins are C1, not C2.</p></section>
+    </section>
+  </main>
+</body>
+</html>

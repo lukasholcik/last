@@ -6,7 +6,7 @@ Its measurement form is a useful reference for organising our inputs; the meanin
 
 The findings below distinguish three things:
 - **Documentation:** what a product guide or page says it does.
-- **Image observations:** what we could see in six inspected product images.
+- **Image observations:** what we could see in inspected product images and measurement diagrams.
 - **Our suggestions:** ideas we could use, not claims about a vendor's features.
 
 Images are linked at their source. No image files are stored in this project.
@@ -113,7 +113,7 @@ After inspecting the images, the independent review recommended starting with me
 (heel, waist, ball, and toe) joined by curves, rather than arbitrary control points.
 Separate side distances can determine total width; local curve adjustments shape the spaces between locations.
 These are our modelling suggestions, not a reconstruction of the products' hidden algorithms.
-A numeric script producing SVG is the recommended first test, before interactive Blender editing.
+The numeric SVG test is now implemented. The current app direction is browser-first, not interactive Blender editing.
 
 Other useful ideas are separate reference/last values, asymmetric sides, paired views,
 sections to help build the upper surface, clearly marked edited/fixed regions, and deliberate edit/update actions.
@@ -126,3 +126,49 @@ automatic preservation of every number, or a rule linking the heel endpoint to t
 We have not verified an automatic heel-deformation formula in these products.
 Their features do not prove that a generated last will fit, and do not decide our measurement methods or allowances.
 Use these examples to make our controls clearer, not to invent hidden guarantees.
+
+## Measurement definitions checked for the next step
+
+For every last-design choice, consult online evidence and label it as an established definition,
+a vendor convention, or our assumption. A familiar label does not mean two tools measure the same thing.
+
+**Vendor convention:** the [3DShoemaker measurement guide](https://3dshoemaker.com/measurements-in-shoe-last-maker/)
+describes five primary measurements: length, ball girth, instep girth, ball width, and heel height.
+They work with toe, body, insert, and bottom templates: five numbers alone do not uniquely determine a shape.
+See its [primary-measurements image](https://3dshoemaker.com/wp-content/uploads/2022/05/Primary-Measurements-in-Shoe-Last-Maker.jpg)
+and [combined measurement diagram](https://3dshoemaker.com/wp-content/uploads/2022/05/Shoe-Last-Maker-Measurements.png).
+Read each control's full functional description, not just its label:
+- Its curved-profile length differs from the legacy top-view projected length; do not silently substitute one for the other.
+  The browser now deliberately uses a new bottom-contour target, not a reinterpretation of the old example.
+- Adapt behaves differently by field; it is not a universal promise to preserve all numbers automatically.
+- An oblique plan-view ball width is not automatically our side extent at a particular forward position.
+- Future girths need named measurement paths around the 3D last, not just a generic width or circumference.
+- Room for an internal insert is not external sole thickness.
+The sources do not give us exact curve algorithms or establish the meaning of every percentage control.
+
+**Established definitions:** the [ISO 19408:2023 preview](https://cdn.standards.iteh.ai/sist-preview/83107/cb5f303e387a42a6842831f8721fb244/ISO-19408-2023.pdf)
+covers last heel height (rear underside to ground in normal orientation, §3.2.6), heel seat (§3.2.7),
+and toe spring (toe underside to ground, §3.2.13). These are last definitions, not shoe sole-stack inputs.
+The [Bird anatomy reference](https://shoemaking.wiki/The_Anatomy_of_a_Shoe_Last) locates the breast at the front
+of the seat and the tread at the forepart contact. Do not transfer inconsistent shoe-height wording into our last definition.
+
+**Our prototype guide:** horizontal ground at z=0 and four profile segments for seat, waist, contact blend, and straight forepart.
+This is not a sourced universal curve recipe or a validated 3D bottom. See the
+[bottom-profile specification](bottom-profile.md), implemented as a numeric/SVG experiment. Version 2 replaces the
+rejected S-shaped rise with the user's chosen rounded transition and exactly straight incline through the toe.
+Its explicit 10 mm development blend is not an anatomical default. ISO defines height terminology, not this shape;
+the linked MDN Bézier explanation supports the representation, not a universal footwear recipe.
+Browser display is separate from geometry. The earlier plain HTML/native JavaScript viewer with Python geometry is now a legacy reference.
+The production application uses an actual [create-t3-app](https://create.t3.gg/en/installation) scaffold adapted to Next.js 16 App Router,
+React, TypeScript, Tailwind CSS, and tRPC. One independent TypeScript geometry module supplies the canonical models/reports;
+Three.js displays reference guides only. There is no Python runtime bridge, authentication, database, or persistence layer.
+The current pnpm-only setup and optional Python comparison tools are documented in [README](../README.md).
+Numeric/API parity is checked with nine frozen Python fixtures plus independent TypeScript checks; React/browser acceptance
+is a separate step. No 3D last surface or improved high-heel posture model is established by this technology change.
+
+**New contour adapter assumption:** `last_length` is measured along our actual bottom guide. Top stations are distances
+along that guide, mapped separately to forward positions; seat/waist/blend/ramp arc lengths remain fixed during heel edits.
+The [vendor guide](https://3dshoemaker.com/measurements-in-shoe-last-maker/) supports distinguishing contour length
+from projection, not our station anchors, region preservation, or solver. Its internal algorithms remain unknown.
+The chosen 250 mm contour target intentionally changes the old 250 mm projected shape. A user-entered seat angle
+and the existing rounded-transition/straight-ramp rule still apply; this is not a sourced heel-posture formula.

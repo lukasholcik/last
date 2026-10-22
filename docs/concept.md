@@ -4,7 +4,13 @@ A last is the solid form that a shoe is made around. It is not simply a copy of 
 its shape also depends on the shoe we want to make, its materials, and how it is put together.
 
 This is a working discussion document, not a finished implementation plan.
-The approved first prototype now generates a numeric top outline and SVG diagrams; interactive editing and 3D come later.
+The prototypes generate a numeric top outline and a separate longitudinal bottom guide with SVG diagrams.
+The browser viewer contract adds numeric editing, 2D views, and rotatable 3D reference guides, not a last surface.
+The current application uses Next.js/React/TypeScript with tRPC and one production TypeScript geometry module;
+Python/SVG tools remain reference experiments, not browser runtime dependencies.
+Edits do not overwrite example files and there is no save feature yet. React/browser acceptance is separate from the numeric/API review.
+Its new designed last-length target is **250 mm along the bottom contour**, not the previous 250 mm projection.
+This deliberately creates a new shape rather than preserving the old baseline. Legacy projected experiments remain unchanged.
 Below, **agreed** means decided, **recommended** means a suggestion, and **still to decide** means an open question.
 
 ## What we're aiming for — agreed
@@ -17,9 +23,8 @@ Below, **agreed** means decided, **recommended** means a suggestion, and **still
 - Control most of the shape with numbers, with optional Bézier curves or handles for finer adjustments.
 - Show the same model from the top, from the side, and in 3D.
 - Keep chosen dimensions in charge: a curve edit must not quietly change them.
-- Enter heel elevation as the height of the rear endpoint (the “tip of heel”).
-  The bottom profile connects that endpoint to the front of the foot; the front reference still needs defining.
-  Do not replace these with separate rear and forefoot sole-stack heights.
+- Describe last heel height and toe spring relative to horizontal ground, using the sourced definitions below.
+  The bottom profile belongs to the last, not a foot outline. No sole-thickness or separate sole-stack inputs.
 - Work first on the foot/last outline seen from above, then the elevation and bottom seen from the side,
   then the upper surface, which is likely the hardest part. Arch shaping can come later if needed.
 - The first outline is the outer silhouette seen from above, not the edge of the last's bottom.
@@ -27,6 +32,8 @@ Below, **agreed** means decided, **recommended** means a suggestion, and **still
 - Make generated diagrams available as rendered images for visual review, not just SVG source.
 - Treat toe labels as starting presets: you can adjust between “round”, “almond”, and “pointed”.
 - Keep shoe construction in the discussion; it affects what shape will work.
+- Consult internet sources for every last-design decision. Separate established definitions,
+  a particular vendor's conventions, and our own modelling assumptions.
 
 ## Keep three kinds of numbers separate — agreed
 
@@ -74,7 +81,7 @@ These are candidate inputs, not a shopping list of measurements you need to take
 | Instep | Height and shape over the top of the foot | The upper shape of the last |
 | Heel | Heel width and shape | The heel region and its support shape |
 | Toes | How far toes reach and how much height they need | The last's toe shape |
-| Heel elevation | Foot observations in the relevant posture, if available | Height of the rear endpoint |
+| Last heel height / toe spring | No personal measurements needed for this development step | Rear and toe underside heights above ground |
 | Bottom | Useful foot observations, if available | The bottom curve and shape |
 | Local details | Usually not separate foot measurements | Small curve adjustments |
 
@@ -111,14 +118,31 @@ The first version uses mm, named cubic curves, one rounded toe style, and indepe
 Side widths are distances from the centre line at each side's own forward position;
 their sum is not a single section width when those positions differ.
 Handles and full section widths are calculated, not separate editable numbers.
+The browser now enters top locations as contour stations `_s`, measured along the bottom guide.
+It calculates their forward positions separately; widths remain entered distances from the centre line at those positions.
+One `contour_last` document supplies last contour length and all controls. There is no second editable projected length.
+When heel height changes, the seat, waist, blend, and ramp keep their respective contour lengths; the top's forward
+positions follow their mapped stations. This is our explicit prototype assumption, not an anatomical or vendor rule.
+Seat inclination stays editable; impossible height/length/angle combinations are rejected, not silently redistributed.
 See [README](../README.md) for commands, shape assumptions, and curve-based checks to 0.1 mm.
 
-**Possible later step:** use a Blender Python add-on that builds a mesh from saved numbers and curve controls.
+**Agreed direction:** our own browser-first app, with geometry calculated independently of its display.
+Keep one production geometry implementation rather than separate browser and Blender versions of the shape rules.
+**Current implementation:** an actual create-t3-app scaffold, adapted to Next.js 16 App Router, React, TypeScript,
+Tailwind CSS, and tRPC; locally installed Three.js displays the guides. `src/lib/geometry` is independent of rendering and transport.
+The earlier plain HTML/JavaScript viewer and Python geometry are temporary comparison references, not a second production service.
+There is no authentication, database, or automatic persistence. See [README](../README.md) for the pnpm-only setup.
+The top guide is shown at z=0 and the side guide at x=0 only for display. These reference lines do not define
+a 3D last, an anatomical centreline, or the edge of a bottom surface. The 2D views share one uniform scale;
+the sampled 3D lines are for inspection, not precise measurements.
+Blender may be an optional export destination, not the primary app or a required geometry engine.
 Attach controls to named regions such as the heel or toe, relative to the guiding shape,
 not to vertex numbers that may change when the mesh is rebuilt.
 Keep those editable controls; the output mesh alone is not the saved design.
 Rebuild explicitly, carrying local adjustments onto the updated shape.
-The platform and exactly how controls stay attached are still to decide.
+Edits must clear passed status immediately. Last-valid results are reference-only until a successful rebuild of the current revision;
+an older response must not overwrite later edits or reinstate a stale success claim.
+Exactly how future draggable controls stay attached is still to decide. The current viewer edits numbers only.
 
 There are two suggested ways to drag things; you have not yet chosen whether you want both:
 
@@ -131,15 +155,26 @@ Still to decide: refuse the edit, stop it at the limit, or move the handle to a 
 If the tool adjusts a handle, show what changed. If rebuilding cannot keep an edit, report that too.
 We still need to define how smoothly adjoining curves should meet and what makes a usable, unbroken model.
 
-## Heel elevation and the bottom
+## Last heel height, toe spring, and the bottom
 
 The rough flow is: example or measured foot information + stated guesses → chosen last dimensions
 → guiding points and curves → resulting 3D model → printed last → test shoe → fit changes.
 Toe settings, the bottom shape, and heel elevation can affect several parts of the model along the way.
 
-The agreed heel input sets the rear endpoint's height. The bottom profile runs from there to the front of the foot.
-That does not mean a straight line, or that the endpoint height determines the whole curve.
-We still need to define the front reference and how the bottom curve is controlled between the endpoints.
+The [ISO 19408:2023 preview](https://cdn.standards.iteh.ai/sist-preview/83107/cb5f303e387a42a6842831f8721fb244/ISO-19408-2023.pdf)
+defines last heel height from the rear underside to ground in normal orientation (§3.2.6),
+the heel seat (§3.2.7), and toe spring from the toe underside to ground (§3.2.13).
+Toe spring is a height here, not an angle. For our proposed drawing, horizontal ground is z=0.
+These replace the loose “tip of heel” and “front of foot” descriptions, not the existing top-outline inputs.
+
+The approved [bottom-profile specification](bottom-profile.md) now has a numeric/SVG experiment.
+Its new contour-length adapter reuses the same shape constructors, with a separate input format and tight arc-length checks.
+It describes a side-view guide through the heel seat, waist, rounded contact transition, and straight inclined forepart,
+not a validated 3D bottom. You approved a 10 mm development transition instead of the rejected S-shaped toe rise;
+this is an explicit design choice, not an anatomical default. The positive-height toe does not flatten again.
+The breast is the front of the heel seat; the tread is the forepart contact region
+([Bird anatomy reference](https://shoemaking.wiki/The_Anatomy_of_a_Shoe_Last)).
+Neither endpoint heights nor these names determine the whole curve. Curve rules remain our assumptions to state and check.
 
 Raising the heel is not just rotating an unchanged foot or last. Posture can change the shape needed.
 We have not chosen a tested formula for changing the last with heel elevation.
@@ -149,13 +184,14 @@ Research about posture does not provide that formula. How elevation and the bott
 
 1. Define the numbers, point positions, and clearly labelled made-up examples.
 2. Start with the foot/last outline from above, including the forefoot and toe controls; check chosen dimensions.
-3. Add the side view: heel-endpoint elevation and the bottom profile.
+3. Try the implemented bottom-guide experiment, using sourced last heel height and toe spring; review the rendered shape.
+   Inspect both guides in the browser and rebuild after numeric edits without changing the example files.
 4. Build the upper surface and check joins and all three views. Add arch shaping later only if needed.
 5. Much later, agree how to measure your foot, collect those measurements, and adapt the design.
 6. Print the personal last and compare its dimensions with the digital model.
 7. Make a test shoe and check that the last can be removed.
 8. Try the actual shoe and adjust the design. You will diagnose fit issues; no elaborate fit workflow is required.
-9. Consider a standalone app only if experience shows Blender is not enough.
+9. Extend the first browser viewer only as later geometry and checks are approved; Blender export is optional.
 
 See [software research](software-research.md) for existing tools, image examples, and suggested top-outline controls.
 The first outline describes the outer silhouette seen from above. The edge of the last's bottom is a separate curve,

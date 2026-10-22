@@ -1,0 +1,6630 @@
+{
+  "input": {
+    "schema_version": 1,
+    "kind": "contour_last",
+    "units": "mm",
+    "description": "Made-up designed contour-length target, not foot measurements or an automatic migration of the old projection.",
+    "design": {
+      "last_length": 250,
+      "top": {
+        "medial_heel_s": 30,
+        "medial_heel_width": 28,
+        "lateral_heel_s": 30,
+        "lateral_heel_width": 29,
+        "medial_waist_s": 100,
+        "medial_waist_width": 29,
+        "lateral_waist_s": 100,
+        "lateral_waist_width": 32,
+        "medial_ball_s": 175,
+        "medial_ball_width": 46,
+        "lateral_ball_s": 165,
+        "lateral_ball_width": 48,
+        "medial_toe_s": 220,
+        "medial_toe_width": 33,
+        "lateral_toe_s": 220,
+        "lateral_toe_width": 31
+      },
+      "bottom": {
+        "heel_height": 40,
+        "toe_spring": 10,
+        "seat_arc_length": 50,
+        "seat_inclination_deg": 35,
+        "contact_s": 99,
+        "blend_arc_length": 10
+      }
+    }
+  },
+  "expected": {
+    "inputs": {
+      "schema_version": 1,
+      "kind": "contour_last",
+      "units": "mm",
+      "description": "Made-up designed contour-length target, not foot measurements or an automatic migration of the old projection.",
+      "design": {
+        "last_length": 250,
+        "top": {
+          "medial_heel_s": 30,
+          "medial_heel_width": 28,
+          "lateral_heel_s": 30,
+          "lateral_heel_width": 29,
+          "medial_waist_s": 100,
+          "medial_waist_width": 29,
+          "lateral_waist_s": 100,
+          "lateral_waist_width": 32,
+          "medial_ball_s": 175,
+          "medial_ball_width": 46,
+          "lateral_ball_s": 165,
+          "lateral_ball_width": 48,
+          "medial_toe_s": 220,
+          "medial_toe_width": 33,
+          "lateral_toe_s": 220,
+          "lateral_toe_width": 31
+        },
+        "bottom": {
+          "heel_height": 40,
+          "toe_spring": 10,
+          "seat_arc_length": 50,
+          "seat_inclination_deg": 35,
+          "contact_s": 99,
+          "blend_arc_length": 10
+        }
+      }
+    },
+    "models": {
+      "top": {
+        "schema_version": 1,
+        "units": "mm",
+        "points": {
+          "heel_tip": {
+            "x": 0.0,
+            "y": 0.0,
+            "kind": "landmark"
+          },
+          "toe_tip": {
+            "x": 0.0,
+            "y": 238.37806945720558,
+            "kind": "landmark"
+          },
+          "medial_heel": {
+            "x": -28,
+            "y": 24.574561328669756,
+            "kind": "landmark"
+          },
+          "medial_heel_center": {
+            "x": 0.0,
+            "y": 24.574561328669756,
+            "kind": "reference"
+          },
+          "medial_waist": {
+            "x": -29,
+            "y": 88.71700091826689,
+            "kind": "landmark"
+          },
+          "medial_waist_center": {
+            "x": 0.0,
+            "y": 88.71700091826689,
+            "kind": "reference"
+          },
+          "medial_ball": {
+            "x": -46,
+            "y": 163.5541869903401,
+            "kind": "landmark"
+          },
+          "medial_ball_center": {
+            "x": 0.0,
+            "y": 163.5541869903401,
+            "kind": "reference"
+          },
+          "medial_toe": {
+            "x": -33,
+            "y": 208.44851974737617,
+            "kind": "landmark"
+          },
+          "medial_toe_center": {
+            "x": 0.0,
+            "y": 208.44851974737617,
+            "kind": "reference"
+          },
+          "lateral_heel": {
+            "x": 29,
+            "y": 24.574561328669756,
+            "kind": "landmark"
+          },
+          "lateral_heel_center": {
+            "x": 0.0,
+            "y": 24.574561328669756,
+            "kind": "reference"
+          },
+          "lateral_waist": {
+            "x": 32,
+            "y": 88.71700091826689,
+            "kind": "landmark"
+          },
+          "lateral_waist_center": {
+            "x": 0.0,
+            "y": 88.71700091826689,
+            "kind": "reference"
+          },
+          "lateral_ball": {
+            "x": 48,
+            "y": 153.57766859988766,
+            "kind": "landmark"
+          },
+          "lateral_ball_center": {
+            "x": 0.0,
+            "y": 153.57766859988766,
+            "kind": "reference"
+          },
+          "lateral_toe": {
+            "x": 31,
+            "y": 208.44851974737617,
+            "kind": "landmark"
+          },
+          "lateral_toe_center": {
+            "x": 0.0,
+            "y": 208.44851974737617,
+            "kind": "reference"
+          },
+          "heel_tip_to_lateral_heel_handle_start": {
+            "x": 14.0,
+            "y": 0.0,
+            "kind": "handle"
+          },
+          "heel_tip_to_lateral_heel_handle_end": {
+            "x": 27.718444296320996,
+            "y": 12.287280664334878,
+            "kind": "handle"
+          },
+          "lateral_heel_to_lateral_waist_handle_start": {
+            "x": 30.281555703679004,
+            "y": 36.86184199300463,
+            "kind": "handle"
+          },
+          "lateral_heel_to_lateral_waist_handle_end": {
+            "x": 30.5,
+            "y": 69.61693006473723,
+            "kind": "handle"
+          },
+          "lateral_waist_to_lateral_ball_handle_start": {
+            "x": 33.5,
+            "y": 107.81707177179655,
+            "kind": "handle"
+          },
+          "lateral_waist_to_lateral_ball_handle_end": {
+            "x": 48.0,
+            "y": 126.1422430261434,
+            "kind": "handle"
+          },
+          "lateral_ball_to_lateral_toe_handle_start": {
+            "x": 48.0,
+            "y": 181.0130941736319,
+            "kind": "handle"
+          },
+          "lateral_ball_to_lateral_toe_handle_end": {
+            "x": 38.53631091599017,
+            "y": 193.48374489246146,
+            "kind": "handle"
+          },
+          "lateral_toe_to_toe_tip_handle_start": {
+            "x": 23.46368908400983,
+            "y": 223.41329460229088,
+            "kind": "handle"
+          },
+          "lateral_toe_to_toe_tip_handle_end": {
+            "x": 15.5,
+            "y": 238.37806945720558,
+            "kind": "handle"
+          },
+          "toe_tip_to_medial_toe_handle_start": {
+            "x": -15.5,
+            "y": 238.37806945720558,
+            "kind": "handle"
+          },
+          "toe_tip_to_medial_toe_handle_end": {
+            "x": -26.5,
+            "y": 222.06797812867177,
+            "kind": "handle"
+          },
+          "medial_toe_to_medial_ball_handle_start": {
+            "x": -39.5,
+            "y": 194.82906136608057,
+            "kind": "handle"
+          },
+          "medial_toe_to_medial_ball_handle_end": {
+            "x": -46.0,
+            "y": 186.00135336885813,
+            "kind": "handle"
+          },
+          "medial_ball_to_medial_waist_handle_start": {
+            "x": -46.0,
+            "y": 141.10702061182207,
+            "kind": "handle"
+          },
+          "medial_ball_to_medial_waist_handle_end": {
+            "x": -29.5,
+            "y": 106.23625150371785,
+            "kind": "handle"
+          },
+          "medial_waist_to_medial_heel_handle_start": {
+            "x": -28.5,
+            "y": 71.19775033281593,
+            "kind": "handle"
+          },
+          "medial_waist_to_medial_heel_handle_end": {
+            "x": -28.441871558264143,
+            "y": 36.86184199300463,
+            "kind": "handle"
+          },
+          "medial_heel_to_heel_tip_handle_start": {
+            "x": -27.558128441735857,
+            "y": 12.287280664334878,
+            "kind": "handle"
+          },
+          "medial_heel_to_heel_tip_handle_end": {
+            "x": -14.0,
+            "y": 0.0,
+            "kind": "handle"
+          }
+        },
+        "curves": {
+          "heel_tip_to_lateral_heel": {
+            "start": "heel_tip",
+            "control1": "heel_tip_to_lateral_heel_handle_start",
+            "control2": "heel_tip_to_lateral_heel_handle_end",
+            "end": "lateral_heel"
+          },
+          "lateral_heel_to_lateral_waist": {
+            "start": "lateral_heel",
+            "control1": "lateral_heel_to_lateral_waist_handle_start",
+            "control2": "lateral_heel_to_lateral_waist_handle_end",
+            "end": "lateral_waist"
+          },
+          "lateral_waist_to_lateral_ball": {
+            "start": "lateral_waist",
+            "control1": "lateral_waist_to_lateral_ball_handle_start",
+            "control2": "lateral_waist_to_lateral_ball_handle_end",
+            "end": "lateral_ball"
+          },
+          "lateral_ball_to_lateral_toe": {
+            "start": "lateral_ball",
+            "control1": "lateral_ball_to_lateral_toe_handle_start",
+            "control2": "lateral_ball_to_lateral_toe_handle_end",
+            "end": "lateral_toe"
+          },
+          "lateral_toe_to_toe_tip": {
+            "start": "lateral_toe",
+            "control1": "lateral_toe_to_toe_tip_handle_start",
+            "control2": "lateral_toe_to_toe_tip_handle_end",
+            "end": "toe_tip"
+          },
+          "toe_tip_to_medial_toe": {
+            "start": "toe_tip",
+            "control1": "toe_tip_to_medial_toe_handle_start",
+            "control2": "toe_tip_to_medial_toe_handle_end",
+            "end": "medial_toe"
+          },
+          "medial_toe_to_medial_ball": {
+            "start": "medial_toe",
+            "control1": "medial_toe_to_medial_ball_handle_start",
+            "control2": "medial_toe_to_medial_ball_handle_end",
+            "end": "medial_ball"
+          },
+          "medial_ball_to_medial_waist": {
+            "start": "medial_ball",
+            "control1": "medial_ball_to_medial_waist_handle_start",
+            "control2": "medial_ball_to_medial_waist_handle_end",
+            "end": "medial_waist"
+          },
+          "medial_waist_to_medial_heel": {
+            "start": "medial_waist",
+            "control1": "medial_waist_to_medial_heel_handle_start",
+            "control2": "medial_waist_to_medial_heel_handle_end",
+            "end": "medial_heel"
+          },
+          "medial_heel_to_heel_tip": {
+            "start": "medial_heel",
+            "control1": "medial_heel_to_heel_tip_handle_start",
+            "control2": "medial_heel_to_heel_tip_handle_end",
+            "end": "heel_tip"
+          }
+        },
+        "reference_lines": {
+          "medial_heel_half_width": {
+            "start": "medial_heel_center",
+            "end": "medial_heel"
+          },
+          "medial_waist_half_width": {
+            "start": "medial_waist_center",
+            "end": "medial_waist"
+          },
+          "medial_ball_half_width": {
+            "start": "medial_ball_center",
+            "end": "medial_ball"
+          },
+          "medial_toe_half_width": {
+            "start": "medial_toe_center",
+            "end": "medial_toe"
+          },
+          "lateral_heel_half_width": {
+            "start": "lateral_heel_center",
+            "end": "lateral_heel"
+          },
+          "lateral_waist_half_width": {
+            "start": "lateral_waist_center",
+            "end": "lateral_waist"
+          },
+          "lateral_ball_half_width": {
+            "start": "lateral_ball_center",
+            "end": "lateral_ball"
+          },
+          "lateral_toe_half_width": {
+            "start": "lateral_toe_center",
+            "end": "lateral_toe"
+          },
+          "length_axis": {
+            "start": "heel_tip",
+            "end": "toe_tip"
+          }
+        },
+        "outline": [
+          "heel_tip_to_lateral_heel",
+          "lateral_heel_to_lateral_waist",
+          "lateral_waist_to_lateral_ball",
+          "lateral_ball_to_lateral_toe",
+          "lateral_toe_to_toe_tip",
+          "toe_tip_to_medial_toe",
+          "medial_toe_to_medial_ball",
+          "medial_ball_to_medial_waist",
+          "medial_waist_to_medial_heel",
+          "medial_heel_to_heel_tip"
+        ],
+        "dimensions": {
+          "length": {
+            "kind": "length",
+            "axis": "y",
+            "start_y": 0.0,
+            "end_y": 238.37806945720558,
+            "expected": 238.37806945720558,
+            "reference_line": "length_axis"
+          },
+          "medial_heel_half_width": {
+            "kind": "side_extent",
+            "axis": "x",
+            "side": "medial",
+            "station_y": 24.574561328669756,
+            "expected": 28,
+            "reference_line": "medial_heel_half_width",
+            "definition": "Positive distance from x=0 to this side at station_y"
+          },
+          "medial_waist_half_width": {
+            "kind": "side_extent",
+            "axis": "x",
+            "side": "medial",
+            "station_y": 88.71700091826689,
+            "expected": 29,
+            "reference_line": "medial_waist_half_width",
+            "definition": "Positive distance from x=0 to this side at station_y"
+          },
+          "medial_ball_half_width": {
+            "kind": "side_extent",
+            "axis": "x",
+            "side": "medial",
+            "station_y": 163.5541869903401,
+            "expected": 46,
+            "reference_line": "medial_ball_half_width",
+            "definition": "Positive distance from x=0 to this side at station_y"
+          },
+          "medial_toe_half_width": {
+            "kind": "side_extent",
+            "axis": "x",
+            "side": "medial",
+            "station_y": 208.44851974737617,
+            "expected": 33,
+            "reference_line": "medial_toe_half_width",
+            "definition": "Positive distance from x=0 to this side at station_y"
+          },
+          "lateral_heel_half_width": {
+            "kind": "side_extent",
+            "axis": "x",
+            "side": "lateral",
+            "station_y": 24.574561328669756,
+            "expected": 29,
+            "reference_line": "lateral_heel_half_width",
+            "definition": "Positive distance from x=0 to this side at station_y"
+          },
+          "lateral_waist_half_width": {
+            "kind": "side_extent",
+            "axis": "x",
+            "side": "lateral",
+            "station_y": 88.71700091826689,
+            "expected": 32,
+            "reference_line": "lateral_waist_half_width",
+            "definition": "Positive distance from x=0 to this side at station_y"
+          },
+          "lateral_ball_half_width": {
+            "kind": "side_extent",
+            "axis": "x",
+            "side": "lateral",
+            "station_y": 153.57766859988766,
+            "expected": 48,
+            "reference_line": "lateral_ball_half_width",
+            "definition": "Positive distance from x=0 to this side at station_y"
+          },
+          "lateral_toe_half_width": {
+            "kind": "side_extent",
+            "axis": "x",
+            "side": "lateral",
+            "station_y": 208.44851974737617,
+            "expected": 31,
+            "reference_line": "lateral_toe_half_width",
+            "definition": "Positive distance from x=0 to this side at station_y"
+          }
+        },
+        "design": {
+          "length": 238.37806945720558,
+          "medial_heel_y": 24.574561328669756,
+          "medial_heel_width": 28,
+          "medial_waist_y": 88.71700091826689,
+          "medial_waist_width": 29,
+          "medial_ball_y": 163.5541869903401,
+          "medial_ball_width": 46,
+          "medial_toe_y": 208.44851974737617,
+          "medial_toe_width": 33,
+          "lateral_heel_y": 24.574561328669756,
+          "lateral_heel_width": 29,
+          "lateral_waist_y": 88.71700091826689,
+          "lateral_waist_width": 32,
+          "lateral_ball_y": 153.57766859988766,
+          "lateral_ball_width": 48,
+          "lateral_toe_y": 208.44851974737617,
+          "lateral_toe_width": 31
+        },
+        "source": "made-up design dimensions; not measured foot data"
+      },
+      "bottom": {
+        "schema_version": 2,
+        "kind": "bottom_profile",
+        "units": "mm",
+        "axes": [
+          "y",
+          "z"
+        ],
+        "closed": false,
+        "points": {
+          "bottom_heel_rear": {
+            "y": 0,
+            "z": 40,
+            "kind": "landmark"
+          },
+          "bottom_seat_front": {
+            "y": 40.95760221444959,
+            "z": 11.3211781824477,
+            "kind": "landmark"
+          },
+          "bottom_forepart_contact": {
+            "y": 87.71700331096719,
+            "z": 0,
+            "kind": "landmark"
+          },
+          "bottom_forepart_blend_end": {
+            "y": 97.70916015182588,
+            "z": 0.34298416513333074,
+            "kind": "landmark"
+          },
+          "bottom_toe_end": {
+            "y": 238.37806945720558,
+            "z": 10,
+            "kind": "landmark"
+          },
+          "bottom_heel_ground": {
+            "y": 0,
+            "z": 0,
+            "kind": "reference"
+          },
+          "bottom_toe_ground": {
+            "y": 238.37806945720558,
+            "z": 0,
+            "kind": "reference"
+          },
+          "bottom_seat_horizontal_front": {
+            "y": 40.95760221444959,
+            "z": 40,
+            "kind": "reference"
+          },
+          "bottom_forepart_blend_ground_end": {
+            "y": 97.70916015182588,
+            "z": 0,
+            "kind": "reference"
+          },
+          "bottom_heel_seat_handle_start": {
+            "y": 13.652534071483196,
+            "z": 30.440392727482568,
+            "kind": "handle"
+          },
+          "bottom_heel_seat_handle_end": {
+            "y": 27.30506814296639,
+            "z": 20.880785454965135,
+            "kind": "handle"
+          },
+          "bottom_waist_handle_start": {
+            "y": 56.54406924662212,
+            "z": 0.4074164724633693,
+            "kind": "handle"
+          },
+          "bottom_waist_handle_end": {
+            "y": 72.13053627879465,
+            "z": 0.0,
+            "kind": "handle"
+          },
+          "bottom_forepart_blend_handle_start": {
+            "y": 91.04772225792009,
+            "z": 0.0,
+            "kind": "handle"
+          },
+          "bottom_forepart_blend_handle_end": {
+            "y": 94.37844120487298,
+            "z": 0.11432805504444354,
+            "kind": "handle"
+          },
+          "bottom_forepart_ramp_handle_start": {
+            "y": 144.59879658695246,
+            "z": 3.5619894434222212,
+            "kind": "handle"
+          },
+          "bottom_forepart_ramp_handle_end": {
+            "y": 191.48843302207902,
+            "z": 6.78099472171111,
+            "kind": "handle"
+          }
+        },
+        "curves": {
+          "bottom_heel_seat": {
+            "start": "bottom_heel_rear",
+            "control1": "bottom_heel_seat_handle_start",
+            "control2": "bottom_heel_seat_handle_end",
+            "end": "bottom_seat_front"
+          },
+          "bottom_waist": {
+            "start": "bottom_seat_front",
+            "control1": "bottom_waist_handle_start",
+            "control2": "bottom_waist_handle_end",
+            "end": "bottom_forepart_contact"
+          },
+          "bottom_forepart_blend": {
+            "start": "bottom_forepart_contact",
+            "control1": "bottom_forepart_blend_handle_start",
+            "control2": "bottom_forepart_blend_handle_end",
+            "end": "bottom_forepart_blend_end"
+          },
+          "bottom_forepart_ramp": {
+            "start": "bottom_forepart_blend_end",
+            "control1": "bottom_forepart_ramp_handle_start",
+            "control2": "bottom_forepart_ramp_handle_end",
+            "end": "bottom_toe_end"
+          }
+        },
+        "profile": [
+          "bottom_heel_seat",
+          "bottom_waist",
+          "bottom_forepart_blend",
+          "bottom_forepart_ramp"
+        ],
+        "reference_lines": {
+          "bottom_ground_projected_length": {
+            "start": "bottom_heel_ground",
+            "end": "bottom_toe_ground"
+          },
+          "bottom_heel_height": {
+            "start": "bottom_heel_ground",
+            "end": "bottom_heel_rear"
+          },
+          "bottom_toe_spring": {
+            "start": "bottom_toe_ground",
+            "end": "bottom_toe_end"
+          },
+          "bottom_seat_horizontal": {
+            "start": "bottom_heel_rear",
+            "end": "bottom_seat_horizontal_front"
+          },
+          "bottom_seat_chord": {
+            "start": "bottom_heel_rear",
+            "end": "bottom_seat_front"
+          },
+          "bottom_contact_forward": {
+            "start": "bottom_heel_ground",
+            "end": "bottom_forepart_contact"
+          },
+          "bottom_forepart_blend_projection": {
+            "start": "bottom_forepart_contact",
+            "end": "bottom_forepart_blend_ground_end"
+          }
+        },
+        "construction_lines": {
+          "bottom_heel_seat_start_to_handle_start": {
+            "start": "bottom_heel_rear",
+            "end": "bottom_heel_seat_handle_start"
+          },
+          "bottom_heel_seat_handle_start_to_handle_end": {
+            "start": "bottom_heel_seat_handle_start",
+            "end": "bottom_heel_seat_handle_end"
+          },
+          "bottom_heel_seat_handle_end_to_end": {
+            "start": "bottom_heel_seat_handle_end",
+            "end": "bottom_seat_front"
+          },
+          "bottom_waist_start_to_handle_start": {
+            "start": "bottom_seat_front",
+            "end": "bottom_waist_handle_start"
+          },
+          "bottom_waist_handle_start_to_handle_end": {
+            "start": "bottom_waist_handle_start",
+            "end": "bottom_waist_handle_end"
+          },
+          "bottom_waist_handle_end_to_end": {
+            "start": "bottom_waist_handle_end",
+            "end": "bottom_forepart_contact"
+          },
+          "bottom_forepart_blend_start_to_handle_start": {
+            "start": "bottom_forepart_contact",
+            "end": "bottom_forepart_blend_handle_start"
+          },
+          "bottom_forepart_blend_handle_start_to_handle_end": {
+            "start": "bottom_forepart_blend_handle_start",
+            "end": "bottom_forepart_blend_handle_end"
+          },
+          "bottom_forepart_blend_handle_end_to_end": {
+            "start": "bottom_forepart_blend_handle_end",
+            "end": "bottom_forepart_blend_end"
+          },
+          "bottom_forepart_ramp_start_to_handle_start": {
+            "start": "bottom_forepart_blend_end",
+            "end": "bottom_forepart_ramp_handle_start"
+          },
+          "bottom_forepart_ramp_handle_start_to_handle_end": {
+            "start": "bottom_forepart_ramp_handle_start",
+            "end": "bottom_forepart_ramp_handle_end"
+          },
+          "bottom_forepart_ramp_handle_end_to_end": {
+            "start": "bottom_forepart_ramp_handle_end",
+            "end": "bottom_toe_end"
+          }
+        },
+        "dimensions": {
+          "projected_length": {
+            "expected": 238.37806945720558,
+            "units": "mm",
+            "reference_line": "bottom_ground_projected_length",
+            "definition": "Shared top design.length: forward separation, not arc length"
+          },
+          "heel_height": {
+            "expected": 40,
+            "units": "mm",
+            "reference_line": "bottom_heel_height",
+            "definition": "Rear guide endpoint height above z=0"
+          },
+          "toe_spring": {
+            "expected": 10,
+            "units": "mm",
+            "reference_line": "bottom_toe_spring",
+            "definition": "Toe guide endpoint height above z=0"
+          },
+          "seat_projected_length": {
+            "expected": 40.95760221444959,
+            "units": "mm",
+            "reference_line": "bottom_seat_horizontal",
+            "definition": "Horizontal seat projection"
+          },
+          "seat_inclination_deg": {
+            "expected": 35,
+            "units": "deg",
+            "reference_line": "bottom_seat_chord",
+            "definition": "Downward-forward seat angle from horizontal"
+          },
+          "contact_forward": {
+            "expected": 87.71700331096719,
+            "units": "mm",
+            "reference_line": "bottom_contact_forward",
+            "definition": "Forward position of designated contact guide point"
+          },
+          "forepart_blend_length": {
+            "expected": 9.992156840858696,
+            "units": "mm",
+            "reference_line": "bottom_forepart_blend_projection",
+            "definition": "Forward length of the rounded contact transition"
+          }
+        },
+        "source": "Made-up design values; provisional shared y range, not foot measurements"
+      }
+    },
+    "derived": {
+      "projected_length": 238.37806945720558,
+      "station_map": {
+        "medial_heel": {
+          "s": 30,
+          "y": 24.574561328669756
+        },
+        "medial_waist": {
+          "s": 100,
+          "y": 88.71700091826689
+        },
+        "medial_ball": {
+          "s": 175,
+          "y": 163.5541869903401
+        },
+        "medial_toe": {
+          "s": 220,
+          "y": 208.44851974737617
+        },
+        "lateral_heel": {
+          "s": 30,
+          "y": 24.574561328669756
+        },
+        "lateral_waist": {
+          "s": 100,
+          "y": 88.71700091826689
+        },
+        "lateral_ball": {
+          "s": 165,
+          "y": 153.57766859988766
+        },
+        "lateral_toe": {
+          "s": 220,
+          "y": 208.44851974737617
+        }
+      },
+      "bottom_stations": {
+        "seat_s": 50,
+        "contact_s": 99,
+        "blend_end_s": 109
+      }
+    },
+    "reports": {
+      "top": {
+        "passed": true,
+        "units": "mm",
+        "checks": [
+          {
+            "name": "heel_y",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 0.1,
+            "passed": true
+          },
+          {
+            "name": "toe_y",
+            "actual": 238.37806945720558,
+            "expected": 238.37806945720558,
+            "tolerance": 0.1,
+            "passed": true
+          },
+          {
+            "name": "longitudinal_length",
+            "actual": 238.37806945720558,
+            "expected": 238.37806945720558,
+            "tolerance": 0.1,
+            "passed": true
+          },
+          {
+            "name": "medial_heel_half_width",
+            "actual": 28.0,
+            "expected": 28,
+            "tolerance": 0.1,
+            "passed": true
+          },
+          {
+            "name": "medial_waist_half_width",
+            "actual": 29.0,
+            "expected": 29,
+            "tolerance": 0.1,
+            "passed": true
+          },
+          {
+            "name": "medial_ball_half_width",
+            "actual": 46.0,
+            "expected": 46,
+            "tolerance": 0.1,
+            "passed": true
+          },
+          {
+            "name": "medial_toe_half_width",
+            "actual": 33.0,
+            "expected": 33,
+            "tolerance": 0.1,
+            "passed": true
+          },
+          {
+            "name": "lateral_heel_half_width",
+            "actual": 29.0,
+            "expected": 29,
+            "tolerance": 0.1,
+            "passed": true
+          },
+          {
+            "name": "lateral_waist_half_width",
+            "actual": 32.0,
+            "expected": 32,
+            "tolerance": 0.1,
+            "passed": true
+          },
+          {
+            "name": "lateral_ball_half_width",
+            "actual": 48.0,
+            "expected": 48,
+            "tolerance": 0.1,
+            "passed": true
+          },
+          {
+            "name": "lateral_toe_half_width",
+            "actual": 31.0,
+            "expected": 31,
+            "tolerance": 0.1,
+            "passed": true
+          },
+          {
+            "name": "join_0_closure",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "passed": true
+          },
+          {
+            "name": "join_0_tangent_difference",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "passed": true
+          },
+          {
+            "name": "join_0_nonzero_tangent",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "join_1_closure",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "passed": true
+          },
+          {
+            "name": "join_1_tangent_difference",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "passed": true
+          },
+          {
+            "name": "join_1_nonzero_tangent",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "join_2_closure",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "passed": true
+          },
+          {
+            "name": "join_2_tangent_difference",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "passed": true
+          },
+          {
+            "name": "join_2_nonzero_tangent",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "join_3_closure",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "passed": true
+          },
+          {
+            "name": "join_3_tangent_difference",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "passed": true
+          },
+          {
+            "name": "join_3_nonzero_tangent",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "join_4_closure",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "passed": true
+          },
+          {
+            "name": "join_4_tangent_difference",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "passed": true
+          },
+          {
+            "name": "join_4_nonzero_tangent",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "join_5_closure",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "passed": true
+          },
+          {
+            "name": "join_5_tangent_difference",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "passed": true
+          },
+          {
+            "name": "join_5_nonzero_tangent",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "join_6_closure",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "passed": true
+          },
+          {
+            "name": "join_6_tangent_difference",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "passed": true
+          },
+          {
+            "name": "join_6_nonzero_tangent",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "join_7_closure",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "passed": true
+          },
+          {
+            "name": "join_7_tangent_difference",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "passed": true
+          },
+          {
+            "name": "join_7_nonzero_tangent",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "join_8_closure",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "passed": true
+          },
+          {
+            "name": "join_8_tangent_difference",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "passed": true
+          },
+          {
+            "name": "join_8_nonzero_tangent",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "join_9_closure",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "passed": true
+          },
+          {
+            "name": "join_9_tangent_difference",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "passed": true
+          },
+          {
+            "name": "join_9_nonzero_tangent",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "heel_tip_to_lateral_heel_side_and_monotonicity",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "heel_tip_to_lateral_heel_width_monotonicity",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "lateral_heel_to_lateral_waist_side_and_monotonicity",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "lateral_heel_to_lateral_waist_width_monotonicity",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "lateral_waist_to_lateral_ball_side_and_monotonicity",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "lateral_waist_to_lateral_ball_width_monotonicity",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "lateral_ball_to_lateral_toe_side_and_monotonicity",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "lateral_ball_to_lateral_toe_width_monotonicity",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "lateral_toe_to_toe_tip_side_and_monotonicity",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "lateral_toe_to_toe_tip_width_monotonicity",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "toe_tip_to_medial_toe_side_and_monotonicity",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "toe_tip_to_medial_toe_width_monotonicity",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "medial_toe_to_medial_ball_side_and_monotonicity",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "medial_toe_to_medial_ball_width_monotonicity",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "medial_ball_to_medial_waist_side_and_monotonicity",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "medial_ball_to_medial_waist_width_monotonicity",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "medial_waist_to_medial_heel_side_and_monotonicity",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "medial_waist_to_medial_heel_width_monotonicity",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "medial_heel_to_heel_tip_side_and_monotonicity",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "medial_heel_to_heel_tip_width_monotonicity",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "passed": true
+          },
+          {
+            "name": "sampled_nonadjacent_intersections",
+            "actual": 0,
+            "expected": 0,
+            "tolerance": 0,
+            "passed": true
+          }
+        ],
+        "sections": [
+          {
+            "name": "medial_heel",
+            "y": 24.574561328669756,
+            "medial_x": -28.0,
+            "lateral_x": 29.0,
+            "width": 57.0
+          },
+          {
+            "name": "medial_waist",
+            "y": 88.71700091826689,
+            "medial_x": -29.0,
+            "lateral_x": 32.0,
+            "width": 61.0
+          },
+          {
+            "name": "medial_ball",
+            "y": 163.5541869903401,
+            "medial_x": -46.0,
+            "lateral_x": 47.54549686314628,
+            "width": 93.54549686314628
+          },
+          {
+            "name": "medial_toe",
+            "y": 208.44851974737617,
+            "medial_x": -33.0,
+            "lateral_x": 31.0,
+            "width": 64.0
+          },
+          {
+            "name": "lateral_heel",
+            "y": 24.574561328669756,
+            "medial_x": -28.0,
+            "lateral_x": 29.0,
+            "width": 57.0
+          },
+          {
+            "name": "lateral_waist",
+            "y": 88.71700091826689,
+            "medial_x": -29.0,
+            "lateral_x": 32.0,
+            "width": 61.0
+          },
+          {
+            "name": "lateral_ball",
+            "y": 153.57766859988766,
+            "medial_x": -45.1346565210833,
+            "lateral_x": 48.0,
+            "width": 93.1346565210833
+          },
+          {
+            "name": "lateral_toe",
+            "y": 208.44851974737617,
+            "medial_x": -33.0,
+            "lateral_x": 31.0,
+            "width": 64.0
+          }
+        ],
+        "limits": [
+          "Dimensions use cubic extrema and section roots, not landmark distances.",
+          "Join checks require matching first derivatives, not curvature continuity.",
+          "Monotone x control polygons prevent width overshoot between neighbouring landmarks.",
+          "Monotone, opposite-half-plane curves certify this construction's simple outline.",
+          "Additional intersection test uses 32 chords per curve; it is not an exact general curve test.",
+          "This top silhouette says nothing about bottom geometry, toe clearance, or shoe fit."
+        ]
+      },
+      "bottom": {
+        "passed": true,
+        "units": "mm",
+        "checks": [
+          {
+            "name": "rear_y",
+            "actual": 0,
+            "expected": 0,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "projected_length",
+            "actual": 238.37806945720558,
+            "expected": 238.37806945720558,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "toe_forward",
+            "actual": 238.37806945720558,
+            "expected": 238.37806945720558,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "heel_height",
+            "actual": 40,
+            "expected": 40,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "toe_spring",
+            "actual": 10,
+            "expected": 10,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "seat_projected_length",
+            "actual": 40.95760221444959,
+            "expected": 40.95760221444959,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "contact_forward",
+            "actual": 87.71700331096719,
+            "expected": 87.71700331096719,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "forepart_blend_length",
+            "actual": 9.992156840858698,
+            "expected": 9.992156840858696,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "contact_height",
+            "actual": 0,
+            "expected": 0,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "minimum_height",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "no_below_ground",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "units": "boolean",
+            "passed": true
+          },
+          {
+            "name": "seat_inclination_deg",
+            "actual": 35.0,
+            "expected": 35,
+            "tolerance": 0.001,
+            "units": "deg",
+            "passed": true
+          },
+          {
+            "name": "seat_vertical_drop",
+            "actual": 28.6788218175523,
+            "expected": 28.6788218175523,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "bottom_heel_rear_position_error",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "bottom_heel_seat_handle_start_position_error",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "bottom_heel_seat_handle_end_position_error",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "bottom_seat_front_position_error",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "bottom_heel_seat_strictly_forward",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "units": "boolean",
+            "passed": true
+          },
+          {
+            "name": "bottom_heel_seat_linear_y",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "units": "boolean",
+            "passed": true
+          },
+          {
+            "name": "bottom_heel_seat_start_nonzero_forward_tangent",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "units": "boolean",
+            "passed": true
+          },
+          {
+            "name": "bottom_heel_seat_start_slope",
+            "actual": -0.7002075382097096,
+            "expected": -0.7002075382097097,
+            "tolerance": 1e-09,
+            "units": "dz/dy",
+            "passed": true
+          },
+          {
+            "name": "bottom_heel_seat_end_nonzero_forward_tangent",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "units": "boolean",
+            "passed": true
+          },
+          {
+            "name": "bottom_heel_seat_end_slope",
+            "actual": -0.7002075382097099,
+            "expected": -0.7002075382097097,
+            "tolerance": 1e-09,
+            "units": "dz/dy",
+            "passed": true
+          },
+          {
+            "name": "bottom_seat_front_position_error",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "bottom_waist_handle_start_position_error",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "bottom_waist_handle_end_position_error",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_contact_position_error",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "bottom_waist_strictly_forward",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "units": "boolean",
+            "passed": true
+          },
+          {
+            "name": "bottom_waist_linear_y",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "units": "boolean",
+            "passed": true
+          },
+          {
+            "name": "bottom_waist_start_nonzero_forward_tangent",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "units": "boolean",
+            "passed": true
+          },
+          {
+            "name": "bottom_waist_start_slope",
+            "actual": -0.7002075382097096,
+            "expected": -0.7002075382097097,
+            "tolerance": 1e-09,
+            "units": "dz/dy",
+            "passed": true
+          },
+          {
+            "name": "bottom_waist_end_nonzero_forward_tangent",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "units": "boolean",
+            "passed": true
+          },
+          {
+            "name": "bottom_waist_end_slope",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "units": "dz/dy",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_contact_position_error",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_blend_handle_start_position_error",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_blend_handle_end_position_error",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_blend_end_position_error",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_blend_strictly_forward",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "units": "boolean",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_blend_linear_y",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "units": "boolean",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_blend_start_nonzero_forward_tangent",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "units": "boolean",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_blend_start_slope",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "units": "dz/dy",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_blend_end_nonzero_forward_tangent",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "units": "boolean",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_blend_end_slope",
+            "actual": 0.06865067684503152,
+            "expected": 0.06865067684503152,
+            "tolerance": 1e-09,
+            "units": "dz/dy",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_blend_end_position_error",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_ramp_handle_start_position_error",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_ramp_handle_end_position_error",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "bottom_toe_end_position_error",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 0.1,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_ramp_strictly_forward",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "units": "boolean",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_ramp_linear_y",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "units": "boolean",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_ramp_start_nonzero_forward_tangent",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "units": "boolean",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_ramp_start_slope",
+            "actual": 0.06865067684503152,
+            "expected": 0.06865067684503152,
+            "tolerance": 1e-09,
+            "units": "dz/dy",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_ramp_end_nonzero_forward_tangent",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "units": "boolean",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_ramp_end_slope",
+            "actual": 0.06865067684503152,
+            "expected": 0.06865067684503152,
+            "tolerance": 1e-09,
+            "units": "dz/dy",
+            "passed": true
+          },
+          {
+            "name": "bottom_heel_seat_join_gap",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "bottom_heel_seat_join_slope_difference",
+            "actual": 3.3306690738754696e-16,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "units": "dz/dy",
+            "passed": true
+          },
+          {
+            "name": "bottom_waist_join_gap",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "bottom_waist_join_slope_difference",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "units": "dz/dy",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_blend_join_gap",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_blend_join_slope_difference",
+            "actual": 0.0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "units": "dz/dy",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_blend_nonnegative_slope",
+            "actual": 0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "forepart_blend_convex_up",
+            "actual": 0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "forepart_blend_quadratic",
+            "actual": 1.1102230246251565e-16,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "bottom_forepart_ramp_nonnegative_slope",
+            "actual": 0,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "forepart_ramp_second_difference_y",
+            "actual": 1.4210854715202004e-14,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "forepart_ramp_second_difference_z",
+            "actual": 1.5543122344752192e-15,
+            "expected": 0,
+            "tolerance": 1e-09,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "positive_toe_spring_has_inclined_end",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "units": "boolean",
+            "passed": true
+          },
+          {
+            "name": "designated_station_has_ground_contact",
+            "actual": 1,
+            "expected": 1,
+            "tolerance": 0,
+            "units": "boolean",
+            "passed": true
+          }
+        ],
+        "ground_contact": {
+          "intervals": [],
+          "isolated_y": [
+            87.717003311
+          ]
+        },
+        "bottom_arc_length": {
+          "actual": 250.00000164119052,
+          "lower_bound": 249.99892234821985,
+          "upper_bound": 250.0010809341612,
+          "uncertainty_mm": 0.0010792929706724408,
+          "units": "mm",
+          "derived": true
+        },
+        "limits": [
+          "0.1 mm and 0.001 degree tolerances are software checks, not fit allowances.",
+          "Arc bounds use recursive chord/control-polygon bounds; total gap <=0.01 mm, depth limit 30.",
+          "Strict forward curves and closed internal joins form an open graph without self-crossings.",
+          "C1 means matching dz/dy, not matching local-parameter derivative magnitudes or curvature.",
+          "Shared top length is provisional alignment, not a validated spatial correspondence.",
+          "No 3D bottom, sole, posture transformation, toe-clearance or fit prediction."
+        ]
+      },
+      "contour": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "last_length",
+            "actual": 249.99999452561732,
+            "expected": 250,
+            "tolerance": 0.01,
+            "uncertainty_mm": 4.368616105310252e-06,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "seat_arc_length",
+            "actual": 50.0,
+            "expected": 50,
+            "tolerance": 0.01,
+            "uncertainty_mm": 3.552713678800501e-15,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "waist_arc_length",
+            "actual": 48.9999945256175,
+            "expected": 49,
+            "tolerance": 0.01,
+            "uncertainty_mm": 2.456928946514836e-06,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "contact_s",
+            "actual": 98.9999945256175,
+            "expected": 99,
+            "tolerance": 0.01,
+            "uncertainty_mm": 2.4569289500675495e-06,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "blend_arc_length",
+            "actual": 9.999999999999785,
+            "expected": 10,
+            "tolerance": 0.01,
+            "uncertainty_mm": 1.911687155242703e-06,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "blend_end_s",
+            "actual": 108.99999452561728,
+            "expected": 109,
+            "tolerance": 0.01,
+            "uncertainty_mm": 4.368616105310252e-06,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "ramp_arc_length",
+            "actual": 141.00000000000003,
+            "expected": 141,
+            "tolerance": 0.01,
+            "uncertainty_mm": 0.0,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "medial_heel_station_roundtrip",
+            "actual": 29.999999999999975,
+            "expected": 30,
+            "tolerance": 0.01,
+            "uncertainty_mm": 4e-05,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "medial_waist_station_roundtrip",
+            "actual": 99.99999999999764,
+            "expected": 100,
+            "tolerance": 0.01,
+            "uncertainty_mm": 4e-05,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "medial_ball_station_roundtrip",
+            "actual": 174.99999999999972,
+            "expected": 175,
+            "tolerance": 0.01,
+            "uncertainty_mm": 4e-05,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "medial_toe_station_roundtrip",
+            "actual": 220.0000000000001,
+            "expected": 220,
+            "tolerance": 0.01,
+            "uncertainty_mm": 4e-05,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "lateral_heel_station_roundtrip",
+            "actual": 29.999999999999975,
+            "expected": 30,
+            "tolerance": 0.01,
+            "uncertainty_mm": 4e-05,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "lateral_waist_station_roundtrip",
+            "actual": 99.99999999999764,
+            "expected": 100,
+            "tolerance": 0.01,
+            "uncertainty_mm": 4e-05,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "lateral_ball_station_roundtrip",
+            "actual": 164.9999999999999,
+            "expected": 165,
+            "tolerance": 0.01,
+            "uncertainty_mm": 4e-05,
+            "units": "mm",
+            "passed": true
+          },
+          {
+            "name": "lateral_toe_station_roundtrip",
+            "actual": 220.0000000000001,
+            "expected": 220,
+            "tolerance": 0.01,
+            "uncertainty_mm": 4e-05,
+            "units": "mm",
+            "passed": true
+          }
+        ],
+        "units": "mm",
+        "last_length_bounds": {
+          "lower": 249.9999901570012,
+          "upper": 249.9999988942334
+        },
+        "limits": [
+          "Contour stations and regional arc preservation are our prototype assumptions, not vendor or anatomical rules.",
+          "Actual cubic chord/control-polygon bounds, not formula targets, validate arc lengths.",
+          "Projected model dimensions remain projected; no 3D last, fit or validated heel-posture claim."
+        ]
+      }
+    },
+    "display": {
+      "top": [
+        {
+          "name": "heel_tip_to_lateral_heel",
+          "points": [
+            [
+              0.0,
+              0.0,
+              0
+            ],
+            [
+              0.6559974135284602,
+              0.008952600886871193,
+              0
+            ],
+            [
+              1.3113041784533035,
+              0.03562291452367594,
+              0
+            ],
+            [
+              1.9656420812837245,
+              0.07972970737470103,
+              0
+            ],
+            [
+              2.618732908528917,
+              0.14099174590423322,
+              0
+            ],
+            [
+              3.270298446698076,
+              0.21912779657655929,
+              0
+            ],
+            [
+              3.920060482300395,
+              0.31385662585596596,
+              0
+            ],
+            [
+              4.567740801845068,
+              0.4248970002067401,
+              0
+            ],
+            [
+              5.213061191841291,
+              0.5519676860931683,
+              0
+            ],
+            [
+              5.855743438798257,
+              0.6947874499795376,
+              0
+            ],
+            [
+              6.495509329225159,
+              0.8530750583301344,
+              0
+            ],
+            [
+              7.1320806496311935,
+              1.026549277609246,
+              0
+            ],
+            [
+              7.765179186525554,
+              1.2149288742811586,
+              0
+            ],
+            [
+              8.394526726417435,
+              1.4179326148101592,
+              0
+            ],
+            [
+              9.01984505581603,
+              1.6352792656605346,
+              0
+            ],
+            [
+              9.640855961230534,
+              1.8666875932965716,
+              0
+            ],
+            [
+              10.25728122917014,
+              2.111876364182557,
+              0
+            ],
+            [
+              10.868842646144044,
+              2.3705643447827778,
+              0
+            ],
+            [
+              11.47526199866144,
+              2.64247030156152,
+              0
+            ],
+            [
+              12.076261073231521,
+              2.927313000983071,
+              0
+            ],
+            [
+              12.671561656363483,
+              3.224811209511717,
+              0
+            ],
+            [
+              13.260885534566517,
+              3.5346836936117456,
+              0
+            ],
+            [
+              13.843954494349822,
+              3.856649219747443,
+              0
+            ],
+            [
+              14.420490322222587,
+              4.190426554383096,
+              0
+            ],
+            [
+              14.990214804694013,
+              4.535734463982992,
+              0
+            ],
+            [
+              15.552849728273287,
+              4.892291715011417,
+              0
+            ],
+            [
+              16.10811687946961,
+              5.259817073932658,
+              0
+            ],
+            [
+              16.65573804479217,
+              5.638029307211002,
+              0
+            ],
+            [
+              17.195435010750167,
+              6.026647181310734,
+              0
+            ],
+            [
+              17.72692956385279,
+              6.4253894626961445,
+              0
+            ],
+            [
+              18.249943490609233,
+              6.833974917831517,
+              0
+            ],
+            [
+              18.7641985775287,
+              7.25212231318114,
+              0
+            ],
+            [
+              19.269416611120374,
+              7.679550415209299,
+              0
+            ],
+            [
+              19.765319377893455,
+              8.11597799038028,
+              0
+            ],
+            [
+              20.251628664357135,
+              8.561123805158374,
+              0
+            ],
+            [
+              20.728066257020608,
+              9.014706626007865,
+              0
+            ],
+            [
+              21.19435394239307,
+              9.476445219393037,
+              0
+            ],
+            [
+              21.650213506983714,
+              9.94605835177818,
+              0
+            ],
+            [
+              22.095366737301738,
+              10.42326478962758,
+              0
+            ],
+            [
+              22.52953541985633,
+              10.907783299405526,
+              0
+            ],
+            [
+              22.952441341156685,
+              11.399332647576301,
+              0
+            ],
+            [
+              23.363806287712006,
+              11.897631600604196,
+              0
+            ],
+            [
+              23.76335204603148,
+              12.402398924953493,
+              0
+            ],
+            [
+              24.1508004026243,
+              12.913353387088481,
+              0
+            ],
+            [
+              24.52587314399966,
+              13.43021375347345,
+              0
+            ],
+            [
+              24.88829205666676,
+              13.952698790572681,
+              0
+            ],
+            [
+              25.23777892713479,
+              14.480527264850464,
+              0
+            ],
+            [
+              25.574055541912944,
+              15.013417942771085,
+              0
+            ],
+            [
+              25.89684368751042,
+              15.55108959079883,
+              0
+            ],
+            [
+              26.20586515043641,
+              16.093260975397985,
+              0
+            ],
+            [
+              26.500841717200107,
+              16.639650863032845,
+              0
+            ],
+            [
+              26.781495174310706,
+              17.189978020167683,
+              0
+            ],
+            [
+              27.0475473082774,
+              17.743961213266797,
+              0
+            ],
+            [
+              27.29871990560939,
+              18.301319208794467,
+              0
+            ],
+            [
+              27.534734752815858,
+              18.861770773214985,
+              0
+            ],
+            [
+              27.75531363640601,
+              19.425034672992638,
+              0
+            ],
+            [
+              27.960178342889037,
+              19.990829674591705,
+              0
+            ],
+            [
+              28.14905065877413,
+              20.55887454447648,
+              0
+            ],
+            [
+              28.321652370570483,
+              21.128888049111247,
+              0
+            ],
+            [
+              28.477705264787296,
+              21.700588954960292,
+              0
+            ],
+            [
+              28.616931127933757,
+              22.273696028487908,
+              0
+            ],
+            [
+              28.739051746519067,
+              22.847928036158372,
+              0
+            ],
+            [
+              28.843788907052414,
+              23.423003744435977,
+              0
+            ],
+            [
+              28.930864396042992,
+              23.998641919785012,
+              0
+            ],
+            [
+              29.0,
+              24.574561328669756,
+              0
+            ]
+          ]
+        },
+        {
+          "name": "lateral_heel_to_lateral_waist",
+          "points": [
+            [
+              29.0,
+              24.574561328669756,
+              0
+            ],
+            [
+              29.05930322175486,
+              25.165388511443123,
+              0
+            ],
+            [
+              29.1171028165804,
+              25.785416824498654,
+              0
+            ],
+            [
+              29.173452449647925,
+              26.43386525836158,
+              0
+            ],
+            [
+              29.228405786128743,
+              27.109952803557128,
+              0
+            ],
+            [
+              29.28201649119415,
+              27.812898450610533,
+              0
+            ],
+            [
+              29.334338230015454,
+              28.541921190047034,
+              0
+            ],
+            [
+              29.385424667763957,
+              29.296240012391852,
+              0
+            ],
+            [
+              29.435329469610963,
+              30.075073908170225,
+              0
+            ],
+            [
+              29.484106300727777,
+              30.877641867907386,
+              0
+            ],
+            [
+              29.531808826285705,
+              31.703162882128563,
+              0
+            ],
+            [
+              29.57849071145604,
+              32.55085594135899,
+              0
+            ],
+            [
+              29.6242056214101,
+              33.4199400361239,
+              0
+            ],
+            [
+              29.669007221319177,
+              34.30963415694851,
+              0
+            ],
+            [
+              29.71294917635458,
+              35.219157294358084,
+              0
+            ],
+            [
+              29.756085151687614,
+              36.14772843887782,
+              0
+            ],
+            [
+              29.79846881248958,
+              37.09456658103298,
+              0
+            ],
+            [
+              29.840153823931782,
+              38.058890711348766,
+              0
+            ],
+            [
+              29.88119385118552,
+              39.039919820350434,
+              0
+            ],
+            [
+              29.921642559422107,
+              40.0368728985632,
+              0
+            ],
+            [
+              29.96155361381284,
+              41.04896893651231,
+              0
+            ],
+            [
+              30.00098067952902,
+              42.07542692472299,
+              0
+            ],
+            [
+              30.03997742174196,
+              43.115465853720465,
+              0
+            ],
+            [
+              30.078597505622955,
+              44.16830471402997,
+              0
+            ],
+            [
+              30.116894596343315,
+              45.233162496176746,
+              0
+            ],
+            [
+              30.154922359074334,
+              46.309258190686016,
+              0
+            ],
+            [
+              30.192734458987324,
+              47.39581078808301,
+              0
+            ],
+            [
+              30.23038456125359,
+              48.492039278892975,
+              0
+            ],
+            [
+              30.26792633104443,
+              49.59716265364112,
+              0
+            ],
+            [
+              30.30541343353115,
+              50.71039990285269,
+              0
+            ],
+            [
+              30.342899533885053,
+              51.83097001705293,
+              0
+            ],
+            [
+              30.380438297277443,
+              52.958091986767045,
+              0
+            ],
+            [
+              30.418083388879626,
+              54.09098480252028,
+              0
+            ],
+            [
+              30.455888473862903,
+              55.22886745483787,
+              0
+            ],
+            [
+              30.49390721739858,
+              56.370958934245046,
+              0
+            ],
+            [
+              30.532193284657954,
+              57.51647823126703,
+              0
+            ],
+            [
+              30.570800340812333,
+              58.66464433642906,
+              0
+            ],
+            [
+              30.609782051033026,
+              59.81467624025638,
+              0
+            ],
+            [
+              30.64919208049133,
+              60.96579293327421,
+              0
+            ],
+            [
+              30.68908409435855,
+              62.11721340600777,
+              0
+            ],
+            [
+              30.729511757805987,
+              63.26815664898232,
+              0
+            ],
+            [
+              30.77052873600495,
+              64.41784165272307,
+              0
+            ],
+            [
+              30.81218869412674,
+              65.56548740775526,
+              0
+            ],
+            [
+              30.85454529734266,
+              66.71031290460412,
+              0
+            ],
+            [
+              30.897652210824017,
+              67.85153713379488,
+              0
+            ],
+            [
+              30.941563099742112,
+              68.98837908585278,
+              0
+            ],
+            [
+              30.98633162926825,
+              70.12005775130305,
+              0
+            ],
+            [
+              31.032011464573728,
+              71.24579212067091,
+              0
+            ],
+            [
+              31.07865627082986,
+              72.3648011844816,
+              0
+            ],
+            [
+              31.12631971320794,
+              73.47630393326035,
+              0
+            ],
+            [
+              31.17505545687928,
+              74.5795193575324,
+              0
+            ],
+            [
+              31.22491716701518,
+              75.673666447823,
+              0
+            ],
+            [
+              31.275958508786946,
+              76.75796419465732,
+              0
+            ],
+            [
+              31.328233147365875,
+              77.83163158856065,
+              0
+            ],
+            [
+              31.38179474792328,
+              78.8938876200582,
+              0
+            ],
+            [
+              31.436696975630454,
+              79.9439512796752,
+              0
+            ],
+            [
+              31.49299349565871,
+              80.98104155793688,
+              0
+            ],
+            [
+              31.550737973179345,
+              82.00437744536849,
+              0
+            ],
+            [
+              31.609984073363666,
+              83.01317793249524,
+              0
+            ],
+            [
+              31.67078546138298,
+              84.00666200984237,
+              0
+            ],
+            [
+              31.733195802408584,
+              84.98404866793513,
+              0
+            ],
+            [
+              31.797268761611782,
+              85.94455689729871,
+              0
+            ],
+            [
+              31.863058004163882,
+              86.88740568845839,
+              0
+            ],
+            [
+              31.930617195236188,
+              87.81181403193938,
+              0
+            ],
+            [
+              32.0,
+              88.71700091826689,
+              0
+            ]
+          ]
+        },
+        {
+          "name": "lateral_waist_to_lateral_ball",
+          "points": [
+            [
+              32.0,
+              88.71700091826689,
+              0
+            ],
+            [
+              32.079729080200195,
+              89.61178689497835,
+              0
+            ],
+            [
+              32.17787170410156,
+              90.5056640180728,
+              0
+            ],
+            [
+              32.29379844665527,
+              91.398858540768,
+              0
+            ],
+            [
+              32.4268798828125,
+              92.29159671628169,
+              0
+            ],
+            [
+              32.576486587524414,
+              93.1841047978316,
+              0
+            ],
+            [
+              32.74198913574219,
+              94.07660903863545,
+              0
+            ],
+            [
+              32.92275810241699,
+              94.96933569191103,
+              0
+            ],
+            [
+              33.1181640625,
+              95.86251101087605,
+              0
+            ],
+            [
+              33.32757759094238,
+              96.75636124874826,
+              0
+            ],
+            [
+              33.55036926269531,
+              97.65111265874539,
+              0
+            ],
+            [
+              33.78590965270996,
+              98.54699149408519,
+              0
+            ],
+            [
+              34.0335693359375,
+              99.4442240079854,
+              0
+            ],
+            [
+              34.2927188873291,
+              100.34303645366377,
+              0
+            ],
+            [
+              34.56272888183594,
+              101.24365508433802,
+              0
+            ],
+            [
+              34.84296989440918,
+              102.14630615322591,
+              0
+            ],
+            [
+              35.1328125,
+              103.05121591354518,
+              0
+            ],
+            [
+              35.43162727355957,
+              103.95861061851355,
+              0
+            ],
+            [
+              35.73878479003906,
+              104.86871652134879,
+              0
+            ],
+            [
+              36.05365562438965,
+              105.78175987526862,
+              0
+            ],
+            [
+              36.3756103515625,
+              106.69796693349078,
+              0
+            ],
+            [
+              36.70401954650879,
+              107.61756394923302,
+              0
+            ],
+            [
+              37.03825378417969,
+              108.54077717571309,
+              0
+            ],
+            [
+              37.37768363952637,
+              109.46783286614871,
+              0
+            ],
+            [
+              37.7216796875,
+              110.39895727375765,
+              0
+            ],
+            [
+              38.06961250305176,
+              111.33437665175761,
+              0
+            ],
+            [
+              38.42085266113281,
+              112.27431725336635,
+              0
+            ],
+            [
+              38.774770736694336,
+              113.21900533180164,
+              0
+            ],
+            [
+              39.1307373046875,
+              114.16866714028117,
+              0
+            ],
+            [
+              39.48812294006348,
+              115.12352893202272,
+              0
+            ],
+            [
+              39.84629821777344,
+              116.08381696024401,
+              0
+            ],
+            [
+              40.204633712768555,
+              117.04975747816279,
+              0
+            ],
+            [
+              40.5625,
+              118.0215767389968,
+              0
+            ],
+            [
+              40.919267654418945,
+              118.99950099596379,
+              0
+            ],
+            [
+              41.27430725097656,
+              119.98375650228147,
+              0
+            ],
+            [
+              41.62698936462402,
+              120.97456951116762,
+              0
+            ],
+            [
+              41.9766845703125,
+              121.97216627583994,
+              0
+            ],
+            [
+              42.322763442993164,
+              122.97677304951621,
+              0
+            ],
+            [
+              42.66459655761719,
+              123.98861608541415,
+              0
+            ],
+            [
+              43.00155448913574,
+              125.0079216367515,
+              0
+            ],
+            [
+              43.3330078125,
+              126.03491595674602,
+              0
+            ],
+            [
+              43.65832710266113,
+              127.06982529861543,
+              0
+            ],
+            [
+              43.97688293457031,
+              128.1128759155775,
+              0
+            ],
+            [
+              44.28804588317871,
+              129.1642940608499,
+              0
+            ],
+            [
+              44.5911865234375,
+              130.22430598765044,
+              0
+            ],
+            [
+              44.88567543029785,
+              131.29313794919685,
+              0
+            ],
+            [
+              45.17088317871094,
+              132.37101619870688,
+              0
+            ],
+            [
+              45.44618034362793,
+              133.45816698939822,
+              0
+            ],
+            [
+              45.7109375,
+              134.55481657448865,
+              0
+            ],
+            [
+              45.96452522277832,
+              135.66119120719594,
+              0
+            ],
+            [
+              46.20631408691406,
+              136.77751714073776,
+              0
+            ],
+            [
+              46.4356746673584,
+              137.9040206283319,
+              0
+            ],
+            [
+              46.6519775390625,
+              139.04092792319605,
+              0
+            ],
+            [
+              46.85459327697754,
+              140.18846527854805,
+              0
+            ],
+            [
+              47.04289245605469,
+              141.34685894760554,
+              0
+            ],
+            [
+              47.21624565124512,
+              142.5163351835863,
+              0
+            ],
+            [
+              47.3740234375,
+              143.69712023970808,
+              0
+            ],
+            [
+              47.51559638977051,
+              144.88944036918863,
+              0
+            ],
+            [
+              47.64033508300781,
+              146.09352182524566,
+              0
+            ],
+            [
+              47.747610092163086,
+              147.30959086109692,
+              0
+            ],
+            [
+              47.8367919921875,
+              148.53787372996015,
+              0
+            ],
+            [
+              47.90725135803223,
+              149.77859668505312,
+              0
+            ],
+            [
+              47.95835876464844,
+              151.03198597959351,
+              0
+            ],
+            [
+              47.989484786987305,
+              152.2982678667991,
+              0
+            ],
+            [
+              48.0,
+              153.57766859988766,
+              0
+            ]
+          ]
+        },
+        {
+          "name": "lateral_ball_to_lateral_toe",
+          "points": [
+            [
+              48.0,
+              153.57766859988766,
+              0
+            ],
+            [
+              47.99311204056977,
+              154.85281024561297,
+              0
+            ],
+            [
+              47.97262197617148,
+              156.10643043690737,
+              0
+            ],
+            [
+              47.938790527643725,
+              157.33892877625627,
+              0
+            ],
+            [
+              47.89187841582509,
+              158.55070486614517,
+              0
+            ],
+            [
+              47.83214636155417,
+              159.74215830905945,
+              0
+            ],
+            [
+              47.759855085669564,
+              160.91368870748465,
+              0
+            ],
+            [
+              47.675265309009866,
+              162.06569566390615,
+              0
+            ],
+            [
+              47.57863775241366,
+              163.1985787808094,
+              0
+            ],
+            [
+              47.47023313671954,
+              164.31273766067994,
+              0
+            ],
+            [
+              47.35031218276612,
+              165.40857190600312,
+              0
+            ],
+            [
+              47.21913561139196,
+              166.48648111926443,
+              0
+            ],
+            [
+              47.07696414343568,
+              167.54686490294932,
+              0
+            ],
+            [
+              46.924058499735864,
+              168.59012285954327,
+              0
+            ],
+            [
+              46.7606794011311,
+              169.61665459153167,
+              0
+            ],
+            [
+              46.587087568459985,
+              170.6268597014,
+              0
+            ],
+            [
+              46.40354372256112,
+              171.6211377916337,
+              0
+            ],
+            [
+              46.210308584273086,
+              172.59988846471828,
+              0
+            ],
+            [
+              46.00764287443448,
+              173.5635113231391,
+              0
+            ],
+            [
+              45.7958073138839,
+              174.5124059693817,
+              0
+            ],
+            [
+              45.575062623459935,
+              175.44697200593143,
+              0
+            ],
+            [
+              45.34566952400118,
+              176.36760903527383,
+              0
+            ],
+            [
+              45.107888736346226,
+              177.2747166598943,
+              0
+            ],
+            [
+              44.861980981333666,
+              178.1686944822783,
+              0
+            ],
+            [
+              44.6082069798021,
+              179.0499421049113,
+              0
+            ],
+            [
+              44.346827452590105,
+              179.91885913027875,
+              0
+            ],
+            [
+              44.0781031205363,
+              180.77584516086608,
+              0
+            ],
+            [
+              43.80229470447925,
+              181.62129979915875,
+              0
+            ],
+            [
+              43.51966292525756,
+              182.4556226476422,
+              0
+            ],
+            [
+              43.23046850370984,
+              183.27921330880193,
+              0
+            ],
+            [
+              42.93497216067466,
+              184.09247138512333,
+              0
+            ],
+            [
+              42.63343461699062,
+              184.89579647909187,
+              0
+            ],
+            [
+              42.326116593496316,
+              185.689588193193,
+              0
+            ],
+            [
+              42.01327881103033,
+              186.47424612991216,
+              0
+            ],
+            [
+              41.69518199043128,
+              187.25016989173483,
+              0
+            ],
+            [
+              41.372086852537734,
+              188.01775908114647,
+              0
+            ],
+            [
+              41.044254118188306,
+              188.77741330063247,
+              0
+            ],
+            [
+              40.71194450822156,
+              189.52953215267834,
+              0
+            ],
+            [
+              40.375418743476125,
+              190.2745152397695,
+              0
+            ],
+            [
+              40.034937544790566,
+              191.01276216439143,
+              0
+            ],
+            [
+              39.69076163300349,
+              191.74467252902954,
+              0
+            ],
+            [
+              39.34315172895349,
+              192.47064593616932,
+              0
+            ],
+            [
+              38.99236855347915,
+              193.1910819882962,
+              0
+            ],
+            [
+              38.63867282741908,
+              193.9063802878956,
+              0
+            ],
+            [
+              38.28232527161185,
+              194.61694043745302,
+              0
+            ],
+            [
+              37.92358660689608,
+              195.32316203945388,
+              0
+            ],
+            [
+              37.562717554110336,
+              196.02544469638366,
+              0
+            ],
+            [
+              37.19997883409323,
+              196.7241880107278,
+              0
+            ],
+            [
+              36.83563116768335,
+              197.41979158497173,
+              0
+            ],
+            [
+              36.469935275719294,
+              198.11265502160094,
+              0
+            ],
+            [
+              36.10315187903964,
+              198.80317792310083,
+              0
+            ],
+            [
+              35.735541698483,
+              199.4917598919569,
+              0
+            ],
+            [
+              35.36736545488795,
+              200.17880053065457,
+              0
+            ],
+            [
+              34.9988838690931,
+              200.86469944167928,
+              0
+            ],
+            [
+              34.630357661937026,
+              201.54985622751653,
+              0
+            ],
+            [
+              34.26204755425834,
+              202.23467049065172,
+              0
+            ],
+            [
+              33.89421426689562,
+              202.91954183357032,
+              0
+            ],
+            [
+              33.52711852068746,
+              203.6048698587578,
+              0
+            ],
+            [
+              33.16102103647246,
+              204.29105416869962,
+              0
+            ],
+            [
+              32.796182535089216,
+              204.97849436588115,
+              0
+            ],
+            [
+              32.43286373737631,
+              205.66759005278794,
+              0
+            ],
+            [
+              32.071325364172345,
+              206.35874083190538,
+              0
+            ],
+            [
+              31.71182813631591,
+              207.0523463057189,
+              0
+            ],
+            [
+              31.354632774645594,
+              207.74880607671403,
+              0
+            ],
+            [
+              31.0,
+              208.44851974737617,
+              0
+            ]
+          ]
+        },
+        {
+          "name": "lateral_toe_to_toe_tip",
+          "points": [
+            [
+              31.0,
+              208.44851974737617,
+              0
+            ],
+            [
+              30.64639528626749,
+              209.14993648261458,
+              0
+            ],
+            [
+              30.29200181973878,
+              209.85101070133868,
+              0
+            ],
+            [
+              29.936656889855975,
+              210.5513998870341,
+              0
+            ],
+            [
+              29.58019778606119,
+              211.2507615231866,
+              0
+            ],
+            [
+              29.222461797796527,
+              211.94875309328182,
+              0
+            ],
+            [
+              28.8632862145041,
+              212.64503208080546,
+              0
+            ],
+            [
+              28.502508325626017,
+              213.33925596924317,
+              0
+            ],
+            [
+              28.139965420604383,
+              214.03108224208066,
+              0
+            ],
+            [
+              27.77549478888131,
+              214.72016838280362,
+              0
+            ],
+            [
+              27.40893371989891,
+              215.40617187489772,
+              0
+            ],
+            [
+              27.040119503099284,
+              216.0887502018486,
+              0
+            ],
+            [
+              26.668889427924547,
+              216.767560847142,
+              0
+            ],
+            [
+              26.295080783816807,
+              217.44226129426357,
+              0
+            ],
+            [
+              25.91853086021817,
+              218.11250902669897,
+              0
+            ],
+            [
+              25.539076946570745,
+              218.77796152793397,
+              0
+            ],
+            [
+              25.156556332316647,
+              219.43827628145416,
+              0
+            ],
+            [
+              24.770806306897978,
+              220.09311077074526,
+              0
+            ],
+            [
+              24.38166415975685,
+              220.74212247929296,
+              0
+            ],
+            [
+              23.988967180335365,
+              221.38496889058288,
+              0
+            ],
+            [
+              23.592552658075647,
+              222.0213074881008,
+              0
+            ],
+            [
+              23.19225788241979,
+              222.65079575533235,
+              0
+            ],
+            [
+              22.78792014280991,
+              223.2730911757632,
+              0
+            ],
+            [
+              22.37937672868811,
+              223.88785123287903,
+              0
+            ],
+            [
+              21.966464929496507,
+              224.49473341016557,
+              0
+            ],
+            [
+              21.549022034677208,
+              225.09339519110844,
+              0
+            ],
+            [
+              21.126885333672313,
+              225.68349405919338,
+              0
+            ],
+            [
+              20.699892115923944,
+              226.264687497906,
+              0
+            ],
+            [
+              20.2678796708742,
+              226.83663299073206,
+              0
+            ],
+            [
+              19.830685287965192,
+              227.3989880211572,
+              0
+            ],
+            [
+              19.388146256639033,
+              227.95141007266707,
+              0
+            ],
+            [
+              18.940099866337828,
+              228.49355662874743,
+              0
+            ],
+            [
+              18.486383406503684,
+              229.0250851728839,
+              0
+            ],
+            [
+              18.026834166578716,
+              229.54565318856217,
+              0
+            ],
+            [
+              17.561289436005026,
+              230.05491815926794,
+              0
+            ],
+            [
+              17.08958650422473,
+              230.55253756848688,
+              0
+            ],
+            [
+              16.611562660679933,
+              231.0381688997047,
+              0
+            ],
+            [
+              16.12705519481274,
+              231.511469636407,
+              0
+            ],
+            [
+              15.635901396065268,
+              231.9720972620796,
+              0
+            ],
+            [
+              15.137938553879618,
+              232.41970926020804,
+              0
+            ],
+            [
+              14.633003957697905,
+              232.8539631142781,
+              0
+            ],
+            [
+              14.120934896962233,
+              233.27451630777537,
+              0
+            ],
+            [
+              13.601568661114714,
+              233.68102632418564,
+              0
+            ],
+            [
+              13.074742539597455,
+              234.0731506469945,
+              0
+            ],
+            [
+              12.540293821852565,
+              234.45054675968768,
+              0
+            ],
+            [
+              11.998059797322156,
+              234.81287214575087,
+              0
+            ],
+            [
+              11.447877755448332,
+              235.1597842886697,
+              0
+            ],
+            [
+              10.889584985673205,
+              235.49094067192988,
+              0
+            ],
+            [
+              10.323018777438882,
+              235.80599877901713,
+              0
+            ],
+            [
+              9.748016420187474,
+              236.10461609341706,
+              0
+            ],
+            [
+              9.164415203361088,
+              236.38645009861543,
+              0
+            ],
+            [
+              8.572052416401833,
+              236.6511582780978,
+              0
+            ],
+            [
+              7.970765348751819,
+              236.89839811535,
+              0
+            ],
+            [
+              7.360391289853154,
+              237.12782709385763,
+              0
+            ],
+            [
+              6.740767529147947,
+              237.33910269710637,
+              0
+            ],
+            [
+              6.111731356078305,
+              237.53188240858194,
+              0
+            ],
+            [
+              5.473120060086341,
+              237.70582371176997,
+              0
+            ],
+            [
+              4.82477093061416,
+              237.86058409015618,
+              0
+            ],
+            [
+              4.166521257103873,
+              237.99582102722624,
+              0
+            ],
+            [
+              3.4982083289975874,
+              238.1111920064658,
+              0
+            ],
+            [
+              2.8196694357374126,
+              238.20635451136062,
+              0
+            ],
+            [
+              2.130741866765458,
+              238.2809660253963,
+              0
+            ],
+            [
+              1.4312629115238316,
+              238.33468403205856,
+              0
+            ],
+            [
+              0.7210698594546427,
+              238.36716601483312,
+              0
+            ],
+            [
+              0.0,
+              238.37806945720558,
+              0
+            ]
+          ]
+        },
+        {
+          "name": "toe_tip_to_medial_toe",
+          "points": [
+            [
+              0.0,
+              238.37806945720558,
+              0
+            ],
+            [
+              -0.7232666015625,
+              238.36619607154427,
+              0
+            ],
+            [
+              -1.43994140625,
+              238.33086584260403,
+              0
+            ],
+            [
+              -2.1500244140625,
+              238.27251366245056,
+              0
+            ],
+            [
+              -2.853515625,
+              238.1915744231495,
+              0
+            ],
+            [
+              -3.5504150390625,
+              238.0884830167664,
+              0
+            ],
+            [
+              -4.24072265625,
+              237.963674335367,
+              0
+            ],
+            [
+              -4.9244384765625,
+              237.81758327101687,
+              0
+            ],
+            [
+              -5.6015625,
+              237.65064471578168,
+              0
+            ],
+            [
+              -6.2720947265625,
+              237.46329356172708,
+              0
+            ],
+            [
+              -6.93603515625,
+              237.25596470091867,
+              0
+            ],
+            [
+              -7.5933837890625,
+              237.0290930254221,
+              0
+            ],
+            [
+              -8.244140625,
+              236.78311342730305,
+              0
+            ],
+            [
+              -8.8883056640625,
+              236.5184607986271,
+              0
+            ],
+            [
+              -9.52587890625,
+              236.23557003145996,
+              0
+            ],
+            [
+              -10.1568603515625,
+              235.93487601786717,
+              0
+            ],
+            [
+              -10.78125,
+              235.61681364991443,
+              0
+            ],
+            [
+              -11.3990478515625,
+              235.28181781966737,
+              0
+            ],
+            [
+              -12.01025390625,
+              234.93032341919164,
+              0
+            ],
+            [
+              -12.6148681640625,
+              234.56276534055286,
+              0
+            ],
+            [
+              -13.212890625,
+              234.17957847581664,
+              0
+            ],
+            [
+              -13.8043212890625,
+              233.78119771704868,
+              0
+            ],
+            [
+              -14.38916015625,
+              233.36805795631457,
+              0
+            ],
+            [
+              -14.9674072265625,
+              232.94059408567998,
+              0
+            ],
+            [
+              -15.5390625,
+              232.49924099721056,
+              0
+            ],
+            [
+              -16.1041259765625,
+              232.04443358297186,
+              0
+            ],
+            [
+              -16.66259765625,
+              231.57660673502963,
+              0
+            ],
+            [
+              -17.2144775390625,
+              231.09619534544944,
+              0
+            ],
+            [
+              -17.759765625,
+              230.60363430629695,
+              0
+            ],
+            [
+              -18.2984619140625,
+              230.0993585096378,
+              0
+            ],
+            [
+              -18.83056640625,
+              229.5838028475376,
+              0
+            ],
+            [
+              -19.3560791015625,
+              229.05740221206204,
+              0
+            ],
+            [
+              -19.875,
+              228.52059149527673,
+              0
+            ],
+            [
+              -20.3873291015625,
+              227.9738055892473,
+              0
+            ],
+            [
+              -20.89306640625,
+              227.41747938603936,
+              0
+            ],
+            [
+              -21.3922119140625,
+              226.85204777771864,
+              0
+            ],
+            [
+              -21.884765625,
+              226.27794565635068,
+              0
+            ],
+            [
+              -22.3707275390625,
+              225.6956079140012,
+              0
+            ],
+            [
+              -22.85009765625,
+              225.10546944273574,
+              0
+            ],
+            [
+              -23.3228759765625,
+              224.50796513462004,
+              0
+            ],
+            [
+              -23.7890625,
+              223.90352988171966,
+              0
+            ],
+            [
+              -24.2486572265625,
+              223.29259857610032,
+              0
+            ],
+            [
+              -24.70166015625,
+              222.67560610982756,
+              0
+            ],
+            [
+              -25.1480712890625,
+              222.0529873749671,
+              0
+            ],
+            [
+              -25.587890625,
+              221.42517726358454,
+              0
+            ],
+            [
+              -26.0211181640625,
+              220.7926106677455,
+              0
+            ],
+            [
+              -26.44775390625,
+              220.15572247951567,
+              0
+            ],
+            [
+              -26.8677978515625,
+              219.51494759096067,
+              0
+            ],
+            [
+              -27.28125,
+              218.8707208941461,
+              0
+            ],
+            [
+              -27.6881103515625,
+              218.22347728113763,
+              0
+            ],
+            [
+              -28.08837890625,
+              217.5736516440009,
+              0
+            ],
+            [
+              -28.4820556640625,
+              216.92167887480156,
+              0
+            ],
+            [
+              -28.869140625,
+              216.2679938656052,
+              0
+            ],
+            [
+              -29.2496337890625,
+              215.61303150847752,
+              0
+            ],
+            [
+              -29.62353515625,
+              214.9572266954841,
+              0
+            ],
+            [
+              -29.9908447265625,
+              214.30101431869062,
+              0
+            ],
+            [
+              -30.3515625,
+              213.6448292701627,
+              0
+            ],
+            [
+              -30.7056884765625,
+              212.98910644196596,
+              0
+            ],
+            [
+              -31.05322265625,
+              212.3342807261661,
+              0
+            ],
+            [
+              -31.3941650390625,
+              211.6807870148287,
+              0
+            ],
+            [
+              -31.728515625,
+              211.0290602000194,
+              0
+            ],
+            [
+              -32.0562744140625,
+              210.37953517380387,
+              0
+            ],
+            [
+              -32.37744140625,
+              209.73264682824774,
+              0
+            ],
+            [
+              -32.6920166015625,
+              209.0888300554166,
+              0
+            ],
+            [
+              -33.0,
+              208.44851974737617,
+              0
+            ]
+          ]
+        },
+        {
+          "name": "medial_toe_to_medial_ball",
+          "points": [
+            [
+              -33.0,
+              208.44851974737617,
+              0
+            ],
+            [
+              -33.30466270446777,
+              207.81354698536603,
+              0
+            ],
+            [
+              -33.60917663574219,
+              207.1851719898312,
+              0
+            ],
+            [
+              -33.91339302062988,
+              206.56297336164516,
+              0
+            ],
+            [
+              -34.2171630859375,
+              205.9465297016816,
+              0
+            ],
+            [
+              -34.52033805847168,
+              205.3354196108141,
+              0
+            ],
+            [
+              -34.82276916503906,
+              204.72922168991627,
+              0
+            ],
+            [
+              -35.12430763244629,
+              204.12751453986164,
+              0
+            ],
+            [
+              -35.4248046875,
+              203.52987676152387,
+              0
+            ],
+            [
+              -35.724111557006836,
+              202.93588695577654,
+              0
+            ],
+            [
+              -36.02207946777344,
+              202.34512372349323,
+              0
+            ],
+            [
+              -36.318559646606445,
+              201.75716566554755,
+              0
+            ],
+            [
+              -36.6134033203125,
+              201.1715913828131,
+              0
+            ],
+            [
+              -36.90646171569824,
+              200.5879794761634,
+              0
+            ],
+            [
+              -37.19758605957031,
+              200.00590854647217,
+              0
+            ],
+            [
+              -37.48662757873535,
+              199.42495719461294,
+              0
+            ],
+            [
+              -37.7734375,
+              198.8447040214593,
+              0
+            ],
+            [
+              -38.0578670501709,
+              198.26472762788487,
+              0
+            ],
+            [
+              -38.33976745605469,
+              197.6846066147632,
+              0
+            ],
+            [
+              -38.61898994445801,
+              197.10391958296793,
+              0
+            ],
+            [
+              -38.8953857421875,
+              196.52224513337265,
+              0
+            ],
+            [
+              -39.168806076049805,
+              195.93916186685095,
+              0
+            ],
+            [
+              -39.43910217285156,
+              195.35424838427642,
+              0
+            ],
+            [
+              -39.706125259399414,
+              194.76708328652265,
+              0
+            ],
+            [
+              -39.9697265625,
+              194.17724517446322,
+              0
+            ],
+            [
+              -40.22975730895996,
+              193.5843126489718,
+              0
+            ],
+            [
+              -40.48606872558594,
+              192.9878643109219,
+              0
+            ],
+            [
+              -40.73851203918457,
+              192.38747876118717,
+              0
+            ],
+            [
+              -40.9869384765625,
+              191.78273460064116,
+              0
+            ],
+            [
+              -41.23119926452637,
+              191.17321043015752,
+              0
+            ],
+            [
+              -41.47114562988281,
+              190.55848485060977,
+              0
+            ],
+            [
+              -41.70662879943848,
+              189.93813646287163,
+              0
+            ],
+            [
+              -41.9375,
+              189.31174386781652,
+              0
+            ],
+            [
+              -42.16361045837402,
+              188.6788856663182,
+              0
+            ],
+            [
+              -42.38481140136719,
+              188.03914045925018,
+              0
+            ],
+            [
+              -42.60095405578613,
+              187.39208684748607,
+              0
+            ],
+            [
+              -42.8118896484375,
+              186.73730343189948,
+              0
+            ],
+            [
+              -43.01746940612793,
+              186.07436881336398,
+              0
+            ],
+            [
+              -43.21754455566406,
+              185.40286159275317,
+              0
+            ],
+            [
+              -43.41196632385254,
+              184.72236037094066,
+              0
+            ],
+            [
+              -43.6005859375,
+              184.03244374880006,
+              0
+            ],
+            [
+              -43.783254623413086,
+              183.33269032720492,
+              0
+            ],
+            [
+              -43.95982360839844,
+              182.62267870702888,
+              0
+            ],
+            [
+              -44.130144119262695,
+              181.90198748914548,
+              0
+            ],
+            [
+              -44.2940673828125,
+              181.17019527442838,
+              0
+            ],
+            [
+              -44.45144462585449,
+              180.42688066375115,
+              0
+            ],
+            [
+              -44.60212707519531,
+              179.67162225798737,
+              0
+            ],
+            [
+              -44.7459659576416,
+              178.90399865801066,
+              0
+            ],
+            [
+              -44.8828125,
+              178.1235884646946,
+              0
+            ],
+            [
+              -45.01251792907715,
+              177.32997027891275,
+              0
+            ],
+            [
+              -45.13493347167969,
+              176.5227227015388,
+              0
+            ],
+            [
+              -45.24991035461426,
+              175.70142433344625,
+              0
+            ],
+            [
+              -45.3572998046875,
+              174.86565377550875,
+              0
+            ],
+            [
+              -45.456953048706055,
+              174.01498962859986,
+              0
+            ],
+            [
+              -45.54872131347656,
+              173.14901049359324,
+              0
+            ],
+            [
+              -45.632455825805664,
+              172.2672949713624,
+              0
+            ],
+            [
+              -45.7080078125,
+              171.36942166278098,
+              0
+            ],
+            [
+              -45.77522850036621,
+              170.45496916872258,
+              0
+            ],
+            [
+              -45.83396911621094,
+              169.52351609006078,
+              0
+            ],
+            [
+              -45.88408088684082,
+              168.5746410276692,
+              0
+            ],
+            [
+              -45.9254150390625,
+              167.6079225824214,
+              0
+            ],
+            [
+              -45.95782279968262,
+              166.62293935519102,
+              0
+            ],
+            [
+              -45.98115539550781,
+              165.6192699468516,
+              0
+            ],
+            [
+              -45.99526405334473,
+              164.59649295827677,
+              0
+            ],
+            [
+              -46.0,
+              163.5541869903401,
+              0
+            ]
+          ]
+        },
+        {
+          "name": "medial_ball_to_medial_waist",
+          "points": [
+            [
+              -46.0,
+              163.5541869903401,
+              0
+            ],
+            [
+              -45.98803901672363,
+              162.49299033101525,
+              0
+            ],
+            [
+              -45.95265197753906,
+              161.41427653332119,
+              0
+            ],
+            [
+              -45.894582748413086,
+              160.31872709569976,
+              0
+            ],
+            [
+              -45.8145751953125,
+              159.2070235165926,
+              0
+            ],
+            [
+              -45.7133731842041,
+              158.07984729444155,
+              0
+            ],
+            [
+              -45.59172058105469,
+              156.9378799276883,
+              0
+            ],
+            [
+              -45.450361251831055,
+              155.78180291477463,
+              0
+            ],
+            [
+              -45.2900390625,
+              154.61229775414228,
+              0
+            ],
+            [
+              -45.11149787902832,
+              153.43004594423297,
+              0
+            ],
+            [
+              -44.91548156738281,
+              152.23572898348849,
+              0
+            ],
+            [
+              -44.70273399353027,
+              151.03002837035055,
+              0
+            ],
+            [
+              -44.4739990234375,
+              149.81362560326093,
+              0
+            ],
+            [
+              -44.23002052307129,
+              148.58720218066134,
+              0
+            ],
+            [
+              -43.97154235839844,
+              147.3514396009936,
+              0
+            ],
+            [
+              -43.69930839538574,
+              146.10701936269933,
+              0
+            ],
+            [
+              -43.4140625,
+              144.8546229642204,
+              0
+            ],
+            [
+              -43.11654853820801,
+              143.5949319039985,
+              0
+            ],
+            [
+              -42.80751037597656,
+              142.3286276804754,
+              0
+            ],
+            [
+              -42.48769187927246,
+              141.05639179209285,
+              0
+            ],
+            [
+              -42.1578369140625,
+              139.77890573729255,
+              0
+            ],
+            [
+              -41.81868934631348,
+              138.4968510145163,
+              0
+            ],
+            [
+              -41.47099304199219,
+              137.21090912220583,
+              0
+            ],
+            [
+              -41.11549186706543,
+              135.92176155880287,
+              0
+            ],
+            [
+              -40.7529296875,
+              134.6300898227492,
+              0
+            ],
+            [
+              -40.384050369262695,
+              133.33657541248655,
+              0
+            ],
+            [
+              -40.00959777832031,
+              132.04189982645667,
+              0
+            ],
+            [
+              -39.63031578063965,
+              130.7467445631013,
+              0
+            ],
+            [
+              -39.2469482421875,
+              129.4517911208622,
+              0
+            ],
+            [
+              -38.860239028930664,
+              128.1577209981811,
+              0
+            ],
+            [
+              -38.47093200683594,
+              126.86521569349976,
+              0
+            ],
+            [
+              -38.07977104187012,
+              125.57495670525992,
+              0
+            ],
+            [
+              -37.6875,
+              124.28762553190334,
+              0
+            ],
+            [
+              -37.29486274719238,
+              123.00390367187177,
+              0
+            ],
+            [
+              -36.90260314941406,
+              121.72447262360693,
+              0
+            ],
+            [
+              -36.511465072631836,
+              120.45001388555059,
+              0
+            ],
+            [
+              -36.1221923828125,
+              119.1812089561445,
+              0
+            ],
+            [
+              -35.73552894592285,
+              117.91873933383039,
+              0
+            ],
+            [
+              -35.35221862792969,
+              116.66328651705004,
+              0
+            ],
+            [
+              -34.973005294799805,
+              115.41553200424515,
+              0
+            ],
+            [
+              -34.5986328125,
+              114.1761572938575,
+              0
+            ],
+            [
+              -34.22984504699707,
+              112.94584388432884,
+              0
+            ],
+            [
+              -33.86738586425781,
+              111.72527327410089,
+              0
+            ],
+            [
+              -33.51199913024902,
+              110.51512696161542,
+              0
+            ],
+            [
+              -33.1644287109375,
+              109.31608644531417,
+              0
+            ],
+            [
+              -32.82541847229004,
+              108.12883322363889,
+              0
+            ],
+            [
+              -32.49571228027344,
+              106.95404879503134,
+              0
+            ],
+            [
+              -32.17605400085449,
+              105.79241465793324,
+              0
+            ],
+            [
+              -31.8671875,
+              104.64461231078636,
+              0
+            ],
+            [
+              -31.569856643676758,
+              103.51132325203243,
+              0
+            ],
+            [
+              -31.284805297851562,
+              102.39322898011321,
+              0
+            ],
+            [
+              -31.01277732849121,
+              101.29101099347045,
+              0
+            ],
+            [
+              -30.7545166015625,
+              100.20535079054589,
+              0
+            ],
+            [
+              -30.510766983032227,
+              99.13692986978127,
+              0
+            ],
+            [
+              -30.282272338867188,
+              98.08642972961836,
+              0
+            ],
+            [
+              -30.06977653503418,
+              97.05453186849887,
+              0
+            ],
+            [
+              -29.8740234375,
+              96.0419177848646,
+              0
+            ],
+            [
+              -29.695756912231445,
+              95.04926897715725,
+              0
+            ],
+            [
+              -29.535720825195312,
+              94.07726694381859,
+              0
+            ],
+            [
+              -29.3946590423584,
+              93.12659318329037,
+              0
+            ],
+            [
+              -29.2733154296875,
+              92.19792919401432,
+              0
+            ],
+            [
+              -29.172433853149414,
+              91.2919564744322,
+              0
+            ],
+            [
+              -29.092758178710938,
+              90.40935652298576,
+              0
+            ],
+            [
+              -29.035032272338867,
+              89.55081083811675,
+              0
+            ],
+            [
+              -29.0,
+              88.71700091826689,
+              0
+            ]
+          ]
+        },
+        {
+          "name": "medial_waist_to_medial_heel",
+          "points": [
+            [
+              -29.0,
+              88.71700091826689,
+              0
+            ],
+            [
+              -28.97688298692517,
+              87.88361741836826,
+              0
+            ],
+            [
+              -28.954394349820515,
+              87.02648969825059,
+              0
+            ],
+            [
+              -28.93251519186577,
+              86.14650731370224,
+              0
+            ],
+            [
+              -28.911226616240693,
+              85.24455982051157,
+              0
+            ],
+            [
+              -28.890509726125025,
+              84.32153677446689,
+              0
+            ],
+            [
+              -28.870345624698512,
+              83.37832773135655,
+              0
+            ],
+            [
+              -28.850715415140897,
+              82.41582224696892,
+              0
+            ],
+            [
+              -28.83160020063193,
+              81.43490987709228,
+              0
+            ],
+            [
+              -28.81298108435135,
+              80.43648017751504,
+              0
+            ],
+            [
+              -28.79483916947891,
+              79.42142270402549,
+              0
+            ],
+            [
+              -28.77715555919435,
+              78.39062701241201,
+              0
+            ],
+            [
+              -28.75991135667742,
+              77.34498265846291,
+              0
+            ],
+            [
+              -28.743087665107865,
+              76.28537919796655,
+              0
+            ],
+            [
+              -28.726665587665426,
+              75.21270618671127,
+              0
+            ],
+            [
+              -28.710626227529858,
+              74.1278531804854,
+              0
+            ],
+            [
+              -28.694950687880894,
+              73.0317097350773,
+              0
+            ],
+            [
+              -28.67962007189829,
+              71.92516540627531,
+              0
+            ],
+            [
+              -28.66461548276179,
+              70.80910974986774,
+              0
+            ],
+            [
+              -28.649918023651136,
+              69.68443232164297,
+              0
+            ],
+            [
+              -28.635508797746073,
+              68.55202267738933,
+              0
+            ],
+            [
+              -28.62136890822635,
+              67.41277037289515,
+              0
+            ],
+            [
+              -28.607479458271715,
+              66.26756496394877,
+              0
+            ],
+            [
+              -28.593821551061907,
+              65.11729600633856,
+              0
+            ],
+            [
+              -28.58037628977668,
+              63.96285305585284,
+              0
+            ],
+            [
+              -28.56712477759577,
+              62.80512566827995,
+              0
+            ],
+            [
+              -28.554048117698926,
+              61.64500339940824,
+              0
+            ],
+            [
+              -28.5411274132659,
+              60.48337580502604,
+              0
+            ],
+            [
+              -28.52834376747643,
+              59.32113244092171,
+              0
+            ],
+            [
+              -28.515678283510265,
+              58.15916286288357,
+              0
+            ],
+            [
+              -28.503112064547153,
+              56.99835662669998,
+              0
+            ],
+            [
+              -28.49062621376683,
+              55.839603288159275,
+              0
+            ],
+            [
+              -28.478201834349054,
+              54.68379240304979,
+              0
+            ],
+            [
+              -28.465820029473562,
+              53.531813527159876,
+              0
+            ],
+            [
+              -28.453461902320104,
+              52.38455621627787,
+              0
+            ],
+            [
+              -28.441108556068425,
+              51.24291002619211,
+              0
+            ],
+            [
+              -28.428741093898267,
+              50.107764512690956,
+              0
+            ],
+            [
+              -28.41634061898938,
+              48.980009231562725,
+              0
+            ],
+            [
+              -28.40388823452151,
+              47.86053373859577,
+              0
+            ],
+            [
+              -28.3913650436744,
+              46.75022758957844,
+              0
+            ],
+            [
+              -28.378752149627797,
+              45.64998034029906,
+              0
+            ],
+            [
+              -28.366030655561445,
+              44.56068154654598,
+              0
+            ],
+            [
+              -28.353181664655093,
+              43.48322076410754,
+              0
+            ],
+            [
+              -28.34018628008848,
+              42.41848754877209,
+              0
+            ],
+            [
+              -28.327025605041364,
+              41.367371456327966,
+              0
+            ],
+            [
+              -28.313680742693478,
+              40.33076204256351,
+              0
+            ],
+            [
+              -28.300132796224574,
+              39.309548863267054,
+              0
+            ],
+            [
+              -28.286362868814393,
+              38.304621474226956,
+              0
+            ],
+            [
+              -28.272352063642685,
+              37.316869431231545,
+              0
+            ],
+            [
+              -28.258081483889196,
+              36.34718229006916,
+              0
+            ],
+            [
+              -28.24353223273367,
+              35.396449606528165,
+              0
+            ],
+            [
+              -28.22868541335585,
+              34.46556093639688,
+              0
+            ],
+            [
+              -28.213522128935487,
+              33.555405835463645,
+              0
+            ],
+            [
+              -28.198023482652324,
+              32.66687385951682,
+              0
+            ],
+            [
+              -28.182170577686108,
+              31.80085456434473,
+              0
+            ],
+            [
+              -28.16594451721658,
+              30.958237505735724,
+              0
+            ],
+            [
+              -28.149326404423494,
+              30.13991223947814,
+              0
+            ],
+            [
+              -28.132297342486588,
+              29.346768321360322,
+              0
+            ],
+            [
+              -28.11483843458561,
+              28.579695307170617,
+              0
+            ],
+            [
+              -28.09693078390031,
+              27.839582752697357,
+              0
+            ],
+            [
+              -28.078555493610423,
+              27.12732021372889,
+              0
+            ],
+            [
+              -28.059693666895704,
+              26.443797246053553,
+              0
+            ],
+            [
+              -28.040326406935897,
+              25.789903405459693,
+              0
+            ],
+            [
+              -28.020434816910747,
+              25.166528247735645,
+              0
+            ],
+            [
+              -28.0,
+              24.574561328669756,
+              0
+            ]
+          ]
+        },
+        {
+          "name": "medial_heel_to_heel_tip",
+          "points": [
+            [
+              -28.0,
+              24.574561328669756,
+              0
+            ],
+            [
+              -27.96972898618984,
+              23.998641919785012,
+              0
+            ],
+            [
+              -27.92053479911879,
+              23.423003744435977,
+              0
+            ],
+            [
+              -27.852707532445116,
+              22.847928036158372,
+              0
+            ],
+            [
+              -27.766537279827077,
+              22.273696028487908,
+              0
+            ],
+            [
+              -27.662314134922934,
+              21.700588954960292,
+              0
+            ],
+            [
+              -27.54032819139095,
+              21.128888049111247,
+              0
+            ],
+            [
+              -27.40086954288939,
+              20.55887454447648,
+              0
+            ],
+            [
+              -27.244228283076506,
+              19.990829674591705,
+              0
+            ],
+            [
+              -27.070694505610568,
+              19.425034672992638,
+              0
+            ],
+            [
+              -26.88055830414983,
+              18.861770773214985,
+              0
+            ],
+            [
+              -26.67410977235256,
+              18.301319208794467,
+              0
+            ],
+            [
+              -26.451639003877013,
+              17.743961213266797,
+              0
+            ],
+            [
+              -26.213436092381453,
+              17.189978020167683,
+              0
+            ],
+            [
+              -25.959791131524142,
+              16.639650863032845,
+              0
+            ],
+            [
+              -25.690994214963343,
+              16.093260975397985,
+              0
+            ],
+            [
+              -25.407335436357315,
+              15.55108959079883,
+              0
+            ],
+            [
+              -25.109104889364318,
+              15.013417942771085,
+              0
+            ],
+            [
+              -24.796592667642614,
+              14.480527264850464,
+              0
+            ],
+            [
+              -24.470088864850467,
+              13.952698790572681,
+              0
+            ],
+            [
+              -24.129883574646136,
+              13.43021375347345,
+              0
+            ],
+            [
+              -23.776266890687886,
+              12.913353387088481,
+              0
+            ],
+            [
+              -23.40952890663397,
+              12.402398924953493,
+              0
+            ],
+            [
+              -23.029959716142656,
+              11.897631600604196,
+              0
+            ],
+            [
+              -22.637849412872203,
+              11.399332647576301,
+              0
+            ],
+            [
+              -22.233488090480872,
+              10.907783299405526,
+              0
+            ],
+            [
+              -21.817165842626927,
+              10.42326478962758,
+              0
+            ],
+            [
+              -21.389172762968627,
+              9.94605835177818,
+              0
+            ],
+            [
+              -20.949798945164233,
+              9.476445219393037,
+              0
+            ],
+            [
+              -20.499334482872005,
+              9.014706626007865,
+              0
+            ],
+            [
+              -20.03806946975021,
+              8.561123805158374,
+              0
+            ],
+            [
+              -19.566293999457102,
+              8.11597799038028,
+              0
+            ],
+            [
+              -19.084298165650946,
+              7.679550415209299,
+              0
+            ],
+            [
+              -18.592372061990005,
+              7.25212231318114,
+              0
+            ],
+            [
+              -18.090805782132534,
+              6.833974917831517,
+              0
+            ],
+            [
+              -17.579889419736805,
+              6.4253894626961445,
+              0
+            ],
+            [
+              -17.05991306846107,
+              6.026647181310734,
+              0
+            ],
+            [
+              -16.53116682196359,
+              5.638029307211002,
+              0
+            ],
+            [
+              -15.993940773902635,
+              5.259817073932658,
+              0
+            ],
+            [
+              -15.448525017936458,
+              4.892291715011417,
+              0
+            ],
+            [
+              -14.895209647723322,
+              4.535734463982992,
+              0
+            ],
+            [
+              -14.33428475692149,
+              4.190426554383096,
+              0
+            ],
+            [
+              -13.766040439189222,
+              3.856649219747443,
+              0
+            ],
+            [
+              -13.190766788184781,
+              3.5346836936117456,
+              0
+            ],
+            [
+              -12.608753897566427,
+              3.224811209511717,
+              0
+            ],
+            [
+              -12.020291860992419,
+              2.927313000983071,
+              0
+            ],
+            [
+              -11.425670772121023,
+              2.64247030156152,
+              0
+            ],
+            [
+              -10.825180724610497,
+              2.3705643447827778,
+              0
+            ],
+            [
+              -10.219111812119104,
+              2.111876364182557,
+              0
+            ],
+            [
+              -9.607754128305105,
+              1.8666875932965716,
+              0
+            ],
+            [
+              -8.99139776682676,
+              1.6352792656605346,
+              0
+            ],
+            [
+              -8.37033282134233,
+              1.4179326148101592,
+              0
+            ],
+            [
+              -7.744849385510079,
+              1.2149288742811586,
+              0
+            ],
+            [
+              -7.115237552988267,
+              1.026549277609246,
+              0
+            ],
+            [
+              -6.481787417435154,
+              0.8530750583301344,
+              0
+            ],
+            [
+              -5.844789072509002,
+              0.6947874499795376,
+              0
+            ],
+            [
+              -5.204532611868072,
+              0.5519676860931683,
+              0
+            ],
+            [
+              -4.561308129170627,
+              0.4248970002067401,
+              0
+            ],
+            [
+              -3.915405718074926,
+              0.31385662585596596,
+              0
+            ],
+            [
+              -3.2671154722392317,
+              0.21912779657655929,
+              0
+            ],
+            [
+              -2.616727485321805,
+              0.14099174590423322,
+              0
+            ],
+            [
+              -1.9645318509809073,
+              0.07972970737470103,
+              0
+            ],
+            [
+              -1.3108186628747998,
+              0.03562291452367594,
+              0
+            ],
+            [
+              -0.6558780146617434,
+              0.008952600886871193,
+              0
+            ],
+            [
+              0.0,
+              0.0,
+              0
+            ]
+          ]
+        }
+      ],
+      "bottom": [
+        {
+          "name": "bottom_heel_seat",
+          "points": [
+            [
+              0,
+              0.0,
+              40.0
+            ],
+            [
+              0,
+              0.6399625346007748,
+              39.55189340910074
+            ],
+            [
+              0,
+              1.2799250692015496,
+              39.10378681820149
+            ],
+            [
+              0,
+              1.9198876038023245,
+              38.655680227302234
+            ],
+            [
+              0,
+              2.559850138403099,
+              38.207573636402984
+            ],
+            [
+              0,
+              3.199812673003874,
+              37.759467045503726
+            ],
+            [
+              0,
+              3.8397752076046485,
+              37.311360454604475
+            ],
+            [
+              0,
+              4.479737742205423,
+              36.86325386370522
+            ],
+            [
+              0,
+              5.119700276806198,
+              36.41514727280596
+            ],
+            [
+              0,
+              5.759662811406973,
+              35.96704068190671
+            ],
+            [
+              0,
+              6.399625346007748,
+              35.51893409100745
+            ],
+            [
+              0,
+              7.039587880608522,
+              35.0708275001082
+            ],
+            [
+              0,
+              7.679550415209298,
+              34.622720909208944
+            ],
+            [
+              0,
+              8.319512949810072,
+              34.17461431830969
+            ],
+            [
+              0,
+              8.959475484410847,
+              33.726507727410436
+            ],
+            [
+              0,
+              9.599438019011622,
+              33.27840113651118
+            ],
+            [
+              0,
+              10.239400553612397,
+              32.83029454561193
+            ],
+            [
+              0,
+              10.879363088213172,
+              32.38218795471267
+            ],
+            [
+              0,
+              11.519325622813946,
+              31.934081363813416
+            ],
+            [
+              0,
+              12.159288157414721,
+              31.48597477291416
+            ],
+            [
+              0,
+              12.799250692015496,
+              31.037868182014908
+            ],
+            [
+              0,
+              13.439213226616271,
+              30.589761591115654
+            ],
+            [
+              0,
+              14.079175761217044,
+              30.141655000216396
+            ],
+            [
+              0,
+              14.719138295817821,
+              29.693548409317145
+            ],
+            [
+              0,
+              15.359100830418594,
+              29.245441818417888
+            ],
+            [
+              0,
+              15.99906336501937,
+              28.797335227518634
+            ],
+            [
+              0,
+              16.639025899620144,
+              28.34922863661938
+            ],
+            [
+              0,
+              17.27898843422092,
+              27.901122045720122
+            ],
+            [
+              0,
+              17.918950968821694,
+              27.453015454820868
+            ],
+            [
+              0,
+              18.558913503422467,
+              27.004908863921614
+            ],
+            [
+              0,
+              19.198876038023243,
+              26.55680227302236
+            ],
+            [
+              0,
+              19.83883857262402,
+              26.108695682123106
+            ],
+            [
+              0,
+              20.478801107224793,
+              25.66058909122385
+            ],
+            [
+              0,
+              21.118763641825566,
+              25.212482500324594
+            ],
+            [
+              0,
+              21.758726176426343,
+              24.764375909425343
+            ],
+            [
+              0,
+              22.398688711027116,
+              24.316269318526086
+            ],
+            [
+              0,
+              23.038651245627893,
+              23.86816272762683
+            ],
+            [
+              0,
+              23.678613780228666,
+              23.420056136727577
+            ],
+            [
+              0,
+              24.318576314829443,
+              22.971949545828323
+            ],
+            [
+              0,
+              24.95853884943022,
+              22.52384295492907
+            ],
+            [
+              0,
+              25.598501384030993,
+              22.075736364029815
+            ],
+            [
+              0,
+              26.238463918631766,
+              21.627629773130558
+            ],
+            [
+              0,
+              26.878426453232542,
+              21.179523182231303
+            ],
+            [
+              0,
+              27.518388987833315,
+              20.73141659133205
+            ],
+            [
+              0,
+              28.15835152243409,
+              20.283310000432795
+            ],
+            [
+              0,
+              28.798314057034865,
+              19.83520340953354
+            ],
+            [
+              0,
+              29.438276591635642,
+              19.387096818634287
+            ],
+            [
+              0,
+              30.078239126236415,
+              18.93899022773503
+            ],
+            [
+              0,
+              30.71820166083719,
+              18.490883636835775
+            ],
+            [
+              0,
+              31.358164195437965,
+              18.04277704593652
+            ],
+            [
+              0,
+              31.998126730038738,
+              17.594670455037267
+            ],
+            [
+              0,
+              32.63808926463952,
+              17.146563864138013
+            ],
+            [
+              0,
+              33.27805179924029,
+              16.698457273238756
+            ],
+            [
+              0,
+              33.918014333841064,
+              16.2503506823395
+            ],
+            [
+              0,
+              34.55797686844184,
+              15.802244091440247
+            ],
+            [
+              0,
+              35.19793940304261,
+              15.354137500540993
+            ],
+            [
+              0,
+              35.83790193764339,
+              14.906030909641737
+            ],
+            [
+              0,
+              36.477864472244164,
+              14.457924318742483
+            ],
+            [
+              0,
+              37.11782700684494,
+              14.009817727843227
+            ],
+            [
+              0,
+              37.75778954144571,
+              13.561711136943973
+            ],
+            [
+              0,
+              38.39775207604649,
+              13.11360454604472
+            ],
+            [
+              0,
+              39.037714610647264,
+              12.665497955145463
+            ],
+            [
+              0,
+              39.67767714524803,
+              12.21739136424621
+            ],
+            [
+              0,
+              40.31763967984881,
+              11.769284773346953
+            ],
+            [
+              0,
+              40.95760221444959,
+              11.3211781824477
+            ]
+          ]
+        },
+        {
+          "name": "bottom_waist",
+          "points": [
+            [
+              0,
+              40.95760221444959,
+              11.3211781824477
+            ],
+            [
+              0,
+              41.688217856582675,
+              10.8172521550145
+            ],
+            [
+              0,
+              42.41883349871576,
+              10.328485135602152
+            ],
+            [
+              0,
+              43.14944914084885,
+              9.854645978074977
+            ],
+            [
+              0,
+              43.88006478298194,
+              9.395503536297305
+            ],
+            [
+              0,
+              44.61068042511502,
+              8.950826664133457
+            ],
+            [
+              0,
+              45.341296067248116,
+              8.52038421544776
+            ],
+            [
+              0,
+              46.0719117093812,
+              8.103945044104538
+            ],
+            [
+              0,
+              46.802527351514286,
+              7.701278003968118
+            ],
+            [
+              0,
+              47.533142993647374,
+              7.312151948902824
+            ],
+            [
+              0,
+              48.26375863578046,
+              6.936335732772981
+            ],
+            [
+              0,
+              48.99437427791355,
+              6.573598209442913
+            ],
+            [
+              0,
+              49.72498992004663,
+              6.223708232776948
+            ],
+            [
+              0,
+              50.45560556217973,
+              5.88643465663941
+            ],
+            [
+              0,
+              51.18622120431281,
+              5.561546334894624
+            ],
+            [
+              0,
+              51.9168368464459,
+              5.248812121406914
+            ],
+            [
+              0,
+              52.64745248857899,
+              4.948000870040607
+            ],
+            [
+              0,
+              53.37806813071207,
+              4.658881434660027
+            ],
+            [
+              0,
+              54.10868377284516,
+              4.3812226691295
+            ],
+            [
+              0,
+              54.83929941497825,
+              4.114793427313351
+            ],
+            [
+              0,
+              55.56991505711134,
+              3.859362563075904
+            ],
+            [
+              0,
+              56.300530699244426,
+              3.6146989302814854
+            ],
+            [
+              0,
+              57.031146341377514,
+              3.38057138279442
+            ],
+            [
+              0,
+              57.761761983510596,
+              3.1567487744790332
+            ],
+            [
+              0,
+              58.49237762564369,
+              2.94299995919965
+            ],
+            [
+              0,
+              59.22299326777678,
+              2.7390937908205943
+            ],
+            [
+              0,
+              59.95360890990986,
+              2.5447991232061935
+            ],
+            [
+              0,
+              60.68422455204295,
+              2.3598848102207715
+            ],
+            [
+              0,
+              61.41484019417604,
+              2.184119705728653
+            ],
+            [
+              0,
+              62.145455836309125,
+              2.0172726635941647
+            ],
+            [
+              0,
+              62.87607147844221,
+              1.8591125376816304
+            ],
+            [
+              0,
+              63.6066871205753,
+              1.7094081818553757
+            ],
+            [
+              0,
+              64.33730276270839,
+              1.567928449979726
+            ],
+            [
+              0,
+              65.06791840484146,
+              1.4344421959190061
+            ],
+            [
+              0,
+              65.79853404697457,
+              1.3087182735375413
+            ],
+            [
+              0,
+              66.52914968910765,
+              1.1905255366996566
+            ],
+            [
+              0,
+              67.25976533124074,
+              1.0796328392696775
+            ],
+            [
+              0,
+              67.99038097337383,
+              0.9758090351119288
+            ],
+            [
+              0,
+              68.7209966155069,
+              0.8788229780907358
+            ],
+            [
+              0,
+              69.45161225764,
+              0.7884435220704239
+            ],
+            [
+              0,
+              70.18222789977308,
+              0.7044395209153178
+            ],
+            [
+              0,
+              70.91284354190617,
+              0.6265798284897431
+            ],
+            [
+              0,
+              71.64345918403926,
+              0.5546332986580247
+            ],
+            [
+              0,
+              72.37407482617235,
+              0.48836878528448774
+            ],
+            [
+              0,
+              73.10469046830544,
+              0.4275551422334576
+            ],
+            [
+              0,
+              73.83530611043852,
+              0.3719612233692592
+            ],
+            [
+              0,
+              74.56592175257161,
+              0.3213558825562178
+            ],
+            [
+              0,
+              75.2965373947047,
+              0.27550797365865853
+            ],
+            [
+              0,
+              76.02715303683779,
+              0.2341863505409066
+            ],
+            [
+              0,
+              76.75776867897088,
+              0.19715986706728716
+            ],
+            [
+              0,
+              77.48838432110396,
+              0.16419737710212534
+            ],
+            [
+              0,
+              78.21899996323705,
+              0.1350677345097463
+            ],
+            [
+              0,
+              78.94961560537014,
+              0.1095397931544752
+            ],
+            [
+              0,
+              79.68023124750323,
+              0.08738240690063724
+            ],
+            [
+              0,
+              80.41084688963632,
+              0.06836442961255754
+            ],
+            [
+              0,
+              81.14146253176939,
+              0.052254715154561246
+            ],
+            [
+              0,
+              81.87207817390248,
+              0.03882211739097355
+            ],
+            [
+              0,
+              82.60269381603557,
+              0.027835490186119582
+            ],
+            [
+              0,
+              83.33330945816866,
+              0.019063687404324525
+            ],
+            [
+              0,
+              84.06392510030174,
+              0.012275562909913527
+            ],
+            [
+              0,
+              84.79454074243483,
+              0.007239970567211747
+            ],
+            [
+              0,
+              85.52515638456792,
+              0.003725764240544346
+            ],
+            [
+              0,
+              86.25577202670101,
+              0.0015017977942364822
+            ],
+            [
+              0,
+              86.9863876688341,
+              0.0003369250926133137
+            ],
+            [
+              0,
+              87.71700331096719,
+              0.0
+            ]
+          ]
+        },
+        {
+          "name": "bottom_forepart_blend",
+          "points": [
+            [
+              0,
+              87.71700331096719,
+              0.0
+            ],
+            [
+              0,
+              87.87313076160561,
+              8.373636844075455e-05
+            ],
+            [
+              0,
+              88.02925821224402,
+              0.0003349454737630182
+            ],
+            [
+              0,
+              88.18538566288244,
+              0.000753627315966791
+            ],
+            [
+              0,
+              88.34151311352086,
+              0.0013397818950520728
+            ],
+            [
+              0,
+              88.49764056415927,
+              0.002093409211018864
+            ],
+            [
+              0,
+              88.65376801479768,
+              0.0030145092638671636
+            ],
+            [
+              0,
+              88.8098954654361,
+              0.004103082053596973
+            ],
+            [
+              0,
+              88.96602291607452,
+              0.005359127580208291
+            ],
+            [
+              0,
+              89.12215036671294,
+              0.006782645843701119
+            ],
+            [
+              0,
+              89.27827781735135,
+              0.008373636844075456
+            ],
+            [
+              0,
+              89.43440526798977,
+              0.0101321005813313
+            ],
+            [
+              0,
+              89.5905327186282,
+              0.012058037055468656
+            ],
+            [
+              0,
+              89.7466601692666,
+              0.01415144626648752
+            ],
+            [
+              0,
+              89.90278761990503,
+              0.016412328214387893
+            ],
+            [
+              0,
+              90.05891507054345,
+              0.018840682899169774
+            ],
+            [
+              0,
+              90.21504252118186,
+              0.021436510320833168
+            ],
+            [
+              0,
+              90.37116997182028,
+              0.024199810479378067
+            ],
+            [
+              0,
+              90.52729742245869,
+              0.02713058337480448
+            ],
+            [
+              0,
+              90.68342487309712,
+              0.030228829007112393
+            ],
+            [
+              0,
+              90.83955232373553,
+              0.03349454737630182
+            ],
+            [
+              0,
+              90.99567977437394,
+              0.03692773848237276
+            ],
+            [
+              0,
+              91.15180722501236,
+              0.0405284023253252
+            ],
+            [
+              0,
+              91.30793467565078,
+              0.044296538905159166
+            ],
+            [
+              0,
+              91.4640621262892,
+              0.048232148221874625
+            ],
+            [
+              0,
+              91.62018957692761,
+              0.0523352302754716
+            ],
+            [
+              0,
+              91.77631702756604,
+              0.056605785065950084
+            ],
+            [
+              0,
+              91.93244447820446,
+              0.06104381259331008
+            ],
+            [
+              0,
+              92.08857192884287,
+              0.06564931285755157
+            ],
+            [
+              0,
+              92.24469937948129,
+              0.07042228585867458
+            ],
+            [
+              0,
+              92.4008268301197,
+              0.07536273159667911
+            ],
+            [
+              0,
+              92.55695428075812,
+              0.08047065007156513
+            ],
+            [
+              0,
+              92.71308173139654,
+              0.08574604128333267
+            ],
+            [
+              0,
+              92.86920918203495,
+              0.09118890523198173
+            ],
+            [
+              0,
+              93.02533663267337,
+              0.09679924191751227
+            ],
+            [
+              0,
+              93.18146408331178,
+              0.10257705133992434
+            ],
+            [
+              0,
+              93.3375915339502,
+              0.10852233349921792
+            ],
+            [
+              0,
+              93.49371898458863,
+              0.114635088395393
+            ],
+            [
+              0,
+              93.64984643522703,
+              0.12091531602844958
+            ],
+            [
+              0,
+              93.80597388586546,
+              0.12736301639838768
+            ],
+            [
+              0,
+              93.96210133650388,
+              0.1339781895052073
+            ],
+            [
+              0,
+              94.1182287871423,
+              0.14076083534890843
+            ],
+            [
+              0,
+              94.27435623778071,
+              0.14771095392949105
+            ],
+            [
+              0,
+              94.43048368841912,
+              0.1548285452469552
+            ],
+            [
+              0,
+              94.58661113905754,
+              0.16211360930130084
+            ],
+            [
+              0,
+              94.74273858969596,
+              0.16956614609252801
+            ],
+            [
+              0,
+              94.89886604033438,
+              0.17718615562063667
+            ],
+            [
+              0,
+              95.05499349097279,
+              0.18497363788562685
+            ],
+            [
+              0,
+              95.21112094161121,
+              0.19292859288749853
+            ],
+            [
+              0,
+              95.36724839224962,
+              0.20105102062625171
+            ],
+            [
+              0,
+              95.52337584288804,
+              0.20934092110188643
+            ],
+            [
+              0,
+              95.67950329352647,
+              0.21779829431440265
+            ],
+            [
+              0,
+              95.83563074416489,
+              0.22642314026380037
+            ],
+            [
+              0,
+              95.9917581948033,
+              0.2352154589500796
+            ],
+            [
+              0,
+              96.14788564544172,
+              0.24417525037324034
+            ],
+            [
+              0,
+              96.30401309608013,
+              0.25330251453328256
+            ],
+            [
+              0,
+              96.46014054671855,
+              0.26259725143020635
+            ],
+            [
+              0,
+              96.61626799735696,
+              0.2720594610640116
+            ],
+            [
+              0,
+              96.77239544799538,
+              0.28168914343469836
+            ],
+            [
+              0,
+              96.9285228986338,
+              0.29148629854226665
+            ],
+            [
+              0,
+              97.08465034927222,
+              0.3014509263867165
+            ],
+            [
+              0,
+              97.24077779991063,
+              0.3115830269680478
+            ],
+            [
+              0,
+              97.39690525054905,
+              0.3218826002862606
+            ],
+            [
+              0,
+              97.55303270118746,
+              0.33234964634135494
+            ],
+            [
+              0,
+              97.70916015182588,
+              0.34298416513333074
+            ]
+          ]
+        },
+        {
+          "name": "bottom_forepart_ramp",
+          "points": [
+            [
+              0,
+              97.70916015182588,
+              0.34298416513333074
+            ],
+            [
+              0,
+              99.90711185972245,
+              0.4938750375531225
+            ],
+            [
+              0,
+              102.105063567619,
+              0.6447659099729143
+            ],
+            [
+              0,
+              104.30301527551556,
+              0.795656782392706
+            ],
+            [
+              0,
+              106.50096698341213,
+              0.9465476548124977
+            ],
+            [
+              0,
+              108.69891869130868,
+              1.0974385272322895
+            ],
+            [
+              0,
+              110.89687039920524,
+              1.2483293996520812
+            ],
+            [
+              0,
+              113.09482210710179,
+              1.399220272071873
+            ],
+            [
+              0,
+              115.29277381499834,
+              1.5501111444916646
+            ],
+            [
+              0,
+              117.4907255228949,
+              1.7010020169114561
+            ],
+            [
+              0,
+              119.68867723079147,
+              1.851892889331248
+            ],
+            [
+              0,
+              121.88662893868802,
+              2.00278376175104
+            ],
+            [
+              0,
+              124.08458064658458,
+              2.1536746341708315
+            ],
+            [
+              0,
+              126.28253235448115,
+              2.304565506590623
+            ],
+            [
+              0,
+              128.4804840623777,
+              2.455456379010415
+            ],
+            [
+              0,
+              130.67843577027426,
+              2.6063472514302064
+            ],
+            [
+              0,
+              132.8763874781708,
+              2.7572381238499983
+            ],
+            [
+              0,
+              135.07433918606736,
+              2.9081289962697903
+            ],
+            [
+              0,
+              137.27229089396394,
+              3.0590198686895818
+            ],
+            [
+              0,
+              139.4702426018605,
+              3.2099107411093737
+            ],
+            [
+              0,
+              141.66819430975704,
+              3.360801613529165
+            ],
+            [
+              0,
+              143.86614601765362,
+              3.511692485948957
+            ],
+            [
+              0,
+              146.06409772555017,
+              3.6625833583687486
+            ],
+            [
+              0,
+              148.26204943344672,
+              3.81347423078854
+            ],
+            [
+              0,
+              150.46000114134327,
+              3.964365103208332
+            ],
+            [
+              0,
+              152.65795284923985,
+              4.1152559756281235
+            ],
+            [
+              0,
+              154.8559045571364,
+              4.266146848047915
+            ],
+            [
+              0,
+              157.05385626503295,
+              4.417037720467707
+            ],
+            [
+              0,
+              159.2518079729295,
+              4.567928592887499
+            ],
+            [
+              0,
+              161.44975968082608,
+              4.71881946530729
+            ],
+            [
+              0,
+              163.64771138872263,
+              4.869710337727082
+            ],
+            [
+              0,
+              165.84566309661918,
+              5.020601210146874
+            ],
+            [
+              0,
+              168.04361480451576,
+              5.171492082566666
+            ],
+            [
+              0,
+              170.2415665124123,
+              5.322382954986457
+            ],
+            [
+              0,
+              172.43951822030886,
+              5.473273827406249
+            ],
+            [
+              0,
+              174.6374699282054,
+              5.62416469982604
+            ],
+            [
+              0,
+              176.83542163610196,
+              5.775055572245832
+            ],
+            [
+              0,
+              179.03337334399853,
+              5.925946444665624
+            ],
+            [
+              0,
+              181.23132505189508,
+              6.076837317085416
+            ],
+            [
+              0,
+              183.42927675979163,
+              6.227728189505207
+            ],
+            [
+              0,
+              185.6272284676882,
+              6.378619061924999
+            ],
+            [
+              0,
+              187.82518017558476,
+              6.529509934344791
+            ],
+            [
+              0,
+              190.0231318834813,
+              6.680400806764583
+            ],
+            [
+              0,
+              192.22108359137786,
+              6.831291679184374
+            ],
+            [
+              0,
+              194.41903529927444,
+              6.982182551604166
+            ],
+            [
+              0,
+              196.616987007171,
+              7.133073424023958
+            ],
+            [
+              0,
+              198.81493871506754,
+              7.28396429644375
+            ],
+            [
+              0,
+              201.0128904229641,
+              7.434855168863541
+            ],
+            [
+              0,
+              203.21084213086067,
+              7.585746041283333
+            ],
+            [
+              0,
+              205.40879383875722,
+              7.736636913703125
+            ],
+            [
+              0,
+              207.60674554665377,
+              7.887527786122916
+            ],
+            [
+              0,
+              209.80469725455032,
+              8.038418658542708
+            ],
+            [
+              0,
+              212.0026489624469,
+              8.1893095309625
+            ],
+            [
+              0,
+              214.20060067034345,
+              8.34020040338229
+            ],
+            [
+              0,
+              216.39855237824003,
+              8.491091275802082
+            ],
+            [
+              0,
+              218.59650408613658,
+              8.641982148221874
+            ],
+            [
+              0,
+              220.79445579403313,
+              8.792873020641666
+            ],
+            [
+              0,
+              222.99240750192968,
+              8.943763893061458
+            ],
+            [
+              0,
+              225.19035920982625,
+              9.09465476548125
+            ],
+            [
+              0,
+              227.3883109177228,
+              9.245545637901042
+            ],
+            [
+              0,
+              229.58626262561936,
+              9.396436510320834
+            ],
+            [
+              0,
+              231.7842143335159,
+              9.547327382740624
+            ],
+            [
+              0,
+              233.98216604141246,
+              9.698218255160416
+            ],
+            [
+              0,
+              236.18011774930903,
+              9.849109127580208
+            ],
+            [
+              0,
+              238.37806945720558,
+              10.0
+            ]
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -5,3 +5,14 @@
 # Generated prototype outputs and Python caches.
 /output/
 __pycache__/
+/node_modules/
+.slim/deepwork/
+
+# Next.js and local configuration.
+/.next/
+/out/
+/coverage/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example

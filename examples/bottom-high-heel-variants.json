@@ -1,0 +1,8 @@
+{
+  "description": "Artificial heel-height development sweep: 40, 60 and 80 mm, with every other bottom control and top input unchanged. Arbitrary made-up values, not population averages, sourced high-heel specifications or fit recommendations. Increasing rear height stretches this guide's waist and changes derived arc length at fixed 250 mm projection; this is not a validated heel-posture transformation.",
+  "variants": [
+    {"name": "heel_40mm", "input": "heel_height", "value": 40},
+    {"name": "heel_60mm", "input": "heel_height", "value": 60},
+    {"name": "heel_80mm", "input": "heel_height", "value": 80}
+  ]
+}

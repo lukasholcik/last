@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "kind": "contour_last",
+  "units": "mm",
+  "description": "Made-up designed contour-length target, not foot measurements or an automatic migration of the old projection.",
+  "design": {
+    "last_length": 250,
+    "top": {
+      "medial_heel_s": 30,
+      "medial_heel_width": 28,
+      "lateral_heel_s": 30,
+      "lateral_heel_width": 29,
+      "medial_waist_s": 100,
+      "medial_waist_width": 29,
+      "lateral_waist_s": 100,
+      "lateral_waist_width": 32,
+      "medial_ball_s": 175,
+      "medial_ball_width": 46,
+      "lateral_ball_s": 165,
+      "lateral_ball_width": 48,
+      "medial_toe_s": 220,
+      "medial_toe_width": 33,
+      "lateral_toe_s": 220,
+      "lateral_toe_width": 31
+    },
+    "bottom": {
+      "heel_height": 8,
+      "toe_spring": 10,
+      "seat_arc_length": 50,
+      "seat_inclination_deg": 2,
+      "contact_s": 175,
+      "blend_arc_length": 10
+    }
+  }
+}

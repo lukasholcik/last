@@ -1,0 +1,11 @@
+{
+  "description": "Made-up single-control bottom experiments, not fit models.",
+  "variants": [
+    {"name": "higher_heel", "input": "heel_height", "value": 12},
+    {"name": "higher_toe", "input": "toe_spring", "value": 15},
+    {"name": "longer_seat", "input": "seat_projected_length", "value": 60},
+    {"name": "steeper_seat", "input": "seat_inclination_deg", "value": 3},
+    {"name": "forward_contact", "input": "contact_forward", "value": 185},
+    {"name": "longer_forepart_blend", "input": "forepart_blend_length", "value": 20}
+  ]
+}
