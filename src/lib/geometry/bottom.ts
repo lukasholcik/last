@@ -38,6 +38,18 @@ export function readBottom(
     number(k, v, 0, k === "seat_inclination_deg" ? 90 : 10000);
   if (d.seat_inclination_deg >= 90)
     throw new InputError("seat_inclination_deg must be less than 90");
+  const startReach = d.arch_start_reach_ratio ?? 1 / 3,
+    contactReach = d.arch_contact_reach_ratio ?? 1 / 3;
+  if (!(
+    startReach > 0 &&
+    startReach < 1 &&
+    contactReach > 0 &&
+    contactReach < 1 &&
+    startReach + contactReach <= 1
+  ))
+    throw new InputError(
+      "arch reach fractions must be >0, <1 and sum to at most 1",
+    );
   const {
     heel_height: h,
     seat_projected_length: s,
@@ -54,7 +66,11 @@ export function readBottom(
     throw new InputError(
       "seat front: B = heel_height - seat_projected_length*tan(seat_inclination_deg) must be >= 0",
     );
-  if (front + (m * (c - s)) / 3 < 0)
+  if (
+    front +
+      (startReach === 1 / 3 ? (m * (c - s)) / 3 : m * startReach * (c - s)) <
+    0
+  )
     throw new InputError(
       "bottom_waist_handle_start: B - (contact_forward-seat_projected_length)*tan(seat_inclination_deg)/3 must be >= 0",
     );
@@ -124,8 +140,20 @@ export function buildBottom(length: number, d: ProjectedBottom): BottomModel {
       [u, v] = slopes[i]!,
       hs = name + "_handle_start",
       he = name + "_handle_end";
-    point(hs, p.y + interval / 3, p.z + (u * interval) / 3, "handle");
-    point(he, q.y - interval / 3, q.z - (v * interval) / 3, "handle");
+    const rs = i === 1 ? (d.arch_start_reach_ratio ?? 1 / 3) : 1 / 3,
+      rc = i === 1 ? (d.arch_contact_reach_ratio ?? 1 / 3) : 1 / 3;
+    point(
+      hs,
+      p.y + (rs === 1 / 3 ? interval / 3 : rs * interval),
+      p.z + (rs === 1 / 3 ? (u * interval) / 3 : u * rs * interval),
+      "handle",
+    );
+    point(
+      he,
+      q.y - (rc === 1 / 3 ? interval / 3 : rc * interval),
+      q.z - (rc === 1 / 3 ? (v * interval) / 3 : v * rc * interval),
+      "handle",
+    );
     model.curves[name] = { start, control1: hs, control2: he, end };
     for (const [suffix, a, e] of [
       ["start_to_handle_start", start, hs],
@@ -324,10 +352,18 @@ export function validateBottom(
       q = endpoints[i + 1]!,
       [u, v] = slopes[i]!,
       interval = q[0] - p[0];
+    const rs = i === 1 ? (d.arch_start_reach_ratio ?? 1 / 3) : 1 / 3,
+      rc = i === 1 ? (d.arch_contact_reach_ratio ?? 1 / 3) : 1 / 3;
     const expected: Cubic = [
       p,
-      [p[0] + interval / 3, p[1] + (u * interval) / 3],
-      [q[0] - interval / 3, q[1] - (v * interval) / 3],
+      [
+        p[0] + (rs === 1 / 3 ? interval / 3 : rs * interval),
+        p[1] + (rs === 1 / 3 ? (u * interval) / 3 : u * rs * interval),
+      ],
+      [
+        q[0] - (rc === 1 / 3 ? interval / 3 : rc * interval),
+        q[1] - (rc === 1 / 3 ? (v * interval) / 3 : v * rc * interval),
+      ],
       q,
     ];
     (["start", "control1", "control2", "end"] as const).forEach((key, j) =>
@@ -339,15 +375,24 @@ export function validateBottom(
     );
     flag(
       name + "_strictly_forward",
-      ps.slice(1).every((q, j) => q[0] > ps[j]![0]),
+      ps[3][0] > ps[0][0] &&
+        ps[1][0] > ps[0][0] &&
+        ps[3][0] > ps[2][0] &&
+        ps.slice(1).every((q, j) => q[0] >= ps[j]![0]),
     );
     flag(
-      name + "_linear_y",
-      [1, 2].every(
-        (j) =>
-          Math.abs(ps[j]![0] - (ps[0][0] + (j * (ps[3][0] - ps[0][0])) / 3)) <=
-          1e-9,
-      ),
+      name +
+        (i === 1 && (rs !== 1 / 3 || rc !== 1 / 3)
+          ? "_monotone_y"
+          : "_linear_y"),
+      i === 1 && (rs !== 1 / 3 || rc !== 1 / 3)
+        ? ps.slice(1).every((q, j) => q[0] >= ps[j]![0])
+        : [1, 2].every(
+            (j) =>
+              Math.abs(
+                ps[j]![0] - (ps[0][0] + (j * (ps[3][0] - ps[0][0])) / 3),
+              ) <= 1e-9,
+          ),
     );
     const [ye, ze] = coordinateRoundoff(ps, Math.max(Math.abs(u), Math.abs(v))),
       ends: number[] = [],

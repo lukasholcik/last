@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { buildLast } from "../../src/lib/geometry";
+import { buildLegacyLast as buildLast } from "../../src/lib/geometry/legacy";
+import { buildTop, validateTop } from "../../src/lib/geometry/top";
 import baseline from "../fixtures/baseline.json";
 import heel40 from "../fixtures/heel-40.json";
 import heel60 from "../fixtures/heel-60.json";
@@ -68,7 +69,53 @@ describe("immutable Python-reference fixture parity", () => {
         const before = structuredClone(fixture.input),
           start = performance.now();
         const actual = buildLast(fixture.input);
-        compare(actual, fixture.expected);
+        // These fields intentionally retain the original posed-bottom contract.
+        compare(actual.inputs, fixture.expected.inputs, "root.inputs");
+        compare(
+          actual.models.bottom,
+          fixture.expected.models.bottom,
+          "root.models.bottom",
+        );
+        compare(
+          actual.reports.bottom,
+          fixture.expected.reports.bottom,
+          "root.reports.bottom",
+        );
+        compare(actual.derived, fixture.expected.derived, "root.derived");
+        compare(
+          actual.display.bottom,
+          fixture.expected.display.bottom,
+          "root.display.bottom",
+        );
+        // Frozen top snapshots describe the old projected design. Keep primitive
+        // construction/validation parity without pretending it is the new unbent model.
+        const legacyTop = buildTop(fixture.expected.models.top.design);
+        compare(legacyTop, fixture.expected.models.top, "root.models.top");
+        compare(
+          validateTop(legacyTop, fixture.expected.models.top.design),
+          fixture.expected.reports.top,
+          "root.reports.top",
+        );
+        for (const check of fixture.expected.reports.contour.checks)
+          compare(
+            actual.reports.contour.checks.find(
+              (candidate) => candidate.name === check.name,
+            ),
+            check,
+            "root.reports.contour.checks",
+          );
+        compare(
+          actual.reports.contour.last_length_bounds,
+          fixture.expected.reports.contour.last_length_bounds,
+          "root.reports.contour.last_length_bounds",
+        );
+        expect(actual.reports.contour.passed).toBe(true);
+        expect(actual.reports.contour.limits.slice(0, 2)).toEqual(
+          fixture.expected.reports.contour.limits.slice(0, 2),
+        );
+        expect(actual.reports.contour.limits[2]).toContain(
+          "unbent intrinsic s",
+        );
         expect(fixture.input).toEqual(before);
         console.info(`${name}: ${(performance.now() - start).toFixed(1)} ms`);
       },

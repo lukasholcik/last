@@ -1,0 +1,48 @@
+{
+  "schema_version": 4,
+  "kind": "foot_first_last",
+  "units": "mm",
+  "description": "Synthetic engineering template, not personal observations, population averages, or a legacy contour migration.",
+  "reference": {
+    "provenance": "synthetic",
+    "description": "Made-up development dimensions; not measured foot data.",
+    "width_definition": "Transverse forefoot width basis at the medial-ball reference station; the template is not a measured tracing or a promise that its actual section width equals this basis.",
+    "foot_length": 250,
+    "foot_width": 100
+  },
+  "foot": { "length": 250, "width": 100 },
+  "template": {
+    "medial_heel": { "station_ratio": 0.12, "side_extent_ratio": 0.28 },
+    "medial_waist": { "station_ratio": 0.4, "side_extent_ratio": 0.29 },
+    "medial_ball": { "station_ratio": 0.7, "side_extent_ratio": 0.46 },
+    "medial_toe": { "station_ratio": 0.88, "side_extent_ratio": 0.33 },
+    "lateral_heel": { "station_ratio": 0.12, "side_extent_ratio": 0.29 },
+    "lateral_waist": { "station_ratio": 0.4, "side_extent_ratio": 0.32 },
+    "lateral_ball": { "station_ratio": 0.66, "side_extent_ratio": 0.48 },
+    "lateral_toe": { "station_ratio": 0.88, "side_extent_ratio": 0.31 }
+  },
+  "design": {
+    "toe_extension_ratio": 0.1,
+    "seat_arc_ratio": 0.2,
+    "blend_arc_ratio": 0.04,
+    "bend_radius_ratio": 0.05,
+    "arch_start_reach_ratio": 0.3333333333333333,
+    "arch_contact_reach_ratio": 0.3333333333333333
+  },
+  "pose": { "heel_height": 8, "toe_spring": 10, "seat_inclination_deg": 2 },
+  "centre_section": {
+    "top_rear_station_ratio": 0.04,
+    "top_front_station_ratio": 0.28,
+    "toe_roof_station_ratio": 0.92,
+    "top_front_height_ratio": 0.3,
+    "waist_height_ratio": 0.22,
+    "ball_height_ratio": 0.12,
+    "toe_roof_height_ratio": 0.06,
+    "heel_leave_outward_deg": 10,
+    "heel_bulge_ratio": 0.02,
+    "instep_front_handle_ratio": 0.06,
+    "instep_waist_handle_ratio": 0.04,
+    "instep_front_down_offset_deg": 50,
+    "instep_waist_down_offset_deg": 35
+  }
+}

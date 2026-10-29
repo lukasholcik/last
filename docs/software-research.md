@@ -111,7 +111,8 @@ You chose the outer silhouette seen from above for the first experiment. The bot
 
 After inspecting the images, the independent review recommended starting with meaningful locations
 (heel, waist, ball, and toe) joined by curves, rather than arbitrary control points.
-Separate side distances can determine total width; local curve adjustments shape the spaces between locations.
+Separate side distances determine an actual section width only at a common station; staggered ball extents must not simply be added.
+Local curve adjustments shape the spaces between locations.
 These are our modelling suggestions, not a reconstruction of the products' hidden algorithms.
 The numeric SVG test is now implemented. The current app direction is browser-first, not interactive Blender editing.
 
@@ -139,7 +140,8 @@ See its [primary-measurements image](https://3dshoemaker.com/wp-content/uploads/
 and [combined measurement diagram](https://3dshoemaker.com/wp-content/uploads/2022/05/Shoe-Last-Maker-Measurements.png).
 Read each control's full functional description, not just its label:
 - Its curved-profile length differs from the legacy top-view projected length; do not silently substitute one for the other.
-  The browser now deliberately uses a new bottom-contour target, not a reinterpretation of the old example.
+  The current foot-first model separates reference F, extension E, reference last L0, and posed contour L0+delta;
+  neither older example nor vendor length is silently reinterpreted.
 - Adapt behaves differently by field; it is not a universal promise to preserve all numbers automatically.
 - An oblique plan-view ball width is not automatically our side extent at a particular forward position.
 - Future girths need named measurement paths around the 3D last, not just a generic width or circumference.
@@ -156,19 +158,61 @@ of the seat and the tread at the forepart contact. Do not transfer inconsistent 
 This is not a sourced universal curve recipe or a validated 3D bottom. See the
 [bottom-profile specification](bottom-profile.md), implemented as a numeric/SVG experiment. Version 2 replaces the
 rejected S-shaped rise with the user's chosen rounded transition and exactly straight incline through the toe.
-Its explicit 10 mm development blend is not an anatomical default. ISO defines height terminology, not this shape;
+Its current blend ratio .04F resolves to 10 mm at F=250; this is not an anatomical default. ISO defines height terminology, not this shape;
 the linked MDN Bézier explanation supports the representation, not a universal footwear recipe.
 Browser display is separate from geometry. The earlier plain HTML/native JavaScript viewer with Python geometry is now a legacy reference.
 The production application uses an actual [create-t3-app](https://create.t3.gg/en/installation) scaffold adapted to Next.js 16 App Router,
 React, TypeScript, Tailwind CSS, and tRPC. One independent TypeScript geometry module supplies the canonical models/reports;
 Three.js displays reference guides only. There is no Python runtime bridge, authentication, database, or persistence layer.
 The current pnpm-only setup and optional Python comparison tools are documented in [README](../README.md).
-Numeric/API parity is checked with nine frozen Python fixtures plus independent TypeScript checks; React/browser acceptance
-is a separate step. No 3D last surface or improved high-heel posture model is established by this technology change.
+Nine frozen Python fixtures retain primitive top/bottom and legacy contour-helper parity, not whole current foot-first API parity;
+independent TypeScript checks address the new model. React/browser acceptance is a separate step.
+No 3D last surface or improved high-heel posture model is established by this technology change.
 
-**New contour adapter assumption:** `last_length` is measured along our actual bottom guide. Top stations are distances
-along that guide, mapped separately to forward positions; seat/waist/blend/ramp arc lengths remain fixed during heel edits.
-The [vendor guide](https://3dshoemaker.com/measurements-in-shoe-last-maker/) supports distinguishing contour length
-from projection, not our station anchors, region preservation, or solver. Its internal algorithms remain unknown.
-The chosen 250 mm contour target intentionally changes the old 250 mm projected shape. A user-entered seat angle
-and the existing rounded-transition/straight-ramp rule still apply; this is not a sourced heel-posture formula.
+**Agreed current foot-first scope:** [schema 3](foot-first-model.md) separates original source reference data from working F/W,
+normalized template/design rules, and pose. Landmarks are fractions of foot F; widths and extension are proportional to width basis W.
+The synthetic foot outline is not a measured trace, nor is W automatically an exact generated section width.
+Direct F editing leaves W independent; Resize model scales working F/W without overwriting source data.
+Both reference silhouettes remain unbent and pose-invariant. Toe extension changes only the last terminal taper, not foot anchors.
+
+After the [heel-elevation research report](../reports/Heel%20elevation%20and%20plantar%20length.md), the user approved an adjustable
+synthetic radius default r=.05F and allowance-only rule: `H=A sin(theta)+r(1−cos(theta))`, delta=r theta, with A from medial_ball only.
+The report found no verified general predictor for the external underside skin path; that research did not itself approve a model.
+The later user decision is a development heuristic, not physiological certainty or a sourced 5% ratio. For example,
+[Smith et al.](https://doi.org/10.1016/j.jmbbm.2019.04.012) measure skin deformation in different conditions, and
+[Kouchi & Tsutsumi](https://doi.org/10.1537/ase.108.331) report posture-dependent dimensions, not this correction.
+No bone-radius or fat-pad dimensions are adopted as defaults.
+
+Allowance goes only into the waist, replacing the historical fixed-waist rule: posed total L0+delta, contact A+delta.
+It is not a literal circular-profile constraint. The last's 3D samples use actual bottom arc distance g(s), with a C1
+smoothstep distributing delta from seat S to medial ball A. This user-approved display convention is not a skin-strain field,
+physical upper surface, bottom perimeter, printable last, or fit proof. Independent actual-bottom feasibility still applies.
+The [vendor guide](https://3dshoemaker.com/measurements-in-shoe-last-maker/) supports distinguishing bottom contour length
+from projection, not our station anchors, heel invariance, allowance, or solver. Its internal algorithms remain unknown.
+Older 250 mm projected and schema-1 contour examples remain immutable historical references, explicitly rejected by the current API.
+
+## Approved centre-section convention, not reconstructed anatomy
+
+The [new centre section](centre-section.md) at x=0 adopts the existing lower guide as a **designed lower boundary**;
+this explicit new assumption does not establish a measured bottom surface or anatomical centreline. Schema 3 requires seven F-based
+ratios, including vertical depths (75/55/30/15 mm at synthetic F=250). These are engineering choices, not measured foot heights,
+population ratios, girth conversions, or calibration defaults. Earlier schema 2 is rejected rather than silently filled or migrated.
+Original reference data are never overwritten with these synthetic depths.
+
+The actual upper roof is `Q(s)=P(g(s))+[0,h(s)]`, with reference-height cubics and vertical rather than normal offset.
+Reusing g for this section is a new approved prototype convention. Heel edits rebuild the actual upper section, but authored
+depth rules and source data stay unchanged. No theta rotation, dorsal-strain calculation, or upper-path conservation is established.
+Caps and a horizontal cut close this centre-plane boundary; it is not a side envelope, full surface, cutting operation,
+printable solid, or guarantee of symmetric halves. Existing foot/top/bottom/resolved/derived semantics remain unchanged;
+the new section report is the fifth required passing report.
+
+Source boundaries already checked for this decision:
+
+- [3DShoemaker's foot-girth guide](https://3dshoemaker.com/foot-girth-measurements-for-bespoke-and-custom-shoe-lasts/)
+  discusses semi-weight-bearing tape circumferences, not a formula for centre-plane heights. Girth cannot be relabelled vertical depth.
+- [ISO 19409's public abstract](https://www.iso.org/standard/81028.html) concerns last dimensions, which need not correspond to
+  anatomical dimensions. The public abstract is not the full standard; no restricted full-text measurement procedure is claimed here.
+- [The public foot-measurement study](https://pmc.ncbi.nlm.nih.gov/articles/PMC7271427/) describes foot-height/girth measurement
+  methods, not our centre-plane construction, its synthetic defaults, or universal population norms.
+- The existing [heel-elevation report](../reports/Heel%20elevation%20and%20plantar%20length.md) supplies no biologically validated
+  dorsal transformation. Its evidence does not source the new roof, cap recipes, or depths; these remain our explicit design assumptions.

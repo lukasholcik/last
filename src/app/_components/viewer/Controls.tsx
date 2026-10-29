@@ -1,24 +1,35 @@
-import type { FormEvent } from "react";
-import { bottomFields, regions, sides, type Draft } from "./state";
+import { useState, type FormEvent } from "react";
+import type { FootFirstInput, LastState } from "~/lib/geometry/types";
+import { fmt, physicalDraftValue, regions, type Draft } from "./state";
 
 interface Props {
   draft: Draft | null;
+  reference: FootFirstInput["reference"] | undefined;
+  result: LastState | null;
   busy: boolean;
   canReset: boolean;
+  canDiscard: boolean;
   onEdit: (id: string, value: string) => void;
+  onResize: (length: string) => boolean;
   onSubmit: () => void;
   onReset: () => void;
+  onDiscard: () => void;
 }
 
 export function Controls({
   draft,
+  reference,
   busy,
   canReset,
+  canDiscard,
   onEdit,
+  onResize,
   onSubmit,
   onReset,
+  onDiscard,
 }: Props) {
-  function input(id: string, label: string, unit = "mm") {
+  const [resizeLength, setResizeLength] = useState("");
+  function input(id: string, label: string, physical = false) {
     return (
       <div className="input-wrap">
         <input
@@ -28,25 +39,21 @@ export function Controls({
           id={id}
           name={id}
           aria-label={label}
-          title={id
-            .replace("shared-", "design.")
-            .replace("top-", "design.top.")
-            .replace("bottom-", "design.bottom.")}
           inputMode="decimal"
-          value={draft?.[id] ?? ""}
-          onChange={(e) => onEdit(id, e.target.value)}
+          value={physical ? physicalDraftValue(draft, id) : (draft?.[id] ?? "")}
+          onChange={(event) => onEdit(id, event.target.value)}
         />
         <span className="unit" aria-hidden="true">
-          {unit}
+          mm
         </span>
       </div>
     );
   }
-  function field(id: string, label: string, unit = "mm") {
+  function field(id: string, label: string, physical = false) {
     return (
       <div className="field" key={id}>
         <label htmlFor={id}>{label}</label>
-        {input(id, label, unit)}
+        {input(id, label, physical)}
       </div>
     );
   }
@@ -54,81 +61,137 @@ export function Controls({
     event.preventDefault();
     onSubmit();
   }
+  function resize() {
+    if (onResize(resizeLength)) setResizeLength("");
+  }
   return (
     <aside className="controls" id="controls">
       <div className="control-heading">
-        <span className="eyebrow">DESIGN INPUTS</span>
+        <span className="eyebrow">FOOT-FIRST DESIGN</span>
         <h2>Make a change.</h2>
-        <p>Made-up design values—not foot measurements.</p>
+        <p>Synthetic model · dimensions in mm.</p>
       </div>
+      <details className="input-section source-reference">
+        <summary>
+          Original reference <span className="read-only">Read only</span>
+        </summary>
+        {reference ? (
+          <>
+            <dl className="reference-values">
+              <div>
+                <dt>Source</dt>
+                <dd>
+                  {reference.provenance === "synthetic"
+                    ? "Synthetic example"
+                    : "Measured source"}
+                </dd>
+              </div>
+              <div>
+                <dt>Foot length</dt>
+                <dd>{fmt(reference.foot_length)} mm</dd>
+              </div>
+              <div>
+                <dt>Width basis</dt>
+                <dd>{fmt(reference.foot_width)} mm</dd>
+              </div>
+            </dl>
+            <p className="field-note">{reference.description}</p>
+            <p className="field-note">{reference.width_definition}</p>
+            <p className="field-note">
+              Editing or resizing never changes this source record.
+            </p>
+          </>
+        ) : (
+          <p className="field-note">Loading the source reference…</p>
+        )}
+      </details>
       <form
         id="design-form"
         noValidate
         onSubmit={submit}
-        aria-label="Design dimensions"
+        aria-label="Physical design dimensions"
         aria-busy={busy}
       >
         <fieldset id="inputs" disabled={!draft}>
-          <legend className="sr-only">Top and bottom design dimensions</legend>
+          <legend className="sr-only">Physical foot and last dimensions</legend>
           <div id="fields">
             {!draft ? (
               <p className="loading">Loading the example…</p>
             ) : (
               <>
                 <section className="input-section">
-                  <h3>Length along the bottom</h3>
-                  {field(
-                    "shared-last_length",
-                    "Last length along bottom profile",
-                  )}
+                  <h3>Working foot dimensions</h3>
+                  {field("foot-length", "Foot length F")}
+                  {field("foot-width", "Reference width basis W")}
                   <p className="field-note">
-                    Entered contour length, not horizontal span. Positions are
-                    distances along the bottom guide; horizontal positions are
-                    calculated.
+                    W scales extents; it is not measured section width.
                   </p>
+                  <div className="resize-model">
+                    <label htmlFor="resize-length">
+                      Resize model to length
+                    </label>
+                    <div className="input-wrap">
+                      <input
+                        id="resize-length"
+                        type="number"
+                        step="any"
+                        inputMode="decimal"
+                        aria-label="Resize model to foot length"
+                        value={resizeLength}
+                        onChange={(event) =>
+                          setResizeLength(event.target.value)
+                        }
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter") {
+                            event.preventDefault();
+                            resize();
+                          }
+                        }}
+                      />
+                      <span className="unit" aria-hidden="true">
+                        mm
+                      </span>
+                    </div>
+                    <button id="resize-model" type="button" onClick={resize}>
+                      Resize model
+                    </button>
+                  </div>
+                  <p className="field-note">Resize scales F and W together.</p>
                 </section>
                 <section className="input-section">
-                  <h3>Outer top silhouette</h3>
+                  <h3>Foot side extents</h3>
+                  <div className="region-head">
+                    <strong>Landmark</strong>
+                    <span>Medial · mm</span>
+                    <span>Lateral · mm</span>
+                  </div>
                   {regions.map((region) => (
-                    <div className="region" key={region}>
-                      <div className="region-head">
-                        <strong>
-                          {region[0]!.toUpperCase() + region.slice(1)}
-                        </strong>
-                        <span>Along contour · mm</span>
-                        <span>Side extent · mm</span>
-                      </div>
-                      {sides.map((side) => (
-                        <div className="region-row" key={side}>
-                          <span>{side[0]!.toUpperCase() + side.slice(1)}</span>
-                          {input(
-                            `top-${side}_${region}_s`,
-                            `${side} ${region} contour station`,
-                          )}
-                          {input(
-                            `top-${side}_${region}_width`,
-                            `${side} ${region} side extent`,
-                          )}
-                        </div>
-                      ))}
+                    <div className="region-row" key={region}>
+                      <span>{region[0]!.toUpperCase() + region.slice(1)}</span>
+                      {input(
+                        `extent-medial_${region}`,
+                        `Medial ${region} side extent`,
+                        true,
+                      )}
+                      {input(
+                        `extent-lateral_${region}`,
+                        `Lateral ${region} side extent`,
+                        true,
+                      )}
                     </div>
                   ))}
                   <p className="field-note">
-                    Each side extent is measured from x = 0 at its own contour
-                    station s. The two sides are independent—not a summed
-                    section width.
+                    Independent extents—not a summed section width. The dashed
+                    foot is the reference.
                   </p>
                 </section>
                 <section className="input-section">
-                  <h3>Longitudinal bottom guide</h3>
-                  {bottomFields.map(([key, label, unit]) =>
-                    field(`bottom-${key}`, label, unit),
-                  )}
+                  <h3>Last dimensions</h3>
+                  {field("pose-heel_height", "Heel rise above support")}
+                  {field("pose-toe_spring", "Toe spring height")}
+                  {field("toe-extension-mm", "Toe extension", true)}
                   <p className="field-note">
-                    Contact is independent of the top ball points. Seat, contact
-                    and blend locations retain their contour distances when heel
-                    height changes. Seat inclination remains your choice—not an
-                    automatic pitch rule.
+                    Shape the last directly in the guides.
                   </p>
                 </section>
               </>
@@ -142,16 +205,31 @@ export function Controls({
             type="submit"
             disabled={busy || !draft}
           >
-            {busy ? "Rebuilding…" : "Rebuild guides"}{" "}
+            {busy ? "Rebuilding…" : "Rebuild 3D"}{" "}
             <span aria-hidden="true">↗</span>
           </button>
           <button
             id="reset"
             type="button"
             disabled={busy || !canReset}
-            onClick={onReset}
+            onClick={() => {
+              setResizeLength("");
+              onReset();
+            }}
           >
-            Reset to example
+            Reset example
+          </button>
+          <button
+            id="discard-pending"
+            className="discard-pending"
+            type="button"
+            disabled={busy || !canDiscard}
+            onClick={() => {
+              setResizeLength("");
+              onDiscard();
+            }}
+          >
+            Discard changes
           </button>
           <a className="back-to-views" href="#views">
             Back to guides ↑

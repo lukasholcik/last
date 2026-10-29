@@ -3,21 +3,22 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { api } from "~/trpc/react";
-import type { ContourInput, LastState } from "~/lib/geometry/types";
+import type { FootFirstInput, LastState } from "~/lib/geometry/types";
+import {
+  resetLastOutlinePoint,
+  type ShapeHandle,
+  type TopAnchorId,
+} from "~/lib/shaping";
 import { AlignedGuides } from "./AlignedGuides";
 import { Controls } from "./Controls";
 import { Reports } from "./Reports";
 import { Scene } from "./Scene";
-import {
-  DraftError,
-  RequestGate,
-  parseDraft,
-  passingResult,
-  toDraft,
-  viewState,
-  type Draft,
-  type Phase,
-} from "./state";
+import { SectionEditor } from "./SectionEditor";
+import { HeelWraps } from "./HeelWraps";
+import type { CrossSectionId } from "~/lib/geometry/section-types";
+import { is3DOutdated } from "./editable-2d";
+import { useEditable2D } from "./useEditable2D";
+import { RequestGate, passingResult, viewState, type Phase } from "./state";
 
 export function Workbench() {
   const defaults = api.last.defaults.useQuery(undefined, {
@@ -26,21 +27,36 @@ export function Workbench() {
     retry: false,
   });
   const { mutateAsync } = api.last.rebuild.useMutation();
-  const [base, setBase] = useState<ContourInput | null>(null),
-    [draft, setDraft] = useState<Draft | null>(null);
-  const [result, setResult] = useState<LastState | null>(null),
-    [phase, setPhase] = useState<Phase>("loading");
+  const [result, setResult] = useState<LastState | null>(null);
   const [busy, setBusy] = useState(false),
-    [error, setError] = useState<string | null>(null);
+    [rebuildError, setRebuildError] = useState<string | null>(null);
   const [construction, setConstruction] = useState(false),
     [selection, setSelection] = useState<string | null>(null);
+  const [selectedShapeId, setSelectedShapeId] = useState<
+    ShapeHandle["id"] | null
+  >(null);
+  const [rebuildRevision, setRebuildRevision] = useState(0);
+  const [sectionSelection, setSelectedSection] =
+    useState<CrossSectionId>("ball");
   const gate = useRef(new RequestGate()),
+    initialized = useRef(false),
     active = useRef(false),
     busyRef = useRef(false),
     errorElement = useRef<HTMLDivElement>(null);
+  const onRevision = useCallback(() => gate.current.edit(), []);
+  const { session, state } = useEditable2D(onRevision);
+  const split = state.validated?.inputs.cross_sections?.split_midfoot;
+  const selectedSection =
+    split && sectionSelection === "midfoot"
+      ? "waist"
+      : !split &&
+          (sectionSelection === "waist" || sectionSelection === "instep")
+        ? "midfoot"
+        : sectionSelection;
+
   useEffect(() => {
-    const currentGate = gate.current;
     active.current = true;
+    const currentGate = gate.current;
     return () => {
       active.current = false;
       currentGate.invalidate();
@@ -48,112 +64,171 @@ export function Workbench() {
     };
   }, []);
   const run = useCallback(
-    async (input: ContourInput) => {
+    async (input: FootFirstInput) => {
       if (busyRef.current) return;
+      const gestureState = session.getSnapshot();
+      if (gestureState.dragging) return;
       const ticket = gate.current.begin();
       busyRef.current = true;
       setBusy(true);
-      setError(null);
-      setPhase("busy");
+      setRebuildError(null);
       try {
         const value = await mutateAsync(structuredClone(input));
         if (!active.current || !gate.current.accepts(ticket)) return;
         if (!passingResult(value))
           throw new Error(
-            "The server did not return passing top, bottom and contour reports. The result has not been applied.",
+            "The server did not return passing foot, last, bottom, contour and centre-section reports. The 3D checkpoint has not been applied.",
           );
         setResult(value);
-        setBase(value.inputs);
+        session.acceptRebuild(value);
+        setRebuildRevision((revision) => revision + 1);
         setSelection(null);
-        setPhase("valid");
       } catch (caught) {
-        if (active.current && gate.current.accepts(ticket)) {
-          setError(
+        if (active.current && gate.current.accepts(ticket))
+          setRebuildError(
             caught instanceof Error
               ? caught.message
-              : "Unable to rebuild guides.",
+              : "Unable to rebuild the 3D/report checkpoint.",
           );
-          setPhase("error");
-        }
       } finally {
         if (active.current && gate.current.latest(ticket)) {
           busyRef.current = false;
           setBusy(false);
-          if (!gate.current.accepts(ticket)) setPhase("dirty");
         }
       }
     },
-    [mutateAsync],
+    [mutateAsync, session],
   );
   useEffect(() => {
     const input = defaults.data;
-    if (!input) return;
+    if (!input || initialized.current) return;
     let cancelled = false;
-    // Schedule query delivery once mounted; StrictMode cleanup cancels the first delivery.
     queueMicrotask(() => {
-      if (cancelled || !active.current) return;
-      setBase(input);
-      setDraft(toDraft(input));
+      if (cancelled || !active.current || initialized.current) return;
+      initialized.current = true;
+      session.load(input);
       void run(input);
     });
     return () => {
       cancelled = true;
     };
-  }, [defaults.data, run]);
+  }, [defaults.data, run, session]);
+  // Do not steal focus when a numeric field is temporarily blank during typing.
   useEffect(() => {
-    if (error) errorElement.current?.focus();
-  }, [error]);
+    if (rebuildError) errorElement.current?.focus();
+  }, [rebuildError]);
 
+  const beginShape = useCallback(() => {
+    if (busyRef.current) return null;
+    setRebuildError(null);
+    return session.beginGesture();
+  }, [session]);
+  const finishShape = useCallback(
+    (token: number, input: FootFirstInput, _feedback: string) => {
+      const accepted = session.finishGesture(token, input);
+      setSelection(
+        accepted
+          ? null
+          : (session.getSnapshot().error ??
+              "Edit cancelled: a newer edit replaced this gesture."),
+      );
+      return accepted;
+    },
+    [session],
+  );
   function edit(id: string, value: string) {
-    gate.current.edit();
-    setDraft((current) => ({ ...current, [id]: value }));
-    setError(null);
-    setPhase("dirty");
+    setRebuildError(null);
+    session.editField(id, value);
   }
   function submit() {
-    if (busyRef.current || !base || !draft) return;
-    try {
-      void run(parseDraft(base, draft));
-    } catch (caught) {
-      setError(
-        caught instanceof Error
-          ? caught.message
-          : "Enter finite numeric dimensions.",
+    const current = session.getSnapshot();
+    if (busyRef.current || current.dragging) return;
+    if (!current.validated || current.draftInvalid) {
+      setRebuildError(
+        "Correct the numeric draft or discard it before rebuilding 3D and reports.",
       );
-      setPhase("error");
-      if (caught instanceof DraftError)
-        document.getElementById(caught.fieldId)?.focus();
+      return;
     }
+    void run(current.validated.inputs);
   }
   function reset() {
     if (busyRef.current || !defaults.data) return;
-    gate.current.edit();
-    setDraft(toDraft(defaults.data));
-    setBase(defaults.data);
+    session.load(defaults.data);
     setSelection(null);
-    void run(defaults.data);
+    setSelectedShapeId(null);
+    setRebuildError(null);
   }
-  const defaultError = defaults.error?.message;
-  const shownError = error ?? defaultError;
-  const effectivePhase = defaultError && !result ? "error" : phase;
-  const title = {
-    loading: "Loading example",
-    busy: "Rebuilding both guides",
-    dirty: "Unapplied changes",
-    valid: "Current geometry · checks passed",
-    error: "Rebuild not applied",
-  }[effectivePhase];
-  const detail = {
-    loading: "Geometry is calculated locally by the TypeScript model.",
-    busy: "Calculating and checking the actual curves in TypeScript…",
-    dirty:
-      "Rebuild explicitly to calculate and check these numbers. Views retain the last valid result.",
-    valid:
-      "Top, bottom and contour checks passed on the resulting curves. This does not establish shoe fit.",
-    error:
-      "The current inputs have not passed. Any visible guides and reports are from the last valid rebuild.",
-  }[effectivePhase];
-  const viewLabel = viewState(effectivePhase, !!result);
+  function discard() {
+    if (busyRef.current || !result) return;
+    session.discardToRebuild(result);
+    setRebuildError(null);
+    setSelection("Restored last 3D checkpoint.");
+  }
+  const chooseShape = useCallback((id: ShapeHandle["id"] | null) => {
+    setSelectedShapeId(id);
+    setSelection(null);
+  }, []);
+  function resetPoint(anchor: TopAnchorId) {
+    const current = session.getSnapshot();
+    if (
+      busyRef.current ||
+      current.dragging ||
+      current.draftInvalid ||
+      !current.validated
+    )
+      return;
+    const accepted = session.applyInput(
+      resetLastOutlinePoint(current.validated.inputs, anchor),
+    );
+    setSelection(accepted ? null : session.getSnapshot().error);
+  }
+  const stale3D = is3DOutdated(result, state);
+  const shownError =
+    state.error ?? rebuildError ?? defaults.error?.message ?? null;
+  const geometry = state.provisional ?? state.validated;
+  const phase: Phase = busy
+    ? "busy"
+    : shownError
+      ? "error"
+      : !geometry
+        ? "loading"
+        : stale3D
+          ? "dirty"
+          : "valid";
+  const checkpointPhase: Phase = result
+    ? stale3D
+      ? "dirty"
+      : "valid"
+    : "loading";
+  const checkpointLabel = viewState(checkpointPhase, !!result);
+  const drawingLabel = state.dragging
+    ? "2D provisional"
+    : state.draftInvalid
+      ? "2D retained · correct the value"
+      : state.error
+        ? "2D retained · edit rejected"
+        : state.validated
+          ? "2D checked"
+          : "Loading 2D";
+  const title = busy
+    ? "Rebuilding 3D"
+    : state.dragging
+      ? "Editing 2D"
+      : state.draftInvalid
+        ? "Value not applied"
+        : state.error
+          ? "Edit rejected · 2D retained"
+          : !geometry
+            ? "Loading example"
+            : stale3D
+              ? "2D ready · 3D out of date"
+              : "2D and 3D up to date";
+  const detail = state.dragging
+    ? "Provisional until release."
+    : state.draftInvalid
+      ? "Correct the value or discard changes."
+      : "Rebuild updates 3D and reports.";
+
   return (
     <>
       <header className="masthead">
@@ -172,20 +247,45 @@ export function Workbench() {
           <a href="#controls">Edit dimensions ↓</a>
         </nav>
         <Controls
-          draft={draft}
+          draft={state.draft}
+          result={result}
+          reference={
+            state.validated?.inputs.reference ?? defaults.data?.reference
+          }
           busy={busy}
           canReset={!!defaults.data}
+          canDiscard={!!result && (stale3D || !!shownError)}
           onEdit={edit}
+          onResize={(length) => {
+            setRebuildError(null);
+            return session.resize(length);
+          }}
           onSubmit={submit}
           onReset={reset}
+          onDiscard={discard}
         />
         <section
           className="workspace"
           id="views"
-          data-state={effectivePhase}
+          data-state={phase}
+          data-2d-status={
+            state.dragging
+              ? "provisional"
+              : state.draftInvalid
+                ? "invalid-draft"
+                : state.error
+                  ? "rejected"
+                  : state.validated
+                    ? "validated"
+                    : "loading"
+          }
+          data-preview-ms={state.previewMs ?? undefined}
+          data-2d-version={state.version}
+          data-3d-revision={rebuildRevision}
+          data-3d-stale={stale3D}
           aria-label="Geometry inspection"
         >
-          <div className="state-bar" id="state-bar" data-state={effectivePhase}>
+          <div className="state-bar" id="state-bar" data-state={phase}>
             <span className="state-dot" aria-hidden="true" />
             <div>
               <strong id="state-title" role="status" aria-live="polite">
@@ -206,7 +306,9 @@ export function Workbench() {
             </div>
           )}
           <AlignedGuides
-            result={result}
+            selectedSection={selectedSection}
+            result={geometry}
+            editable={state.validated}
             construction={construction}
             onConstruction={(value) => {
               setConstruction(value);
@@ -214,10 +316,55 @@ export function Workbench() {
             }}
             selection={selection}
             onSelect={setSelection}
-            viewLabel={viewLabel}
+            viewLabel={drawingLabel}
+            enabled={!!state.validated && !state.draftInvalid && !busy}
+            version={state.version}
+            dragging={state.dragging}
+            previewError={state.previewError}
+            onBegin={beginShape}
+            onPreview={session.queuePreview}
+            onFinish={finishShape}
+            onCancel={session.cancelGesture}
+            selectedId={selectedShapeId}
+            onChoose={chooseShape}
+            onResetPoint={resetPoint}
           />
-          <Scene display={result?.display} viewLabel={viewLabel} />
-          <Reports result={result} phase={effectivePhase} />
+          <SectionEditor
+            geometry={geometry}
+            editable={state.validated}
+            selected={selectedSection}
+            onSelect={setSelectedSection}
+            onMessage={setSelection}
+            enabled={!!state.validated && !state.draftInvalid && !busy}
+            dragging={state.dragging}
+            version={state.version}
+            onBegin={beginShape}
+            onPreview={session.queuePreview}
+            onFinish={finishShape}
+            onCancel={session.cancelGesture}
+          />
+          <Scene
+            display={result?.display}
+            viewLabel={checkpointLabel}
+            selectedSection={selectedSection}
+          />
+          <HeelWraps
+            result={result}
+            stale={stale3D}
+            geometry={state.validated}
+            enabled={
+              !!state.validated &&
+              !state.draftInvalid &&
+              !busy &&
+              !state.dragging
+            }
+            onApply={(input) => {
+              const accepted = session.applyInput(input);
+              setSelection(accepted ? null : session.getSnapshot().error);
+              return accepted;
+            }}
+          />
+          <Reports result={result} phase={checkpointPhase} />
         </section>
       </main>
     </>

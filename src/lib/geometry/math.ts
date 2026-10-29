@@ -88,6 +88,25 @@ export function bezier(p: Cubic, t: number): Vec2 {
     sum(p.map((v, i) => w[i]! * v[1])),
   ];
 }
+/** Invert a certified monotone forward cubic's actual y, including non-third handles. */
+export function parameterAtY(p: Cubic, y: number): number {
+  if (
+    !Number.isFinite(y) ||
+    y < p[0][0] - 32 * ulp(p[0][0]) ||
+    y > p[3][0] + 32 * ulp(p[3][0])
+  )
+    throw new InputError("point is outside the forward cubic");
+  if (y <= p[0][0]) return 0;
+  if (y >= p[3][0]) return 1;
+  let lo = 0,
+    hi = 1;
+  for (let i = 0; i < 56; i++) {
+    const t = (lo + hi) / 2;
+    if (bezier(p, t)[0] < y) lo = t;
+    else hi = t;
+  }
+  return (lo + hi) / 2;
+}
 export function derivativeRoots([p0, p1, p2, p3]: readonly number[]): number[] {
   if (
     p0 === undefined ||

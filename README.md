@@ -1,7 +1,8 @@
 # Last guide viewer and numeric experiments
 
-A local TypeScript application for the **outer silhouette seen from above** and an open longitudinal bottom guide.
-It does not model the sole edge, upper surface, foot, or shoe fit.
+A local TypeScript application for synthetic reference-foot and **outer last silhouettes seen from above**, a longitudinal bottom,
+and a closed designed centre section at x=0.
+The outlines are inferred templates, not measured foot traces. It does not model the sole edge, upper surface, or shoe fit.
 Python numeric/SVG experiments remain as legacy references, not the production geometry runtime.
 The example is made-up design data, not a measured foot or a population average.
 
@@ -30,18 +31,72 @@ pnpm test
 The first line builds and runs the local production application; `check` runs ESLint and strict TypeScript,
 and `test` runs the current TypeScript/Vitest suite. Neither runtime nor these checks requires Python.
 
-The viewer now uses **250 mm along the bottom contour**, not a 250 mm forward projection.
-`examples/contour-baseline.json` is a new designed target, deliberately not a migration preserving the old shape.
-It is the single input document: `design.last_length`, top `_s` contour stations and side widths,
-and bottom heel height, toe spring, seat arc length/angle, contact contour station, and blend arc length.
-Forward projection and all `_y` stations are calculated, not competing editable numbers.
+The canonical input is now schema 4, kind `foot_first_last`, with the synthetic default in
+`examples/foot-first-baseline.json`. It is not an automatic migration of the old 250 mm contour target.
+Original reference dimensions/provenance remain separate from working foot length F and width basis W.
+Eight template landmarks are fractions of **foot F**, with side extents proportional to **W**. Last extension E is
+`toe_extension_ratio × W`; the pose-invariant reference last length is L0=F+E. The width basis is not a guarantee
+that any generated full section has that width; actual section measurements are reported separately.
+Direct length editing changes F only. **Resize model** scales working F and W by newF/oldF, without overwriting source reference data.
 
-The single production geometry module, `src/lib/geometry` (`~/lib/geometry`), adapts those inputs to the ported constructors.
-It is independent of React, Three.js, transport, and filesystem access. Raising the heel preserves each region's
-contour length and maps each top station separately, keeping entered widths—not a uniform scaling of the top.
-The baseline's seat/waist/blend/ramp arcs are 50/125/10/65 mm. Keeping these regions fixed is our explicit
-prototype rule, not a vendor algorithm, anatomical law, or validated high-heel posture transformation.
-Seat inclination remains a user control. Impossible combinations are rejected; length is not borrowed from another region.
+The default F=250 mm, W=100 mm and extension ratio .10 produce E=10 mm and L0=260 mm.
+The adjustable effective radius is r=.05F, a **synthetic development heuristic**, not an anatomical ratio.
+The medial-ball reference station A alone anchors the posture calculation:
+`H=A sin(theta)+r(1−cos(theta))`, `delta=r theta` (theta in radians). The allowance delta is added only to the bottom waist;
+posed total contour is L0+delta and contact is A+delta. There is no independent last-length, contact, or bend-angle input.
+Seat offset is signed: zero means no extra angle, while actual rear angle is theta plus offset in [0°,90°). Toe spring remains separate.
+The existing four bottom cubic rules remain, but the old fixed-waist preservation rule does not.
+See [the foot-first model](docs/foot-first-model.md) for the complete schema, units, equations, defaults, and validation boundaries.
+
+The required `centre_section` retains seven F-based anchor/local-depth ratios and adds explicit heel/instep controls. Two `design` fractions control actual arch-handle reaches; see the [control table](docs/centre-section.md#eight-shape-controls-schema-4).
+At F=250 these depths are 75/55/30/15 mm: synthetic engineering choices, not measured foot heights, girths, or population defaults.
+Heel edits rebuild the actual upper section while authored depths, source values, and both unbent reference silhouettes stay unchanged.
+The previous lower guide is now explicitly adopted as the section's **designed lower boundary**, not a measured anatomical
+centreline or bottom surface. This is a new approved prototype assumption. See [the centre-section contract](docs/centre-section.md).
+
+Minimal complete schema-4 example (descriptions abbreviated; existing foot/template/design/pose values are preserved):
+
+```json
+{
+  "schema_version": 4, "kind": "foot_first_last", "units": "mm",
+  "description": "Synthetic development example, not measured foot data",
+  "reference": {
+    "provenance": "synthetic", "description": "Original synthetic dimensions",
+    "width_definition": "Transverse forefoot width basis at the medial-ball reference station; not a measured tracing",
+    "foot_length": 250, "foot_width": 100
+  },
+  "foot": { "length": 250, "width": 100 },
+  "template": {
+    "medial_heel": { "station_ratio": 0.12, "side_extent_ratio": 0.28 },
+    "medial_waist": { "station_ratio": 0.40, "side_extent_ratio": 0.29 },
+    "medial_ball": { "station_ratio": 0.70, "side_extent_ratio": 0.46 },
+    "medial_toe": { "station_ratio": 0.88, "side_extent_ratio": 0.33 },
+    "lateral_heel": { "station_ratio": 0.12, "side_extent_ratio": 0.29 },
+    "lateral_waist": { "station_ratio": 0.40, "side_extent_ratio": 0.32 },
+    "lateral_ball": { "station_ratio": 0.66, "side_extent_ratio": 0.48 },
+    "lateral_toe": { "station_ratio": 0.88, "side_extent_ratio": 0.31 }
+  },
+  "design": {
+    "toe_extension_ratio": 0.10, "seat_arc_ratio": 0.20,
+    "blend_arc_ratio": 0.04, "bend_radius_ratio": 0.05,
+    "arch_start_reach_ratio": 0.3333333333333333, "arch_contact_reach_ratio": 0.3333333333333333
+  },
+  "pose": { "heel_height": 8, "toe_spring": 10, "seat_inclination_deg": 2 },
+  "centre_section": {
+    "top_rear_station_ratio": 0.04, "top_front_station_ratio": 0.28,
+    "toe_roof_station_ratio": 0.92, "top_front_height_ratio": 0.30,
+    "waist_height_ratio": 0.22, "ball_height_ratio": 0.12, "toe_roof_height_ratio": 0.06,
+    "heel_leave_outward_deg": 10, "heel_bulge_ratio": 0.02,
+    "instep_front_handle_ratio": 0.06, "instep_waist_handle_ratio": 0.04,
+    "instep_front_down_offset_deg": 50, "instep_waist_down_offset_deg": 35
+  }
+}
+```
+
+The single production geometry module, `src/lib/geometry` (`~/lib/geometry`), is independent of React, Three.js,
+transport, and filesystem access. Pose changes leave both unbent reference silhouettes and their reports unchanged.
+Toe extension changes the last's terminal taper without moving foot anchors. Impossible combinations are rejected,
+not repaired by changing seat angle or borrowing arc length. The allowance is not a literal rendered circular arc or a skin-stretch/fit prediction.
 
 The React viewer interaction contract covers numeric edits, the existing top/side guides, and rotatable 3D reference lines;
 browser acceptance of that port is a separate check from numeric/API validation.
@@ -49,20 +104,37 @@ These are made-up **design** values, not foot measurements. Edits exist only in 
 rebuilding does not overwrite examples or save files. Reloading starts from the example defaults. No save feature yet.
 Every edit invalidates the previous passed state and is marked as unapplied. Last-valid results may stay visible as reference,
 but only a successful explicit rebuild for the current revision may restore passed status; stale responses must not replace newer edits.
-The two 2D views use a shared uniform scale. The 3D view uses sampled curves, not dimensional measuring tools.
-Placing the top at z=0 and the bottom guide at x=0 is **display-only embedding**: it does not define
-a 3D last, anatomical centreline, upper/bottom surface, or bottom perimeter.
+The two 2D views in “One forward direction” use a shared uniform scale and forward direction, not coincident toe ends
+or equal extents: the top is unbent, while the bottom shows its calculated projection.
+The unbent plan models stay unchanged; their 3D last copy bends by `(x,s) → (x,y_bottom(g(s)),z_bottom(g(s)))` at actual bottom arc distance g(s),
+where a C1 smoothstep distributes delta between seat S and medial ball A; it is identity before S and adds delta after A.
+Lateral x is retained. The bottom guide is displayed at x=0. This is a user-chosen **prototype display correspondence**,
+not a sourced anatomical or vendor algorithm, foot-height model, physical upper surface, bottom perimeter/featherline,
+printable last, or fit claim. The 3D view uses sampled curves, not dimensional measuring tools.
+The new upper centre-section roof reuses that correspondence as a separate approved convention:
+`Q(s)=(y_bottom(g(s)),z_bottom(g(s))+h(s))`, with vertical depth h defined by three C1 height cubics in reference (s,h).
+It is not a normal offset, theta rotation, dorsal-strain model, or conserved upper path. The composed roof is generally not a posed cubic.
+The closed section includes toe/rear caps and a horizontal top cut, with specified smooth joins and intentional heel/toe/top-cut corners.
+It is a centre-plane section, not a side envelope, full surface, cutting operation, printable solid, or guarantee of symmetric halves.
 
 The `dev` and `start` scripts bind only to 127.0.0.1. Next serves the application; tRPC is mounted at `/api/trpc`.
-`last.defaults` is a GET query returning the single `contour_last` document (schema 1);
+`last.defaults` is a GET query returning the single `foot_first_last` document (schema 4);
 `last.rebuild` is a POST mutation whose typed domain input is that document, not a separate top/bottom wrapper.
 Use the generated tRPC client for its wire envelope rather than the old REST endpoints.
 POST requests require JSON and matching supplied Origin/Host values; the 64 KiB body limit is enforced while reading the stream,
 including when Content-Length is absent or understated.
-The old `{top, bottom}` payload is rejected clearly, not silently converted.
-Successful rebuilds return that input, models, derived projection/station mapping, three validation reports,
-and 65-point samples per named curve. Actual contour lengths and station round trips are checked to 0.01 mm
-using tight cubic arc-length bounds; top/bottom shape reports retain their existing meanings and tolerances.
+Schema 2, schema 1 `contour_last`, and old projected `{top, bottom}` payloads are rejected explicitly, with no silent conversion.
+Missing/partial/extra `centre_section` fields and string numbers reject; there are no hidden fills or coercion.
+Successful rebuilds return the input, `models.foot` (parametric reference foot), `models.top` (unbent extended reference last),
+`models.bottom` (posed lower boundary), `models.section` (closed x=0 design section), and unchanged existing `resolved` dimensions.
+All five reports—`foot`, `top`, `bottom`, `contour`, `section`—must pass. Actual total/regional contour lengths and station
+round trips are checked to 0.01 mm using tight cubic bounds. Section checks use authoritative geometry/control certificates,
+not input echoes or dense display samples as proof of closure, separation, bounds, or tangency.
+`derived.projected_length` is the bottom-only horizontal diagnostic, not a design target.
+`derived.station_map` entries contain `{reference_s,posed_s,y,z}`; `derived.bottom_stations` contains posed arc stations.
+`display.top` is the bent last copy, `display.bottom` samples the lower boundary, and `display.section` samples the complete section.
+The existing foot/top/bottom models, their four reports, resolved/derived values, and top/bottom display values are preserved
+for unchanged existing inputs. Section samples are display-only; public section recipes/evaluators are authoritative. No surface is generated.
 Invalid inputs return 400; failed geometry checks return 422 with reports rather than successful models.
 Unexpected errors return a sanitized 500 without private exception messages or development stacks.
 This is a local experiment, not a public deployment setup.
@@ -72,19 +144,21 @@ not a source of last geometry or fit rules. If dependencies are missing, run `pn
 
 ### Verification and reference boundary
 
-Nine frozen Python-generated fixtures in `tests-ts/fixtures` check cross-language parity of models, reports, derived data,
-and curve samples. Independent TypeScript tests also check integration, regional lengths, station mapping, widths, joins,
+Nine frozen Python-generated fixtures in `tests-ts/fixtures` provide low-level parity references for primitive top/bottom
+generation and legacy contour helpers—not full current schema-4 API/model parity, posture allowance, or centre-section validation.
+Independent TypeScript tests also check integration, regional lengths, station mapping, widths, joins,
 ground contact, and boundary regressions. Passing fixture comparisons alone is not a general proof for arbitrary inputs.
 The historical 86-test Python suite remains optional reference coverage, not a claim that every Python test was ported to TypeScript.
 
-Only when intentionally regenerating the reference fixtures, run:
+The historical fixture-generation command is:
 
 ```sh
 python3 scripts/generate-reference-fixtures.py
 ```
 
-This optional reference operation rewrites the frozen fixtures; it is not part of install, build, runtime, or ordinary tests.
-`viewer_server.py`, `web/`, and the Python geometry are retained temporarily for comparisons, not as a second supported production viewer.
+It rewrites the frozen fixtures; do not use it to replace the references for this semantics change.
+The fixtures, `viewer_server.py`, `web/`, and the Python geometry intentionally retain their prior semantics and remain immutable
+comparison references, not a second supported production viewer. Python is not part of install, build, runtime, or ordinary tests.
 The current startup is the pnpm/Next workflow above, not the old Python server.
 
 Dependency note: the production dependency audit is clean. A known unpatched `braces` advisory remains in development-only
@@ -93,7 +167,8 @@ ESLint tooling; pnpm reports it as one high advisory. This is not a claim that t
 ## Run the legacy SVG experiments (optional Python reference)
 
 The commands and examples below remain **legacy projected-length experiments**, unchanged for comparison.
-Their `length: 250` still means 250 mm in the forward direction; the viewer's contour target does not relabel it.
+Their `length: 250` still means 250 mm in the forward direction; the foot-first model does not relabel it.
+`examples/contour-baseline.json` likewise remains a historical schema-1 contour experiment, not accepted by the current API.
 
 Python 3.14 is available in the development environment. The numeric/SVG commands need only the standard library.
 
@@ -202,7 +277,7 @@ There is no free handle editing, toe-space guarantee, or 3D geometry yet.
 Printing a matching shape does not establish fit. Fit must eventually be checked in an actual shoe.
 See [the concept](docs/concept.md) and [software research](docs/software-research.md) for later questions.
 
-## Bottom-guide experiment
+## Legacy bottom-guide experiment
 
 The [bottom-profile specification](docs/bottom-profile.md) now has a separate numeric/SVG implementation.
 It uses sourced last heel-height and toe-spring meanings, with our explicitly assumed four-curve rule.

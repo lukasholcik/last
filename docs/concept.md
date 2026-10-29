@@ -5,12 +5,19 @@ its shape also depends on the shoe we want to make, its materials, and how it is
 
 This is a working discussion document, not a finished implementation plan.
 The prototypes generate a numeric top outline and a separate longitudinal bottom guide with SVG diagrams.
-The browser viewer contract adds numeric editing, 2D views, and rotatable 3D reference guides, not a last surface.
+The browser viewer contract adds numeric editing, 2D views, rotatable 3D reference lines, and a closed designed x=0 centre section,
+not a last surface, side envelope, cutting operation, or printable solid.
 The current application uses Next.js/React/TypeScript with tRPC and one production TypeScript geometry module;
 Python/SVG tools remain reference experiments, not browser runtime dependencies.
 Edits do not overwrite example files and there is no save feature yet. React/browser acceptance is separate from the numeric/API review.
-Its new designed last-length target is **250 mm along the bottom contour**, not the previous 250 mm projection.
-This deliberately creates a new shape rather than preserving the old baseline. Legacy projected experiments remain unchanged.
+The agreed [foot-first model](foot-first-model.md) separates original source reference data, working foot dimensions,
+normalized template/design rules, and pose. Its new synthetic example is `examples/foot-first-baseline.json`:
+F=250 mm, W=100 mm, extension E=.10W=10 mm, reference last L0=260 mm, plus a calculated posture allowance.
+Both unbent reference silhouettes are pose-invariant. This is not a migration of the previous 250 mm contour baseline;
+all older examples and reference implementations retain their historical semantics.
+The current schema 3 also requires [centre-section controls](centre-section.md). Its vertical depths are designed offsets above
+the posed lower boundary, not source-foot heights or girths. The lower guide is now adopted as that designed boundary by explicit
+user approval, still not as a measured anatomical centreline or bottom surface.
 Below, **agreed** means decided, **recommended** means a suggestion, and **still to decide** means an open question.
 
 ## What we're aiming for — agreed
@@ -54,15 +61,18 @@ Also make clear whether a number describes the foot, the guiding points and curv
 
 We also agree to distinguish **entered numbers** from **calculated numbers**.
 This is a separate distinction: a chosen design value can be either entered or calculated.
-For example, we could calculate last length from reference foot length plus chosen toe extension.
-That formula and which values can be edited directly are recommendations, not yet settled rules.
+The approved current rule calculates reference last length L0 from working foot length F plus extension E,
+where E is an entered nonnegative ratio of working width basis W. There is no independent last-length input.
+Original reference F0/W0, provenance, and width definition remain unchanged when adapting working F/W or pose.
+Direct F editing leaves W independent; the explicit Resize model action scales both working dimensions by newF/oldF.
 Show which numbers are calculated and what they depend on; never change recorded foot measurements silently.
 
 ## Example measurements for development
 
 You asked to start with example measurements based on averages rather than your own foot.
 Until we choose a named dataset describing a particular group of people, call these **made-up example measurements**,
-not true population averages. `examples/baseline.json` now supplies made-up design values for the first prototype.
+not true population averages. `examples/foot-first-baseline.json` supplies the current synthetic engineering values;
+`examples/baseline.json` remains the historical first prototype.
 Even if an example fills a field called “foot width”, label it as an example, not a real observation.
 
 **Recommended:** try a starting example, a wider forefoot, a higher instep, and different toe arrangements.
@@ -90,7 +100,9 @@ Before modelling, agree what each number means and how point positions are writt
 where we measure from, which direction is forward, and which is up.
 For example, everyone should interpret “width at this point” the same way.
 The foot outline will use numbered point positions; a photograph is not required.
-Exactly which points to use and how to measure them remain to be worked out.
+The current template uses eight named heel/waist/ball/toe side landmarks, not measured traces.
+Personal measurement procedures remain to be worked out. The width basis is not necessarily an exact generated section width;
+actual full sections are separate report measurements, and staggered ball extents must not be added as one measured width.
 Actual foot-measuring tools, standing position, weight on the foot, and repeat checks can wait until personal adaptation.
 
 ## Toe shape — recommended controls
@@ -107,8 +119,8 @@ Possible controls are:
 
 These controls may affect one another. Useful combinations and limits still need testing.
 Show the preset's numbers and guesses. A nice-looking toe does not prove there is enough room inside a shoe.
-Checking toe space is agreed. Showing a reference foot or toe outline over the last is an optional aid,
-not a required display; how to check the space still needs defining.
+Checking toe space is agreed, but how to establish actual clearance still needs defining.
+The current top view shows the synthetic reference foot and derived extended last distinctly; neither is a measured trace or fit proof.
 
 ## Numbers, curves, and dragging
 
@@ -118,11 +130,14 @@ The first version uses mm, named cubic curves, one rounded toe style, and indepe
 Side widths are distances from the centre line at each side's own forward position;
 their sum is not a single section width when those positions differ.
 Handles and full section widths are calculated, not separate editable numbers.
-The browser now enters top locations as contour stations `_s`, measured along the bottom guide.
-It calculates their forward positions separately; widths remain entered distances from the centre line at those positions.
-One `contour_last` document supplies last contour length and all controls. There is no second editable projected length.
-When heel height changes, the seat, waist, blend, and ramp keep their respective contour lengths; the top's forward
-positions follow their mapped stations. This is our explicit prototype assumption, not an anatomical or vendor rule.
+The browser accepts only schema-3 `foot_first_last`, with all seven required `centre_section` ratios based on F.
+Schema 2/1 and projected payloads reject; missing/partial/extra fields have no automatic defaults or migration.
+Template forward stations are fractions of foot length F,
+and side extents are fractions of width basis W; their resolved y means intrinsic reference station s, not bottom projection.
+Last extension changes the terminal taper without moving foot anchors. No independent contact or bend-angle input is accepted.
+Bottom pose does not modify either unbent silhouette or its report. The approved allowance rule adds delta only to the waist:
+seat S, waist A−S+delta, blend J, ramp L0−A−J, contact A+delta, total L0+delta, where A is medial_ball only.
+This replaces the previous fixed-waist rule and is an explicit prototype assumption, not anatomy or a vendor algorithm.
 Seat inclination stays editable; impossible height/length/angle combinations are rejected, not silently redistributed.
 See [README](../README.md) for commands, shape assumptions, and curve-based checks to 0.1 mm.
 
@@ -130,11 +145,27 @@ See [README](../README.md) for commands, shape assumptions, and curve-based chec
 Keep one production geometry implementation rather than separate browser and Blender versions of the shape rules.
 **Current implementation:** an actual create-t3-app scaffold, adapted to Next.js 16 App Router, React, TypeScript,
 Tailwind CSS, and tRPC; locally installed Three.js displays the guides. `src/lib/geometry` is independent of rendering and transport.
-The earlier plain HTML/JavaScript viewer and Python geometry are temporary comparison references, not a second production service.
+The earlier plain HTML/JavaScript viewer, Python geometry, and frozen fixtures are immutable comparison references retaining
+their prior semantics, not a second production service. Numerical parity covers primitive top/bottom generation and legacy
+contour helpers, not the current foot-first API, allowance model, or centre-section report. Schema 2/1 reject without automatic migration.
 There is no authentication, database, or automatic persistence. See [README](../README.md) for the pnpm-only setup.
-The top guide is shown at z=0 and the side guide at x=0 only for display. These reference lines do not define
-a 3D last, an anatomical centreline, or the edge of a bottom surface. The 2D views share one uniform scale;
-the sampled 3D lines are for inspection, not precise measurements.
+In “One forward direction”, the 2D views share one uniform scale and forward direction, not equal extents or coincident toe ends.
+The 3D copy of the full reference last outline is bent by `(x,s) → (x,y_bottom(g(s)),z_bottom(g(s)))`, evaluated at actual bottom arc
+distance g(s) while retaining x. A C1 smoothstep adds delta over seat S to medial ball A; see [the equations](foot-first-model.md#reference-to-posed-display-correspondence).
+The side guide is displayed at x=0. This is the user's chosen prototype display correspondence, not a skin-strain field,
+not a sourced anatomical or vendor algorithm. It defines no foot height, physical upper surface, bottom perimeter/featherline,
+printable last, or fit claim. The sampled 3D lines are for inspection, not precise measurements.
+The result contains `models.foot`, unbent `models.top`, posed `models.bottom`, closed `models.section`, unchanged existing resolved
+dimensions, and five required passing reports (`foot`, `top`, `bottom`, `contour`, `section`). `derived.projected_length` is a secondary bottom diagnostic;
+`derived.station_map` records `{reference_s,posed_s,y,z}`. `display.top` is the bent last copy, `display.bottom` the guide samples.
+`display.section` shows the section boundary, not a surface. The actual upper roof is `Q(s)=P(g(s))+[0,h(s)]`, a vertical depth
+above the actual posed bottom. Reusing g for this new section is an approved construction convention, not dorsal strain,
+normal-offset deformation, a theta rotation, or upper-path conservation. Heel edits rebuild that actual upper geometry while
+authored depths, source observations, and both reference silhouettes remain unchanged. C1 height interpolation and selected
+G1 joins coexist with intentional lower heel/toe and roof/top-cut corners; the entire section is not claimed smooth or cubic.
+All seven controls show %F and resolved mm. The synthetic F=250 depths 75/55/30/15 mm are engineering choices, not population
+or measured-foot defaults. Resize scales F-based depths; W-only edits do not. Toe extension moves the last-tip closure,
+not the F-based roof knots. No symmetric-halves, full-last clearance, or printing feature follows from a closed centre section.
 Blender may be an optional export destination, not the primary app or a required geometry engine.
 Attach controls to named regions such as the heel or toe, relative to the guiding shape,
 not to vertex numbers that may change when the mesh is rebuilt.
@@ -168,17 +199,20 @@ Toe spring is a height here, not an angle. For our proposed drawing, horizontal 
 These replace the loose “tip of heel” and “front of foot” descriptions, not the existing top-outline inputs.
 
 The approved [bottom-profile specification](bottom-profile.md) now has a numeric/SVG experiment.
-Its new contour-length adapter reuses the same shape constructors, with a separate input format and tight arc-length checks.
+The current foot-first resolver reuses the four bottom constructors and tight actual-arc checks, with a waist-only allowance.
 It describes a side-view guide through the heel seat, waist, rounded contact transition, and straight inclined forepart,
-not a validated 3D bottom. You approved a 10 mm development transition instead of the rejected S-shaped toe rise;
-this is an explicit design choice, not an anatomical default. The positive-height toe does not flatten again.
+not a validated 3D bottom. You approved the rounded transition instead of the rejected S-shaped toe rise;
+the current blend is .04F (10 mm at F=250). This is an explicit design choice, not an anatomical default.
+The positive-height toe does not flatten again.
 The breast is the front of the heel seat; the tread is the forepart contact region
 ([Bird anatomy reference](https://shoemaking.wiki/The_Anatomy_of_a_Shoe_Last)).
 Neither endpoint heights nor these names determine the whole curve. Curve rules remain our assumptions to state and check.
 
 Raising the heel is not just rotating an unchanged foot or last. Posture can change the shape needed.
-We have not chosen a tested formula for changing the last with heel elevation.
-Research about posture does not provide that formula. How elevation and the bottom shape work together is still open.
+The user approved a synthetic allowance heuristic after the [research report](../reports/Heel%20elevation%20and%20plantar%20length.md),
+not a scientifically validated physiological formula: r=.05F is adjustable, `H=A sin(theta)+r(1−cos(theta))`, delta=r theta.
+The radius controls allowance only, not rendered circular curvature. Research supplies neither a universal skin-path predictor
+nor evidence for this 5% default. Actual bottom feasibility remains independent; no seat angle adapts automatically.
 
 ## Recommended steps
 

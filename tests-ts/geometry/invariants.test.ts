@@ -1,14 +1,16 @@
 import { describe, it, expect, vi } from "vitest";
 import * as contourModule from "../../src/lib/geometry/contour";
 import {
-  buildLast,
-  parseContourInput,
   InputError,
-  GeometryValidationError,
   type Cubic,
-  type LastState,
+  type LegacyLastState as LastState,
   type ProjectedBottom,
 } from "../../src/lib/geometry";
+import {
+  buildLegacyLast as buildLast,
+  LegacyGeometryValidationError as GeometryValidationError,
+} from "../../src/lib/geometry/legacy";
+import { parseContourInput } from "../../src/lib/geometry/contour";
 import { STATIONS, validateContour } from "../../src/lib/geometry/contour";
 import {
   bottomCurvePoints,
@@ -53,7 +55,7 @@ function projected(state: LastState): ProjectedBottom {
   };
 }
 
-describe("independent invariants, not just Python snapshots", () => {
+describe("schema-1 reference invariants, not just Python snapshots", () => {
   it("entry point refuses a failed report from any of the three validators", () => {
     const state = buildLast(baseline.input);
     for (const name of ["top", "bottom", "contour"] as const) {
@@ -99,7 +101,7 @@ describe("independent invariants, not just Python snapshots", () => {
         0.001,
       );
       for (const name of STATIONS) {
-        const y = state.models.top.points[name]!.y;
+        const y = state.derived.station_map[name].y;
         let measured = 0;
         for (let i = 0; i < curves.length; i++) {
           const p = curves[i]!;
@@ -112,7 +114,9 @@ describe("independent invariants, not just Python snapshots", () => {
         expect(
           Math.abs(measured - state.inputs.design.top[`${name}_s`]),
         ).toBeLessThan(0.001);
-        const [lo, hi] = sectionExtent(state.models.top, y),
+        const intrinsic = state.inputs.design.top[`${name}_s`];
+        expect(state.models.top.points[name]!.y).toBe(intrinsic);
+        const [lo, hi] = sectionExtent(state.models.top, intrinsic),
           extent = name.startsWith("medial") ? -lo : hi;
         expect(
           Math.abs(extent - state.inputs.design.top[`${name}_width`]),
@@ -179,6 +183,9 @@ describe("independent invariants, not just Python snapshots", () => {
     expect(() => buildLast(cap)).toThrow(/unattainable/);
     const inclined = structuredClone(baseline.input);
     inclined.design.top.medial_waist_s = 30.01;
+    // A legal intrinsic .01 gap no longer inherits a smaller posed projection gap.
+    expect(buildLast(inclined).reports.top.passed).toBe(true);
+    inclined.design.top.medial_waist_s = 30.009999;
     expect(() => buildLast(inclined)).toThrow(/0.01 mm/);
   }, 30000);
   it("validators measure actual curves, not metadata", () => {

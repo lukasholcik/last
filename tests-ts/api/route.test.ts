@@ -1,10 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 
-import baseline from "../../examples/contour-baseline.json";
+import baseline from "../../examples/foot-first-baseline.json";
+import legacy from "../../examples/contour-baseline.json";
 import { GET, POST } from "~/app/api/trpc/[trpc]/route";
 import * as geometry from "~/lib/geometry";
-import { type ContourInput, type LastState } from "~/lib/geometry/types";
+import { type FootFirstInput, type LastState } from "~/lib/geometry/types";
 
 const base = "http://127.0.0.1:3000/api/trpc/last";
 type ErrorResponse = {
@@ -38,12 +39,12 @@ describe("tRPC HTTP route", () => {
     const response = await GET(new Request(`${base}.defaults`));
     expect(response.status).toBe(200);
     const body = (await response.json()) as {
-      result: { data: { json: ContourInput } };
+      result: { data: { json: FootFirstInput } };
     };
     expect(body.result.data.json).toEqual(baseline);
   });
 
-  it("accepts a current contour document and returns shared-core results", async () => {
+  it("accepts a current foot-first document and returns shared-core results", async () => {
     const response = await post(baseline);
     expect(response.status).toBe(200);
     const body = (await response.json()) as {
@@ -57,6 +58,9 @@ describe("tRPC HTTP route", () => {
     [],
     "input",
     { top: {}, bottom: {} },
+    legacy,
+    { ...baseline, schema_version: 2 },
+    { ...baseline, schema_version: 3 },
     { ...baseline, extra: 1 },
   ])(
     "rejects invalid or legacy JSON input without models: %j",
@@ -73,6 +77,34 @@ describe("tRPC HTTP route", () => {
   it("does not allow mutations over GET", async () => {
     const response = await GET(new Request(`${base}.rebuild`));
     expect(response.status).toBe(405);
+  });
+
+  it("returns descriptive 400 for an impossible actual rear angle without altering pose", async () => {
+    const input = structuredClone(baseline);
+    input.pose.heel_height = 80;
+    input.pose.seat_inclination_deg = 70;
+    const before = structuredClone(input);
+    const response = await post(input);
+    expect(response.status).toBe(400);
+    const body = (await response.json()) as ErrorResponse;
+    expect(body.error.json.message).toContain(
+      "theta + seat offset must be less than 90",
+    );
+    expect(body.error.json.data.stack).toBeUndefined();
+    expect(input).toEqual(before);
+  });
+
+  it("returns 422 reports, not models or an incidental 500, when a section control certificate fails", async () => {
+    const input = structuredClone(baseline);
+    input.pose.heel_height = 80;
+    input.centre_section.waist_height_ratio = 0.00004;
+    const response = await post(input);
+    expect(response.status).toBe(422);
+    const body = (await response.json()) as ErrorResponse;
+    expect(body.error.json.data.reports?.section.passed).toBe(false);
+    expect(body.error.json.data.reports?.bottom.passed).toBe(true);
+    expect(body).not.toHaveProperty("result");
+    expect(body.error.json.data.stack).toBeUndefined();
   });
 
   it("requires JSON for POST", async () => {
@@ -226,7 +258,7 @@ describe("tRPC HTTP route", () => {
     expect(text).not.toContain('"result"');
   });
 
-  it.each(["top", "bottom", "contour"] as const)(
+  it.each(["foot", "top", "bottom", "contour", "section"] as const)(
     "returns 422 reports without models when the %s report fails",
     async (name) => {
       const state = geometry.buildLast(baseline);
@@ -246,7 +278,7 @@ describe("tRPC HTTP route", () => {
   );
 
   it("keeps unexpected parser failures internal", async () => {
-    vi.spyOn(geometry, "parseContourInput").mockImplementationOnce(() => {
+    vi.spyOn(geometry, "parseFootFirstInput").mockImplementationOnce(() => {
       throw new Error("private /server/parser/path");
     });
     const response = await post(baseline);

@@ -7,9 +7,10 @@ import {
   type BottomControls,
   type Station,
   type Cubic,
+  type Vec2,
   type BottomModel,
   type ProjectedBottom,
-  type LastState,
+  type LegacyLastState,
   type ValidationReport,
 } from "./types";
 import {
@@ -18,6 +19,7 @@ import {
   radians,
   arc,
   prefix,
+  split,
   bezier,
   ulp,
   nextafter,
@@ -40,10 +42,10 @@ const BOTTOM_FIELDS = [
   "blend_arc_length",
 ] as const;
 const ARC_BUDGET = 1e-5;
-function record(v: unknown): v is Record<string, unknown> {
+export function record(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null && !Array.isArray(v);
 }
-function keys(
+export function keys(
   v: Record<string, unknown>,
   expected: readonly string[],
 ): boolean {
@@ -52,7 +54,7 @@ function keys(
     expected.every((k) => Object.hasOwn(v, k))
   );
 }
-function jsonValues(v: unknown, depth = 0): void {
+export function jsonValues(v: unknown, depth = 0): void {
   if (depth > 64) throw new InputError("JSON nesting is too deep");
   if (typeof v === "number" && !Number.isFinite(v))
     throw new InputError("JSON numbers must be finite");
@@ -196,10 +198,16 @@ function bottomInputs(
       seat_inclination_deg: d.seat_inclination_deg,
       contact_forward: seat + waist,
       forepart_blend_length: blend,
+      ...(d.arch_start_reach_ratio === undefined
+        ? {}
+        : { arch_start_reach_ratio: d.arch_start_reach_ratio }),
+      ...(d.arch_contact_reach_ratio === undefined
+        ? {}
+        : { arch_contact_reach_ratio: d.arch_contact_reach_ratio }),
     },
   ];
 }
-function solveBottom(
+export function solveBottom(
   total: number,
   d: BottomControls,
 ): [BottomModel, number, ProjectedBottom] {
@@ -221,16 +229,35 @@ function solveBottom(
     target = c - s,
     slope = Math.tan(angle),
     actualFront = d.heel_height - slope * seat;
+  const startReach = d.arch_start_reach_ratio ?? 1 / 3;
   let upper = target;
   if (slope) {
-    upper = Math.min(upper, nextafter((3 * actualFront) / slope, 0));
+    upper = Math.min(
+      upper,
+      nextafter(
+        startReach === 1 / 3
+          ? (3 * actualFront) / slope
+          : actualFront / (slope * startReach),
+        0,
+      ),
+    );
     const limit = upper,
       budget =
         8 *
-        (ulp(seat) + ulp(upper) + ulp(seat + upper) + ulp(actualFront) / slope);
+        (ulp(seat) +
+          ulp(upper) +
+          ulp(seat + upper) +
+          ulp(actualFront) /
+            (startReach === 1 / 3 ? slope : slope * startReach));
     let legal = false;
     for (let i = 0; i < 32; i++) {
-      if (actualFront - (slope * (seat + upper - seat)) / 3 >= 0) {
+      if (
+        actualFront -
+          (startReach === 1 / 3
+            ? (slope * (seat + upper - seat)) / 3
+            : slope * startReach * (seat + upper - seat)) >=
+        0
+      ) {
         legal = true;
         break;
       }
@@ -301,22 +328,43 @@ function straightArc(p: Cubic, index: number): number | undefined {
     return;
   return Math.hypot(dy, dz);
 }
-export function mapStation(
+/** Evaluate actual bottom arc station s as [posed y, z], not a Bézier t fraction. */
+export function pointAtStation(
   curves: Cubic[],
   lengths: number[],
   station: number,
-): number {
+  total = sum(lengths),
+): Vec2 {
+  const measuredTotal = sum(lengths);
+  if (
+    curves.length === 0 ||
+    curves.length !== lengths.length ||
+    lengths.some((length) => !Number.isFinite(length) || length <= 0) ||
+    !Number.isFinite(total) ||
+    !Number.isFinite(station) ||
+    station < 0 ||
+    station > total ||
+    Math.abs(measuredTotal - total) > 0.01
+  )
+    throw new InputError("contour station is outside the resulting guide");
+  if (station === 0) return [...curves[0]![0]];
+  // The accepted solve's measured total may differ from the target by its
+  // existing numerical tolerance. Anchor exact target endpoints, never rescale s.
+  if (station === total) return [...curves.at(-1)![3]];
   let offset = 0;
   for (let i = 0; i < curves.length; i++) {
     const p = curves[i]!,
       length = lengths[i]!;
     if (station <= offset + length || i === curves.length - 1) {
       const local = Math.max(0, Math.min(length, station - offset));
-      if (local === 0) return p[0][0];
-      if (local === length) return p[3][0];
+      if (local === 0) return [...p[0]];
+      if (local === length) return [...p[3]];
       const line = straightArc(p, i);
       if (line !== undefined)
-        return p[0][0] + (local * (p[3][0] - p[0][0])) / line;
+        return [
+          p[0][0] + (local * (p[3][0] - p[0][0])) / line,
+          p[0][1] + (local * (p[3][1] - p[0][1])) / line,
+        ];
       let lo = 0,
         hi = 1;
       for (let j = 0; j < 48; j++) {
@@ -328,7 +376,7 @@ export function mapStation(
             8 * Math.max(ulp(ylo), ulp(yhi)),
             (p[3][0] - p[0][0]) * 2 ** -46,
           );
-        if (yhi - ylo <= resolution) return bezier(p, t)[0];
+        if (yhi - ylo <= resolution) return bezier(p, t);
         if (measured < local) lo = t;
         else hi = t;
       }
@@ -338,7 +386,40 @@ export function mapStation(
   }
   throw new InputError("contour station is outside the resulting guide");
 }
-function arcToY(curves: Cubic[], lengths: number[], y: number): number {
+/** Projection-only compatibility wrapper; station_map retains posed bottom y. */
+export function mapStation(
+  curves: Cubic[],
+  lengths: number[],
+  station: number,
+): number {
+  return pointAtStation(curves, lengths, station)[0];
+}
+/** Request-local acceleration for dense display sampling. These are exact cubic
+ * subcurves with bounded actual arcs, not a polyline or a t-as-arc lookup. */
+export function createStationEvaluator(curves: Cubic[], total: number) {
+  const pieces: Cubic[] = [];
+  const lengths: number[] = [];
+  const subdivide = (p: Cubic, depth: number) => {
+    if (depth === 0) {
+      pieces.push(p);
+      lengths.push(arc(p, 1e-7 / 64));
+      return;
+    }
+    const [left, right] = split(p);
+    subdivide(left, depth - 1);
+    subdivide(right, depth - 1);
+  };
+  curves.forEach((p, index) => {
+    const line = straightArc(p, index);
+    if (line !== undefined) {
+      pieces.push(p);
+      lengths.push(line);
+    } else subdivide(p, 6);
+  });
+  return (station: number): Vec2 =>
+    pointAtStation(pieces, lengths, station, total);
+}
+export function arcToY(curves: Cubic[], lengths: number[], y: number): number {
   let offset = 0;
   for (let i = 0; i < curves.length; i++) {
     const p = curves[i]!,
@@ -358,7 +439,7 @@ function arcToY(curves: Cubic[], lengths: number[], y: number): number {
   return offset;
 }
 export function validateContour(
-  state: Pick<LastState, "models">,
+  state: Pick<LegacyLastState, "models">,
   input: ContourInput,
 ): ValidationReport {
   const { last_length: total, top, bottom } = input.design,
@@ -404,13 +485,16 @@ export function validateContour(
     total - c - j,
     (bounds[3]![1] - bounds[3]![0]) / 2,
   );
-  for (const name of STATIONS)
+  for (const name of STATIONS) {
+    const station = top[`${name}_s`];
+    check(name + "_unbent_station", state.models.top.points[name]!.y, station);
     check(
       name + "_station_roundtrip",
-      arcToY(curves, lengths, state.models.top.points[name]!.y),
-      top[`${name}_s`],
+      arcToY(curves, lengths, mapStation(curves, lengths, station)),
+      station,
       curves.length * ARC_BUDGET,
     );
+  }
   return {
     passed: checks.every((c) => c.passed),
     checks,
@@ -422,22 +506,26 @@ export function validateContour(
     limits: [
       "Contour stations and regional arc preservation are our prototype assumptions, not vendor or anatomical rules.",
       "Actual cubic chord/control-polygon bounds, not formula targets, validate arc lengths.",
-      "Projected model dimensions remain projected; no 3D last, fit or validated heel-posture claim.",
+      "Top model y is unbent intrinsic s; bottom projections and bent display placement are separate, not a 3D last, fit or validated heel-posture claim.",
     ],
   };
 }
-export function buildContour(input: ContourInput): Omit<LastState, "display"> {
+export function buildContour(
+  input: ContourInput,
+): Omit<LegacyLastState, "display"> {
+  // The top is a design in intrinsic (x,s), independent of every bottom control.
+  // Only station_map and the sampled 3D copy use the solved bottom projection.
   const { last_length: total, top, bottom } = input.design,
     [bottomModel, length, projectedBottom] = solveBottom(total, bottom),
     curves = bottomModel.profile.map((n) => bottomCurvePoints(bottomModel, n)),
     lengths = curves.map((p) => arc(p)),
     cache = new Map<number, number>(),
-    dimensions: Record<string, number> = { length };
+    dimensions: Record<string, number> = { length: total };
   const entries = STATIONS.map((name) => {
     const s = top[`${name}_s`];
     if (!cache.has(s)) cache.set(s, mapStation(curves, lengths, s));
     const y = cache.get(s)!;
-    dimensions[`${name}_y`] = y;
+    dimensions[`${name}_y`] = s;
     dimensions[`${name}_width`] = top[`${name}_width`];
     return [name, { s, y }] as const;
   });
@@ -448,11 +536,24 @@ export function buildContour(input: ContourInput): Omit<LastState, "display"> {
   >;
   const topModel = buildTop(dimensions),
     models = { top: topModel, bottom: bottomModel };
+  // Context belongs to this runtime adapter, not the legacy buildTop primitive.
+  topModel.source =
+    "made-up unbent (x,s) design; y stores intrinsic s, not posed forward projection; not measured foot data";
+  topModel.dimensions.length!.definition =
+    "Unbent longitudinal span in intrinsic s, not bottom forward projection or outline perimeter";
+  for (const dimension of Object.values(topModel.dimensions))
+    if (dimension.kind === "side_extent")
+      dimension.definition =
+        "Positive distance from x=0 to this side at intrinsic s (stored as station_y), not posed bottom y";
+  const topReport = validateTop(topModel, dimensions);
+  topReport.limits.unshift(
+    "Top coordinates and section y values are unbent intrinsic s; the separately bent display and bottom projection do not change this model or its widths.",
+  );
   return {
     inputs: structuredClone(input),
     models,
     reports: {
-      top: validateTop(topModel, dimensions),
+      top: topReport,
       bottom: validateBottom(bottomModel, length, projectedBottom),
       contour: validateContour({ models }, input),
     },

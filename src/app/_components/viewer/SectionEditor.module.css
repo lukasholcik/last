@@ -1,0 +1,96 @@
+.panel {
+  border-top: 1px solid var(--line);
+}
+.strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 8px;
+  padding: 0 22px 18px;
+}
+.card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 9px;
+  background: var(--surface);
+}
+.card[data-selected="true"] {
+  border-color: var(--section);
+  background: #6a668007;
+}
+.name {
+  width: 100%;
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+}
+.card svg {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: visible;
+}
+.card svg text {
+  fill: var(--muted);
+  font-size: 4px;
+}
+.axis {
+  stroke: var(--line);
+  stroke-width: 0.4;
+  stroke-dasharray: 1.5 2;
+}
+.curve {
+  fill: #6a66800a;
+  stroke: var(--section);
+  stroke-width: 0.8;
+}
+.control {
+  fill: var(--surface);
+  stroke: var(--section);
+  stroke-width: 0.7;
+  cursor: grab;
+  touch-action: none;
+}
+.control:focus,
+.control:hover {
+  fill: var(--bottom);
+  outline: none;
+  stroke: var(--bottom);
+}
+.handle {
+  fill: var(--section);
+}
+.link {
+  stroke: var(--section);
+  stroke-width: 0.35;
+}
+.card p,
+.card small {
+  font-size: 10px;
+  color: var(--muted);
+}
+.footer {
+  padding: 0 22px 18px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.footer > small {
+  flex-basis: 100%;
+  font-size: 10px;
+}
+.frame {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+}
+.frame button {
+  padding: 2px 8px;
+}

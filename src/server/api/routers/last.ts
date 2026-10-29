@@ -1,13 +1,13 @@
 import { TRPCError } from "@trpc/server";
 
-import baseline from "../../../../examples/contour-baseline.json";
+import baseline from "../../../../examples/foot-first-baseline.json";
 import {
   buildLast,
   GeometryValidationError,
   InputError,
-  parseContourInput,
+  parseFootFirstInput,
 } from "~/lib/geometry";
-import { type ContourInput, type LastState } from "~/lib/geometry/types";
+import { type FootFirstInput, type LastState } from "~/lib/geometry/types";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 function domainError(error: unknown): TRPCError {
@@ -32,9 +32,9 @@ function domainError(error: unknown): TRPCError {
 }
 
 // tRPC infers this parser's output as its client input, without a duplicate schema.
-function parseInput(input: unknown): ContourInput {
+function parseInput(input: unknown): FootFirstInput {
   try {
-    return parseContourInput(input);
+    return parseFootFirstInput(input);
   } catch (error) {
     throw domainError(error);
   }
@@ -54,7 +54,7 @@ const contourProcedure = publicProcedure.use(async ({ next }) => {
 });
 
 export const lastRouter = createTRPCRouter({
-  defaults: publicProcedure.query((): ContourInput => parseInput(baseline)),
+  defaults: publicProcedure.query((): FootFirstInput => parseInput(baseline)),
   rebuild: contourProcedure
     .input(parseInput)
     .mutation(({ input }): LastState => {

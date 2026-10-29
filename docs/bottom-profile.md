@@ -1,58 +1,78 @@
-# Longitudinal bottom guide — v2 specification and experiment
+# Longitudinal bottom guide — current foot-first model and legacy v2 experiment
 
-**Status: numeric/SVG reference guide and production TypeScript contour-length adapter implemented.** This defines an open guide,
-not a bottom surface. The current Next.js/React viewer uses Three.js for display and tRPC for the shared TypeScript geometry API.
+**Scope: current foot-first allowance contract and historical numeric/SVG construction.** The four-curve bottom remains open,
+but is now explicitly adopted as the designed lower boundary of the [closed centre section](centre-section.md).
+This new approved assumption does not make it a measured anatomical centreline, featherline, or bottom surface.
+The current Next.js/React viewer uses Three.js for display and tRPC for the shared TypeScript geometry API.
 Python is retained for legacy SVG experiments and parity references, not the production runtime; React/browser acceptance is separate.
 
 Version 2 replaces the rejected S-shaped toe rise: a short rounded contact transition now joins
 an exactly straight inclined forepart through the toe. The user chose this shape and an explicit
 10 mm development blend length; neither is an anatomical default or an ISO curve recipe.
-Legacy projected bottom inputs and generated bottom models use `schema_version: 2`; regenerate v1 projected data with the explicit
-`forepart_blend_length` field. Top inputs remain version 1 and unchanged.
+Legacy projected bottom inputs and generated bottom models use `schema_version: 2`, unrelated to the current
+`foot_first_last` schema 3. Legacy top inputs remain version 1. All older examples and frozen references remain unchanged.
 
-## Current browser: a new contour-length target
+## Current browser: foot-first reference and waist-only allowance
 
-The browser accepts one `contour_last` schema-1 document from `examples/contour-baseline.json`.
-Its designed `last_length: 250` means the actual bottom contour, deliberately **not** the old 250 mm
-forward projection or a conversion that preserves the previous shape. `src/lib/geometry` ports the corrected
-top/bottom construction and contour mapping from the Python reference; the projected version-2 controls described below remain internal
-calculated inputs and remain available in the legacy SVG experiments, not editable browser alternatives.
+The browser accepts only schema-3 `foot_first_last`, defaulting to `examples/foot-first-baseline.json`, with required `centre_section`.
+Schema 2, schema-1 `contour_last` (including `examples/contour-baseline.json`), and projected `{top,bottom}` payloads reject explicitly;
+there is no silent migration. See [the foot-first specification](foot-first-model.md) for the full input/result contract.
+Original source dimensions and provenance remain separate from working F/W. Template positions are fractions of foot F,
+not last length; side extents and toe extension use width basis W, not an automatically exact full silhouette section.
+Reference foot F and unbent reference last L0=F+E are both invariant under pose changes.
 
-Enter seat arc S, contact contour station C, blend arc J, total arc A, rear height H, toe spring T,
-and seat angle a. The baseline is S=50, C=175, J=10, A=250, H=8, T=10, a=2°.
-The fixed regional arcs are S, C−S, J, and A−C−J. All must retain at least 0.01 mm, and 0≤a<90°.
-They are 50/125/10/65 mm for the baseline. During heel edits these regions stay fixed, while seat inclination remains user-controlled;
-impossible combinations are rejected rather than silently changing the angle or redistributing arc length.
-Top `_s` stations are also distances along this bottom guide; their side widths remain entered values.
-This anchoring and regional preservation are **our prototype rules**, not anatomical correspondence or vendor algorithms.
+Let A be the reference **medial_ball** station only, r the adjustable effective radius, H heel rise,
+S seat arc, J blend arc, and T toe spring. Solve `H=A sin(theta)+r(1−cos(theta))` on `0≤theta<π/2`, then delta=r theta.
+The default r=.05F is a synthetic development choice, not an anatomical coefficient. A is neither a lateral-ball average,
+a global maximum, a new 70% control, nor an independent contact input. The default .70 is the existing medial-ball template fraction.
 
-Seat projection is S cos(a), and its front height is H−S sin(a). The existing cubic waist is built
-repeatedly to solve its forward span for arc C−S. Its projected bracket starts at 0.01 mm and ends
-at C−S, limited by the existing nonnegative-handle rule. Unattainable arc/vertical-drop/angle combinations
-are rejected; the solver never borrows length from the forepart.
+| Region or station | Current posed arc budget |
+| --- | --- |
+| Seat | S |
+| Waist | A−S+delta |
+| Blend | J |
+| Ramp | L0−A−J |
+| Contact | A+delta |
+| Total | L0+delta |
 
-For the existing quadratic blend and straight ramp, let R=A−C−J and k be their shared ramp slope.
-Q(k)=(√(1+k²)+asinh(k)/k)/2, with Q(0)=1. Blend projection b=J/Q(k), ramp projection
-r=R/√(1+k²), and T=k(b/2+r). A bounded bracket/bisection solve finds k; T=0 gives k=0.
-Require T<J+R and both projected forepart spans at least 0.01 mm. No independent ramp angle is added.
-This solves the already-approved curve, not a new footwear shape recipe.
+Only the waist receives the allowance. This deliberately replaces the previous fixed-waist contour rule; it does not add
+a literal circle or constrain the rendered waist curvature to radius r. Hinge feasibility (`0≤H<A+r`) and actual bottom
+feasibility are separate: H=0 with seat angle 2° remains invalid rather than adapting the seat automatically.
+Radius zero and zero toe extension are allowed; negative/nonfinite ratios reject. Apply the existing 0.01 mm guards to resolved
+spans, not a 0.01 minimum to dimensionless ratios. Foot ordering is against F, with S<A and A+J<F.
 
-Actual cubic chord/control-polygon bounds use a 0.00001 mm gap budget for each measurement, much tighter
-than the final 0.01 mm contour checks. Waist bisection has at most 64 steps; slope bracketing/bisection
-at most 64/80; station inversion at most 48. Prefix curves use de Casteljau subdivision.
-Repeated stations share cached mappings. Each top station maps individually onto the actual guide;
-the top is not uniformly shortened. Its derived projected gaps must still satisfy the unchanged top builder.
+The four existing cubic rules remain: straight seat, cubic waist ending horizontal, upward rounded contact blend, and exactly
+straight inclined ramp through the toe. Seat projection is S cos(a), its front height H−S sin(a); the waist solver now targets
+A−S+delta. For ramp arc R=L0−A−J and slope k, Q(k)=(√(1+k²)+asinh(k)/k)/2, Q(0)=1;
+blend projection b=J/Q(k), ramp projection p=R/√(1+k²), and T=k(b/2+p). T=0 gives k=0.
+Existing actual-curve/contact/handle checks and numerical tolerances remain. No angle clamping or regional length borrowing is allowed.
+Actual cubic chord/control-polygon bounds use a 0.00001 mm gap budget, tighter than final 0.01 mm contour checks;
+station inversion uses actual arc distance with de Casteljau prefixes, not a uniform scale or sampled-length approximation.
 
-The new report checks total and regional arcs plus station round trips from resulting curves, not derived labels.
-Legacy top/bottom shape reports still check their projected dimensions and actual contact; all three reports
-must pass before the API returns models. Projected length remains labelled as projected in legacy model metadata.
-No 3D last, fit guarantee, or validated heel-posture transformation follows from preserving these arcs.
-The typed `last.defaults` query and `last.rebuild` mutation are mounted at `/api/trpc`; invalid inputs return 400,
-failed checks return 422 with reports and no successful models, and unexpected errors return sanitized 500 responses.
-The production module is independent of React/Three.js and transport. Nine frozen Python parity fixtures and independent
-TypeScript invariant tests cover the port; optional reference regeneration and current pnpm commands are in [README](../README.md).
+In “One forward direction”, shared 2D scale/direction does not imply equal extents or coincident toe ends. The 3D copy of
+the reference last bends: `(x,s) → (x,y_bottom(g(s)),z_bottom(g(s)))`, retaining x. The C1 smoothstep g adds delta between S and A,
+mapping A to contact A+delta and L0 to L0+delta. This is an approved prototype display correspondence, not anatomical strain,
+foot height, a physical upper surface, bottom perimeter/featherline, printable last, or fit claim.
+The centre-section roof now reuses g(s) as a new construction convention: `Q(s)=P(g(s))+[0,h(s)]`, with h a designed vertical
+depth, not a normal offset or measured anatomical height. Actual upper geometry changes with the heel pose even while authored
+depths and unbent reference models stay fixed. Its caps/top cut do not change any bottom curve or the allowance budget.
+See [the centre-section specification](centre-section.md) for authoritative height cubics, cap recipes, actual-geometry checks,
+and intentional corners; this is not a full surface, side envelope, or conserved dorsal path.
+
+The result adds closed `models.section` to `models.foot`, unbent `models.top`, and posed `models.bottom`.
+Existing model/report/resolved/derived values remain unchanged for unchanged existing inputs; section controls add no bottom budget.
+All five reports (`foot`, `top`, `bottom`, `contour`, `section`) must pass; contour checks measure actual regional/total arcs and round trips.
+`derived.projected_length` is only the posed bottom horizontal diagnostic. `derived.station_map` stores
+`{reference_s,posed_s,y,z}`; `display.top` is the bent last copy and `display.bottom` samples the guide at x=0.
+`display.section` samples the complete x=0 section, not a surface; authoritative recipes rather than these samples define its geometry.
+The `/api/trpc` defaults/rebuild boundary preserves 400 invalid-input, 422 failed-report, and sanitized 500 error behavior.
+The pure TypeScript module has no Python runtime dependency. Frozen fixtures cover primitive/legacy helper parity,
+not the full current API or the new allowance; current commands are in [README](../README.md).
 
 ## Legacy projected-coordinate construction
+
+The construction, controls, shared projected span, and checks below describe the unchanged legacy experiment,
+not the current browser's intrinsic top stations or 3D display correspondence.
 
 ## What this curve describes
 
@@ -101,6 +121,7 @@ decision; the provisional 0–250 mm alignment does not settle that geometry.
    [Primary-Measurements-in-Shoe-Last-Maker.jpg](https://3dshoemaker.com/wp-content/uploads/2022/05/Primary-Measurements-in-Shoe-Last-Maker.jpg)
    and [Shoe-Last-Maker-Measurements.png](https://3dshoemaker.com/wp-content/uploads/2022/05/Shoe-Last-Maker-Measurements.png).
    We do not copy their proportions, allowances, wedge calculation, or sizing rules.
+   Measuring length along the bottom does not establish our intrinsic foot stations, posture allowance, or 3D bending correspondence.
 4. [MDN, cubic Bézier paths](https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorials/SVG_from_scratch/Paths)
    describes two endpoint-direction control points per cubic. This supports the curve
    representation, not footwear suitability. The particular interpolation below is **our
@@ -292,5 +313,6 @@ reports and SVGs using the separate renderer. Commands and output layout are in 
 Version-2 JSON accepts exactly the six bottom controls and takes L only from the version-1 top input. Heights may be zero;
 lengths/heights above 10000 mm are rejected as a numerical guard, not a physical limit.
 Reports check actual cubic extrema, slopes, stations, handles and ground intervals, not dimension labels.
-The current application provides a browser-viewer path, not a 3D surface. Numeric/API checks alone do not approve the React UI or visual quality. Bottom shape, top-to-bottom
-correspondence, forepart crown, toe clearance and posture response remain separate questions.
+The current application provides a browser-viewer path, not a 3D surface. Numeric/API checks alone do not approve the React UI or visual quality.
+Its chosen top-to-bottom display correspondence does not resolve physical bottom shape, surface correspondence, forepart crown,
+toe clearance, or posture response.

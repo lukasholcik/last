@@ -1,9 +1,12 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import type { LastState } from "~/lib/geometry/types";
+import type { CrossSectionId } from "~/lib/geometry/section-types";
+import type { LastState, Vec3 } from "~/lib/geometry/types";
+import { upperSectionCurves } from "./section-display";
 
 export interface SceneController {
   update: (display: LastState["display"]) => void;
+  select: (id: CrossSectionId | null) => void;
   fit: () => void;
   dispose: () => void;
 }
@@ -16,21 +19,25 @@ export function createScene(
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   let controls: OrbitControls | undefined,
     observer: ResizeObserver | undefined,
-    disposed = false;
+    disposed = false,
+    selectedSection: CrossSectionId | null = null;
   const scene = new THREE.Scene(),
     camera = new THREE.PerspectiveCamera(36, 1, 0.01, 10000);
   const guides = new THREE.Group(),
     box = new THREE.Box3();
   scene.add(guides);
+  scene.add(new THREE.HemisphereLight(0xfffaf0, 0x63736b, 2));
+  const keyLight = new THREE.DirectionalLight(0xfff1de, 2.5);
+  keyLight.position.set(180, -100, 300);
+  scene.add(keyLight);
   function clear() {
     for (const child of [...guides.children]) {
       guides.remove(child);
-      const line = child as THREE.Line<
-        THREE.BufferGeometry,
-        THREE.LineBasicMaterial
-      >;
-      line.geometry.dispose();
-      line.material.dispose();
+      const object = child as
+        | THREE.Line<THREE.BufferGeometry, THREE.LineBasicMaterial>
+        | THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>;
+      object.geometry.dispose();
+      object.material.dispose();
     }
   }
   function dispose() {
@@ -110,29 +117,122 @@ export function createScene(
       fail(error);
     }
   }
+  function addLine(points: Vec3[], color: number, name: string) {
+    const geometry = new THREE.BufferGeometry(),
+      material = new THREE.LineBasicMaterial({ color });
+    const line = new THREE.Line(geometry, material);
+    line.name = name;
+    // Own resources before populating, including on a failed display update.
+    guides.add(line);
+    geometry.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(points.flat(), 3),
+    );
+    for (const point of points) box.expandByPoint(new THREE.Vector3(...point));
+    return line;
+  }
+  function select(id: CrossSectionId | null) {
+    if (disposed) return;
+    selectedSection = id;
+    for (const child of guides.children) {
+      if (!child.userData.sectionId) continue;
+      const active = child.userData.sectionId === id;
+      if (child.userData.frameAxis) {
+        child.visible = active;
+      } else {
+        const line = child as THREE.Line<
+          THREE.BufferGeometry,
+          THREE.LineBasicMaterial
+        >;
+        line.material.color.setHex(active ? 0xb17655 : 0x5d7569);
+        line.material.opacity = active ? 1 : 0.35;
+        line.renderOrder = active ? 3 : 2;
+      }
+    }
+    render();
+  }
   function update(display: LastState["display"]) {
     if (disposed) return;
     clear();
     box.makeEmpty();
     try {
-      for (const [kind, color] of [
-        ["top", 0x216356],
-        ["bottom", 0xb15d35],
+      if (display.surface) {
+        const geometry = new THREE.BufferGeometry(),
+          material = new THREE.MeshStandardMaterial({
+            color: 0xadb9a5,
+            roughness: 0.83,
+            metalness: 0,
+            side: THREE.DoubleSide,
+            polygonOffset: true,
+            polygonOffsetFactor: 1,
+            polygonOffsetUnits: 1,
+          });
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.name = "shared-last-surface";
+        guides.add(mesh);
+        geometry.setAttribute(
+          "position",
+          new THREE.Float32BufferAttribute(display.surface.positions, 3),
+        );
+        geometry.setIndex(display.surface.indices);
+        geometry.computeVertexNormals();
+        geometry.computeBoundingBox();
+        if (geometry.boundingBox) box.union(geometry.boundingBox);
+      }
+      for (const [kind, color, curves] of [
+        ["top", 0x216356, display.top],
+        ["bottom", 0xb15d35, display.bottom],
+        [
+          "section",
+          0x6a6680,
+          upperSectionCurves(display.section, display.bottom),
+        ],
       ] as const)
-        for (const curve of display[kind]) {
-          const geometry = new THREE.BufferGeometry(),
-            material = new THREE.LineBasicMaterial({ color });
-          // Attach before populating so a subsequent error still has a disposable owner.
-          const line = new THREE.Line(geometry, material);
-          line.name = curve.name;
-          guides.add(line);
-          geometry.setAttribute(
-            "position",
-            new THREE.Float32BufferAttribute(curve.points.flat(), 3),
-          );
-          for (const point of curve.points)
-            box.expandByPoint(new THREE.Vector3(...point));
+        for (const curve of curves) {
+          const line = addLine(curve.points, color, curve.name);
+          line.userData.guide = kind;
         }
+      for (const section of display.crossSections ?? []) {
+        const points = section.posedSamples;
+        if (!points.length) continue;
+        const ring = addLine([...points, points[0]!], 0x5d7569, section.label);
+        ring.userData.sectionId = section.id;
+        ring.material.transparent = true;
+        ring.material.depthTest = false;
+        ring.material.depthWrite = false;
+        const origin = new THREE.Vector3(...section.frame.origin);
+        const axisLength = Math.max(section.width, section.height, 20) * 0.65;
+        for (const [name, vector, color] of [
+          ["transverse", section.frame.transverse, 0xb17655],
+          ["up", section.frame.up, 0x597c81],
+        ] as const) {
+          const axis = addLine(
+            [
+              origin.toArray(),
+              origin
+                .clone()
+                .addScaledVector(new THREE.Vector3(...vector), axisLength)
+                .toArray(),
+            ],
+            color,
+            `${section.frame.label} ${name}`,
+          );
+          axis.userData.sectionId = section.id;
+          axis.userData.frameAxis = true;
+          axis.material.depthTest = false;
+          axis.material.depthWrite = false;
+          axis.renderOrder = 4;
+        }
+      }
+      for (const wrap of display.heelWraps ?? []) {
+        if (wrap.status !== "configured" || !wrap.points.length) continue;
+        const line = addLine(wrap.points, 0xa16e52, wrap.id);
+        line.userData.heelWrap = wrap.id;
+        line.material.depthTest = false;
+        line.material.depthWrite = false;
+        line.renderOrder = 3;
+      }
+      select(selectedSection);
       resize();
       fit();
     } catch (error) {
@@ -143,7 +243,7 @@ export function createScene(
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.domElement.setAttribute(
       "aria-label",
-      "3D reference guides. Drag to orbit; scroll to zoom. Use reset view to restore framing.",
+      "3D prototype shared last surface with rebuilt section rings and configured heel wraps. Drag to orbit; scroll to zoom. Use reset view to restore framing.",
     );
     renderer.domElement.addEventListener("webglcontextlost", lost);
     container.append(renderer.domElement);
@@ -157,7 +257,7 @@ export function createScene(
     resize();
     if (disposed)
       throw new Error("Unable to initialize the 3D reference viewer");
-    return { update, fit, dispose };
+    return { update, select, fit, dispose };
   } catch (error) {
     dispose();
     throw error;

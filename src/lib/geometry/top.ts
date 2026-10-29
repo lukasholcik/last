@@ -32,7 +32,10 @@ export function buildTop(d: Record<string, number>): TopModel {
     throw new InputError(
       "design must contain length and each side/region's y and width",
     );
-  for (const [k, v] of Object.entries(d)) number(k, v, 0.01);
+  // Station minima are spans, including 0 -> first heel. Let the same
+  // roundoff-aware gap check below govern them; do not clamp coordinates.
+  for (const [k, v] of Object.entries(d))
+    number(k, v, k.endsWith("_y") ? 0 : 0.01);
   for (const s of SIDES) {
     const ys = [0, ...REGIONS.map((r) => d[`${s}_${r}_y`]!), d.length!];
     if (ys.slice(1).some((v, i) => !gap(v - ys[i]!)))

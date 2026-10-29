@@ -1,17 +1,21 @@
 import { useEffect, useRef, useState } from "react";
+import type { CrossSectionId } from "~/lib/geometry/section-types";
 import type { LastState } from "~/lib/geometry/types";
 import type { SceneController } from "./scene-controller";
 
 export function Scene({
   display,
   viewLabel,
+  selectedSection,
 }: {
   display: LastState["display"] | undefined;
   viewLabel: string;
+  selectedSection: CrossSectionId | null;
 }) {
   const container = useRef<HTMLDivElement>(null),
     controller = useRef<SceneController | null>(null);
   const latestDisplay = useRef(display);
+  const latestSelection = useRef(selectedSection);
   const [status, setStatus] = useState<"loading" | "ready" | "unavailable">(
     "loading",
   );
@@ -19,6 +23,10 @@ export function Scene({
     latestDisplay.current = display;
     if (display) controller.current?.update(display);
   }, [display]);
+  useEffect(() => {
+    latestSelection.current = selectedSection;
+    controller.current?.select(selectedSection);
+  }, [selectedSection]);
   useEffect(() => {
     let cancelled = false;
     const fail = (_error: unknown) => {
@@ -39,6 +47,7 @@ export function Scene({
         controller.current = instance;
         setStatus("ready");
         if (latestDisplay.current) instance.update(latestDisplay.current);
+        instance.select(latestSelection.current);
       })
       .catch(fail);
     return () => {
@@ -52,7 +61,7 @@ export function Scene({
       <div className="panel-heading">
         <div>
           <span className="eyebrow">02 / SPATIAL REFERENCE</span>
-          <h2>Guides, not a surface.</h2>
+          <h2>Shared last surface.</h2>
         </div>
         <button
           id="fit-view"
@@ -63,14 +72,17 @@ export function Scene({
           Reset / fit view
         </button>
       </div>
-      <p className="spatial-notice">Reference guides only—not a 3D last.</p>
+      <p className="spatial-notice">
+        Prototype surface from the rebuilt sections—not anatomical validation or
+        a manufacturing-ready last.
+      </p>
       <p className="view-state" data-view-state>
         {viewLabel}
       </p>
       <div
         id="scene"
         className="scene"
-        aria-label="Rotatable 3D reference guides"
+        aria-label="Rotatable shared last surface with rebuilt sections and heel wraps"
       >
         <div className="scene-mount" ref={container} />
         {status !== "ready" && (
@@ -83,19 +95,7 @@ export function Scene({
       </div>
       <div className="drawing-footer">
         <p>Drag to rotate · wheel or pinch to zoom · right-drag to pan</p>
-        <details>
-          <summary>What is placed in 3D?</summary>
-          <p>
-            The top silhouette is drawn at z = 0; the bottom guide at x = 0.
-            These are display placements only. Width-station y positions are
-            calculated from distances along the bottom guide using our prototype
-            correspondence, not a vendor or anatomy formula. Top height is
-            unknown, and the bottom guide is not an anatomical centreline. There
-            is no joining surface, bottom boundary or width transfer.
-            Heel-height experiments are not validated high-heel geometry; seat
-            inclination stays user-controlled.
-          </p>
-        </details>
+        <p>Surface, section rings and configured heel wraps show the last rebuild.</p>
       </div>
     </section>
   );
