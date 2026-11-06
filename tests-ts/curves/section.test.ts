@@ -105,19 +105,33 @@ describe("section document", () => {
     );
   });
 
-  it("a locked drive resists edits; unlocking frees it", () => {
+  it("dragging a locked crossing point edits its owner; unlocking detaches it", () => {
+    // Superseded behaviour: a locked crown used to snap back. Now the move is
+    // written to the side contour (crossing.ts), and an unlocked one is free
+    // and writes nothing.
     const d = defaultDoc(),
       c = d.sections.ball,
       i = c.points.findIndex((p) => p.role === "crown"),
       q = c.points[i]!.pos,
       moved = moveAnchor(c, i, [q[0], q[1] + 5]),
-      locked = withSection(d, "ball", moved),
+      linked = withSection(d, "ball", moved),
       id = sectionDrives(geom(d)).find(
         (x) => x.role === "crown" && x.axis === 1,
       )!.id,
       free = withSection(withUnlocked(d, id, true), "ball", moved);
-    expect(pos(locked.sections.ball, "crown")[1]).toBeCloseTo(q[1], 9);
+    expect(pos(linked.sections.ball, "crown")[1]).toBeCloseTo(q[1] + 5, 1);
+    expect(linked.dorsal).not.toBe(d.dorsal);
     expect(pos(free.sections.ball, "crown")[1]).toBeCloseTo(q[1] + 5, 9);
+    expect(free.dorsal).toBe(d.dorsal);
+  });
+
+  it("a locked point that no owner can take (the lateral edge's u) still resists", () => {
+    const d = defaultDoc(),
+      c = d.sections.ball,
+      i = c.points.findIndex((p) => p.role === "lateral"),
+      q = c.points[i]!.pos,
+      next = withSection(d, "ball", moveAnchor(c, i, [q[0] + 4, q[1]]));
+    expect(pos(next.sections.ball, "lateral")[0]).toBeCloseTo(q[0], 9);
   });
 
   it("round-trips through JSON, and a save without sections gets them seeded", () => {

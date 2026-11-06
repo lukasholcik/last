@@ -3,6 +3,9 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { Line2 } from "three/addons/lines/Line2.js";
+import { LineGeometry } from "three/addons/lines/LineGeometry.js";
+import { LineMaterial } from "three/addons/lines/LineMaterial.js";
 import type { Loft, Vec3 } from "~/lib/studio/loft";
 import type { Marker } from "~/lib/studio/space-edit";
 import styles from "./studio.module.css";
@@ -132,6 +135,84 @@ const handleStyle = (curve: string): HandleStyle =>
     : curve.startsWith("section:")
       ? "section"
       : "rail";
+
+/**
+ * LINES (decision): rails, sections and handle lines are drawn like the 2D
+ * canvas draws its curves (curve.module.css: a 2.25 px stroke over a 6 px halo
+ * in the canvas colour), as screen-width lines (`Line2`; a WebGL line is always
+ * 1 px wide). The halo is what keeps a dark line readable over the teal surface.
+ * Every line is drawn twice: solid where the surface does not cover it, and a
+ * faint copy that ignores depth. The faint copy is needed because a rail is not
+ * always ON the mesh: inside an end cap the surface is interpolated between the
+ * boundary slice and the tip, so a rail can sit a few mm under it (documented
+ * in the spec, "End caps"); without it the toe box showed almost no lines. The
+ * widths are designed, not measured.
+ */
+const LINE_PX = 2.5,
+  LINE_LIT_PX = 3.5,
+  HALO_EXTRA_PX = 3.5,
+  HALO_COLOUR = 0xfffefb,
+  HALO_OPACITY = 0.9,
+  GHOST_LINE = 0.5,
+  HANDLE_LINE_PX = 1.5;
+
+interface LineSpec {
+  colour: number;
+  width: number;
+  /** Close the loop (sections). */
+  loop?: boolean;
+  /** Draw the halo under the line. */
+  halo?: boolean;
+  /** Added to the render order, so handle lines sit above the rails. */
+  base?: number;
+}
+/**
+ * One line as a group of three passes (see LINES). `size` is the canvas size in
+ * CSS pixels, the unit of the widths; `resize` below keeps it current.
+ */
+function strokes(
+  size: { w: number; h: number },
+  pts: readonly (readonly number[])[],
+  spec: LineSpec,
+): THREE.Group {
+  const flat: number[] = [];
+  for (const p of pts) flat.push(p[0]!, p[1]!, p[2]!);
+  if (spec.loop && pts[0]) flat.push(pts[0][0]!, pts[0][1]!, pts[0][2]!);
+  const geometry = new LineGeometry();
+  geometry.setPositions(flat);
+  const g = new THREE.Group(),
+    pass = (
+      colour: number,
+      width: number,
+      opacity: number,
+      depthTest: boolean,
+      order: number,
+    ) => {
+      const m = new LineMaterial({
+        color: colour,
+        linewidth: width,
+        transparent: true,
+        opacity,
+        depthTest,
+        depthWrite: false,
+      });
+      m.resolution.set(size.w, size.h);
+      const l = new Line2(geometry, m);
+      l.renderOrder = (spec.base ?? 0) + order;
+      g.add(l);
+    };
+  pass(spec.colour, spec.width, GHOST_LINE, false, 1);
+  if (spec.halo !== false)
+    pass(HALO_COLOUR, spec.width + HALO_EXTRA_PX, HALO_OPACITY, true, 2);
+  pass(spec.colour, spec.width, 1, true, 3);
+  return g;
+}
+/** Keep the pixel widths of every `Line2` below `root` right after a resize. */
+function resizeLines(root: THREE.Object3D, w: number, h: number) {
+  root.traverse((o) => {
+    if (o instanceof Line2) o.material.resolution.set(w, h);
+  });
+}
 
 /** Marker size on screen in CSS pixels (the sprite square, shape inside). */
 const SPRITE_PX = 40;
@@ -272,6 +353,8 @@ export function Viewer3D(
       if (!w || !h) return;
       renderer.setSize(w, h);
       l.size = { w, h };
+      resizeLines(content, w, h);
+      resizeLines(markerGroup, w, h);
       persp.aspect = w / h;
       persp.updateProjectionMatrix();
       layoutOrtho();
@@ -651,8 +734,8 @@ export function Viewer3D(
             metalness: 0.08,
             side: THREE.DoubleSide,
             polygonOffset: true,
-            polygonOffsetFactor: 1,
-            polygonOffsetUnits: 1,
+            polygonOffsetFactor: 2,
+            polygonOffsetUnits: 2,
           }),
         ),
       );
@@ -667,42 +750,37 @@ export function Viewer3D(
           }),
         ),
       );
-    const line = (
-      pts: readonly (readonly number[])[],
-      colour: number,
-      loop = false,
-    ) => {
-      const g = new THREE.BufferGeometry().setFromPoints(
-        pts.map((p) => new THREE.Vector3(p[0], p[1], p[2])),
-      );
-      const m = new THREE.LineBasicMaterial({ color: colour });
-      return loop ? new THREE.LineLoop(g, m) : new THREE.Line(g, m);
-    };
-    // the selected line is drawn amber
+    // the selected line is drawn amber and a little thicker
     const lit = (id: string) =>
       highlight === id ||
       (highlight === "top" && (id === "rail:lateral" || id === "rail:medial"));
+    const stroke = (
+      id: string,
+      pts: readonly (readonly number[])[],
+      colour: number,
+      loop = false,
+    ) =>
+      l.content.add(
+        strokes(l.size, pts, {
+          colour: lit(id) ? LINE_LIT : colour,
+          width: lit(id) ? LINE_LIT_PX : LINE_PX,
+          loop,
+        }),
+      );
     if (opts.rails)
-      for (const r of loft.rails) {
-        const id = `rail:${r.role}`;
-        l.content.add(
-          line(
-            r.pts,
-            lit(id)
-              ? LINE_LIT
-              : r.role === "sole"
-                ? SOLE_COLOUR
-                : r.role === "crown"
-                  ? SECTION_COLOUR
-                  : RAIL_COLOUR,
-          ),
+      for (const r of loft.rails)
+        stroke(
+          `rail:${r.role}`,
+          r.pts,
+          r.role === "sole"
+            ? SOLE_COLOUR
+            : r.role === "crown"
+              ? SECTION_COLOUR
+              : RAIL_COLOUR,
         );
-      }
     if (opts.sections)
       for (const s of loft.sections)
-        l.content.add(
-          line(s.pts, lit(`section:${s.id}`) ? LINE_LIT : SECTION_COLOUR, true),
-        );
+        stroke(`section:${s.id}`, s.pts, SECTION_COLOUR, true);
     const grid = new THREE.GridHelper(400, 40, 0xa9b6c9, 0xd0d9e6);
     grid.rotation.x = Math.PI / 2;
     grid.position.set(0, 135, 0);
@@ -761,23 +839,15 @@ export function Viewer3D(
       const style = handleStyle(m.curve),
         map = knobTexture(style, m.mode === "auto"),
         h = new THREE.Group();
-      for (const ghost of [true, false]) {
-        h.add(sprite(map, ghost, m.id));
-        const ln = new THREE.Line(
-          new THREE.BufferGeometry().setFromPoints([
-            new THREE.Vector3(...m.from),
-            new THREE.Vector3(...m.pos),
-          ]),
-          new THREE.LineBasicMaterial({
-            color: HANDLE_COLOUR[style],
-            depthTest: !ghost,
-            transparent: true,
-            opacity: ghost ? GHOST : 1,
-          }),
-        );
-        ln.renderOrder = 8;
-        l.markers.add(ln);
-      }
+      for (const ghost of [true, false]) h.add(sprite(map, ghost, m.id));
+      // the handle's line (one solid and one faint pass, see LINES), drawn once
+      l.markers.add(
+        strokes(l.size, [m.from, m.pos], {
+          colour: Number.parseInt(HANDLE_COLOUR[style].slice(1), 16),
+          width: HANDLE_LINE_PX,
+          base: 5,
+        }),
+      );
       h.position.set(...m.pos);
       h.userData = { marker: true, id: m.id };
       l.markers.add(h);

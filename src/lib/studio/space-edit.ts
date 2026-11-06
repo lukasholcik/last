@@ -1,3 +1,4 @@
+import { writesBack } from "./crossing";
 import {
   moveAnchor,
   moveHandle,
@@ -350,9 +351,19 @@ export function dragMarker(
   constrain = false,
 ): StudioDoc {
   if (m.part === "anchor" && m.members && m.members.length > 1) {
+    // The rails, the outline and the contour own a shared point; a section's
+    // copy follows it (its drive re-applies after the rails moved). Moving it
+    // too would write ITS target back to the rails as a second, different
+    // edit (with Shift each member keeps its own larger axis), so a section
+    // member is only dragged when it is detached (an unlocked axis) or alone.
+    const owners = m.members.filter((k) => !k.curve.startsWith("section:")),
+      sections = m.members.filter((k) => k.curve.startsWith("section:"));
     let next = doc;
-    for (const k of m.members)
+    for (const k of owners)
       next = dragOne(next, frame, { ...k, part: "anchor" }, hit, constrain);
+    for (const k of sections)
+      if (owners.length === 0 || detached(next, k))
+        next = dragOne(next, frame, { ...k, part: "anchor" }, hit, constrain);
     return next;
   }
   if (m.part !== "anchor" && m.members && m.members.length > 1) {
@@ -369,6 +380,21 @@ export function dragMarker(
   }
   const k = m.kind === "both" ? "plan" : m.kind;
   return dragOne(doc, frame, { ...m, kind: k }, hit, constrain);
+}
+
+/** True when one of the section point's crossing coordinates is unlocked. */
+function detached(
+  doc: StudioDoc,
+  k: { curve: CurveKey; index: number },
+): boolean {
+  const id = k.curve.slice(8) as SectionId,
+    role = doc.sections[id]?.points[k.index]?.role;
+  return (
+    !!role &&
+    ([0, 1] as const).some(
+      (a) => writesBack(role, a) && doc.unlocked.includes(`${id}/${role}:${a}`),
+    )
+  );
 }
 
 function dragOne(

@@ -1,5 +1,6 @@
 "use client";
 
+import { sectionGaps, writesBack } from "~/lib/studio/crossing";
 import Link from "next/link";
 import {
   Fragment,
@@ -250,6 +251,8 @@ export function Studio() {
     () => sectionGeometry(doc.top, doc.dorsal, sectionId),
     [doc.top, doc.dorsal, sectionId],
   );
+  // Unlocked crossing points that disagree with the rails (a check only).
+  const gaps = useMemo(() => sectionGaps(doc, sectionId), [doc, sectionId]);
   const secDrives = useMemo(
     () => (geom ? sectionDrives(geom, railValues(geom, doc.rails)) : EMPTY),
     [geom, doc.rails],
@@ -539,9 +542,12 @@ export function Studio() {
     ? markers.find((m) => m.id === sel3d && m.part === "anchor")
     : undefined;
   const selLines = selMarker ? linesOf(selMarker.members, planCounts) : [];
+  // A handle is only shown for the selected ANCHOR (its `owner`), so picking or
+  // dragging a handle keeps its anchor selected. Selecting the handle itself
+  // made the handles vanish the moment a drag began.
   const pick3d = (id: string | null) => {
-    setSel3d(id);
     const m = id ? markers.find((x) => x.id === id) : undefined;
+    setSel3d(m && m.part !== "anchor" ? (m.owner ?? null) : id);
     if (m?.part === "anchor") {
       const first = linesOf(m.members, planCounts)[0];
       if (first) showLine(first);
@@ -1028,6 +1034,19 @@ export function Studio() {
           <RailNote text="A rail seen from the side with the heel height applied (stored flat, like the upper). Each section's point of this role takes its height from this curve; the dots show where the sections meet it. Its ends follow the outline and are re-applied after an edit." />
         )}
         {space === "top" && outline === "top" && <Measures m={measures} />}
+        {space === "section" && (
+          <RailNote text="A point where this section meets a rail or the side contour can be dragged: the rail or contour is pulled through it, locally (a point is added at the crossing). Unlock a point to detach it instead; the surface then ignores that edit." />
+        )}
+        {space === "section" && gaps.length > 0 && (
+          <RailNote
+            text={`Detached from the surface: ${gaps
+              .map(
+                (x) =>
+                  `${prettyRole(x.role)} ${x.axis === 0 ? "u" : "z"} ${x.gap.toFixed(1)} mm`,
+              )
+              .join(", ")}. Lock a point to bring it back to the rail.`}
+          />
+        )}
         {space === "section" && <SectionInfo g={geom} curve={curve} />}
       </aside>
 
@@ -1217,7 +1236,10 @@ function useSpace(space: Space, c: SpaceCtx) {
   const roleOf = (i: number) => curve.points[i]?.role;
   const locks = (i: number): readonly [boolean, boolean] => {
     const role = roleOf(i);
+    // A section's crossing points stay draggable while locked: the move is
+    // written back to the rail or contour that owns them (see crossing.ts).
     const on = (axis: 0 | 1) =>
+      !(space === "section" && writesBack(role, axis)) &&
       activeDrives.some(
         (d) =>
           d.role === role && d.axis === axis && !doc.unlocked.includes(d.id),

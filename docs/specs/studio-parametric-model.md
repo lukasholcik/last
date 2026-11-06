@@ -34,7 +34,7 @@ _dependencies between curves explicit and visible_ instead of buried in a solver
 | **Check**     | A requirement reported against the geometry                    | arc to contact = A + δ; total arc = L + δ; seat above ground                 | Never changes geometry                               |
 
 This keeps the standing rule in `docs/concept.md`: _chosen dimensions stay in charge; a curve edit must not quietly change them._
-Dragging a driven point moves only its free axis; typing into a driven field is disabled until it is unlocked.
+Dragging a driven point moves only its free axis; typing into a driven field is disabled until it is unlocked. Exception: a section's crossing points with a rail or the contour can be dragged and typed while locked; the owner is edited (see Rails).
 
 **Foot measurements are not applied yet.** The plan, so the model is ready for them: a recorded measurement is a **reference
 dimension** (a _check_ with a target, the actual value read from the curves, and a signed delta), never a silent driver, and recorded
@@ -186,8 +186,29 @@ each an ordinary editable Bezier, so a curve is fine-tuned in space by editing i
   frame after an edit and cannot be deleted. The elevation of a pair is not joined into a loop (the two curves overlap in the side view).
 - **Rails are the authority for sections (decision, to be judged in use):** a section point's u is where its cutting line crosses the
   rail's plan curve, its z is the elevation curve at the crossing's y. These are ordinary drives (ids `ball/lateral_bottom:0|1`, …), so
-  a section point of a rail role cannot be dragged until unlocked; the only free coordinate left is the sole point's u. This replaces the
+  a section point of a rail role stays locked to the rail, and dragging it writes the move back to the rail locally (see "Crossings are written back" below); the only free coordinate left is the sole point's u. This replaces the
   earlier flat-bottom drive: rails are **seeded flat** and raising the waist's medial-bottom elevation models the arch.
+- **Crossings are written back (decision, user, replaces "unlock to edit"):** a section's point where it meets a rail or the side contour is
+  the same 3D point as that rail's. The rail/contour stays the OWNER, but dragging the section's point now edits it, LOCALLY (user
+  decision: only at that crossing). `writeBackSection` (`crossing.ts`, called by `withSection` before the drives re-apply) pulls the owner
+  through the new point: an anchor within 1.5 mm of the crossing moves, otherwise a point is inserted at the crossing by de Casteljau
+  subdivision (shape unchanged) and moved; only the segments beside it change (plus the handles of `auto` neighbours). Bottoms and
+  shoulders write u to the PLAN rail and z to the ELEVATION rail (the cut is tilted, so a new u also moves the crossing's station and
+  the elevation anchor moves with it); medial/lateral write z to their elevation rail; the crown writes z to the side contour's upper.
+  The u of medial/lateral (the top outline's landmark) and of the crown (the centre plane) stay locked: their owner is edited elsewhere.
+  Why: with the old rule a section point could only be moved after unlocking it, which detached it; the section line moved, the surface
+  (built from the rails) did not, and they silently disagreed (11, 15 and 28 mm at heel, waist and ball in the user's model, 23
+  drives unlocked). In other tools this is the "shared point" (Blender vertices, sketch coincident constraints) or the
+  "owner and derived" pattern (Grasshopper, Houdini) combined, as chosen. Rejected: moving the whole rail or a least-squares refit (changes
+  what the user did not touch); making the section the owner (the rails carry the chosen dimensions).
+  - **Unlocking** now means "detach": nothing is written, the section point is the user's, and the surface ignores it. The Section
+    inspector lists such points with their gap in mm (`sectionGaps`, a check, it never moves geometry). Locking a point again
+    re-applies the rail's value (the rail wins), as before.
+  - **3D:** a node shared by rails and a section is dragged through the rails; the section's copy follows via its drive (it is only dragged
+    itself when detached or alone), so the move is not applied twice.
+  - **Limits:** only positions are written, a section's handles are not carried to the rail's tangent; no write when the rail misses the
+    cut; a rail that doubles back along y is not supported; contour anchors with a drive (heel back, ...) and rail end points are never
+    moved (a point is inserted next to them); existing documents keep their unlocked points until locked again.
 - **Ends:** every rail curve's first/last point follows the outline's heel back / toe tip (x and y), as drives that can be unlocked.
   - **Toe: ONE point (user request, designed).** All eight rails end at the same 3D point: the outline's toe tip, at half the flat
     upper's height there (`TOE_FRACTION` = 0.5 in `rails.ts`, a convention, calculated from the dorsal's toe wall). That is where the loft
@@ -313,6 +334,19 @@ the 3D pane shows the 3D options and notes. The single tabs stay as they were. `
 **Picking** (decision): markers are picked in screen space, not by ray: the nearest marker centre within 16 px (anchors; 12 px for handle
 knobs, anchors win a near tie) is picked, so the click target has the same size at every zoom and depth. Before, the target was the
 sprite's quad against a ray and the visible glyph was about 10 px. The marker sprite is now 40 px (was 29), the glyph about 14 px.
+
+**Handles while dragging** (fixed): handles are drawn only for the selected anchor (their `owner`). Picking a handle used to select the
+handle itself, so the anchor's handles disappeared the moment a drag began; picking a handle now keeps its anchor selected
+(`pick3d` in `Studio.tsx`). Not run in a real mouse drag (the debug click is synthetic); checked by reading the code path and the
+selection state after a synthetic anchor click.
+
+**Line style** (decision, designed, widths not measured): rails, sections and handle lines copy the 2D canvas (`curve.module.css`: a
+2.25 px stroke over a 6 px halo in the canvas colour). They are screen-width lines (`Line2`, since a WebGL line is always 1 px): 2.5 px
+(3.5 px when selected) over a halo 3.5 px wider, handle lines 1.5 px. Each line is also drawn a second time at 50 % opacity ignoring
+depth. The reason is that a rail is not always on the mesh: inside an end cap the surface is interpolated, so a rail can run a few mm
+under it (see End caps, limits); the toe box showed almost no rail lines before this. The faint copy also shows lines on the far side
+of the model through it, like the markers. The surface's polygon offset was raised (1 → 2) so lines that skim it win the depth test.
+Not done: putting the rail lines ON the cap surface (they would then no longer be the rail curves the handles edit).
 
 The standard views switch to orthographic and stay there until toggled (no auto-perspective).
 

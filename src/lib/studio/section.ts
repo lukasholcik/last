@@ -29,6 +29,9 @@ import { reconcileCurve, type Drive } from "./side";
  * "build sections where section planes meet profile curves" idea as the Rhino
  * CSec command and section-built last patents; the landmark choice is ours.
  *
+ * (A section point that sits on a rail or the contour is dragged THROUGH its
+ * drive: the move is written to the owner, see crossing.ts.)
+ *
  * Drives (all unlockable, ids prefixed by the section id so the shared
  * `unlocked` list cannot collide across sections):
  *  - medial   u = 0         the outline's medial landmark

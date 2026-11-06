@@ -1,3 +1,4 @@
+import { writeBackSection } from "./crossing";
 import { z } from "zod";
 import { curveBody, normalize, type EditableCurve } from "~/lib/curves";
 import {
@@ -155,9 +156,16 @@ export function withSection(
   id: SectionId,
   curve: EditableCurve,
 ): StudioDoc {
+  // A moved crossing point is written back to the rail or contour that owns it
+  // before the drives are re-applied (see crossing.ts).
   return curve === doc.sections[id]
     ? doc
-    : reconcileDoc({ ...doc, sections: { ...doc.sections, [id]: curve } });
+    : reconcileDoc(
+        writeBackSection(
+          { ...doc, sections: { ...doc.sections, [id]: curve } },
+          id,
+        ),
+      );
 }
 
 /** Change the cut's height and/or tilt (clamped to sane values). */
