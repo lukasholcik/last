@@ -12,6 +12,46 @@ export interface SeatGuide {
   footWidth: number;
   provenance: string;
   limitation: string;
+  /** Shared nominal attachment polygon; shoulder may warp the actual cap. */
+  topOutline?: readonly (readonly [number, number])[];
+}
+
+/** Preserve normalized body edits while replacing the source attachment box. */
+export function rebaseHeelParameters(
+  parameters: HeelParameters,
+  previousSeat: SeatGuide,
+  nextSeat: SeatGuide,
+): HeelParameters {
+  const sx =
+    (nextSeat.rightX - nextSeat.leftX) /
+    (previousSeat.rightX - previousSeat.leftX);
+  const sy = nextSeat.length / previousSeat.length;
+  if (!(Number.isFinite(sx) && sx > 0 && Number.isFinite(sy) && sy > 0))
+    throw new Error(
+      "Cannot rebase heel across non-positive source dimensions.",
+    );
+  const x = (v: number) => nextSeat.leftX + (v - previousSeat.leftX) * sx;
+  return {
+    ...parameters,
+    top: {
+      backY: 0,
+      frontY: nextSeat.length,
+      leftX: nextSeat.leftX,
+      rightX: nextSeat.rightX,
+    },
+    bottom: {
+      centerX: x(parameters.bottom.centerX),
+      centerY: parameters.bottom.centerY * sy,
+      width: parameters.bottom.width * sx,
+      depth: parameters.bottom.depth * sy,
+    },
+    handles: {
+      left: parameters.handles.left.map(x) as [number, number],
+      right: parameters.handles.right.map(x) as [number, number],
+      back: parameters.handles.back.map((v) => v * sy) as [number, number],
+      front: parameters.handles.front.map((v) => v * sy) as [number, number],
+    },
+  };
 }
 
 export interface HeelParameters {

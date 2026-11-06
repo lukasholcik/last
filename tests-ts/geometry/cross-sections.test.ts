@@ -19,8 +19,206 @@ import type { FootFirstInput, Vec2 } from "../../src/lib/geometry/types";
 import * as crossSections from "../../src/lib/geometry/cross-sections";
 import { resolveSectionFrame } from "../../src/lib/geometry/section-frame";
 import { bezier } from "../../src/lib/geometry/math";
+import {
+  CROSS_SECTION_ANCHORS,
+  LOCAL_CROSS_SECTION_ANCHORS,
+} from "../../src/lib/geometry/section-types";
 
 describe("shared authored cross sections", () => {
+  it("uses eight semantic anchors and 64 samples, retaining the original route quarters", () => {
+    const sections = resolveCrossSections(buildLast2D(baseline));
+    expect(CROSS_SECTION_ANCHORS).toEqual([
+      "medial",
+      "medial_shoulder",
+      "dorsal",
+      "lateral_shoulder",
+      "lateral",
+      "lateral_bottom",
+      "plantar",
+      "medial_bottom",
+    ]);
+    for (const section of sections.filter((s) => s.id !== "toe_end")) {
+      expect(section.anchors.map((a) => a.id)).toEqual(CROSS_SECTION_ANCHORS);
+      expect(section.cubics).toHaveLength(8);
+      expect(section.samples).toHaveLength(64);
+      expect(section.posedSamples).toHaveLength(64);
+      section.anchors.forEach((a, i) =>
+        expect(section.samples[i * 8]).toEqual(a.point),
+      );
+      for (const [id, index] of [
+        ["medial", 0],
+        ["dorsal", 16],
+        ["lateral", 32],
+        ["plantar", 48],
+      ] as const)
+        expect(section.samples[index]).toEqual(
+          section.anchors.find((a) => a.id === id)!.point,
+        );
+    }
+  });
+  it("authors genuinely flat heel/ball/fore-toe soles and a medial-only midfoot arch", () => {
+    const sections = resolveCrossSections(buildLast2D(baseline));
+    for (const id of ["heel_width", "ball", "fore_toe"]) {
+      const section = sections.find((s) => s.id === id)!;
+      for (const start of ["lateral_bottom", "plantar"] as const) {
+        const index = section.anchors.findIndex((a) => a.id === start);
+        expect(section.cubics[index]!.every((p) => p[1] === 0)).toBe(true);
+        for (let i = 0; i <= 16; i++)
+          expect(bezier(section.cubics[index]!, i / 16)[1]).toBe(0);
+      }
+    }
+    const mid = sections.find((s) => s.id === "midfoot")!;
+    expect(
+      mid.anchors.find((a) => a.id === "medial_bottom")!.point[1],
+    ).toBeCloseTo(0.15 * mid.height, 10);
+    expect(mid.anchors.find((a) => a.id === "lateral_bottom")!.point[1]).toBe(
+      0,
+    );
+    expect(mid.anchors.find((a) => a.id === "plantar")!.point).toEqual([0, 0]);
+    expect(
+      bezier(
+        mid.cubics[mid.anchors.findIndex((a) => a.id === "plantar")]!,
+        0.5,
+      )[1],
+    ).toBeGreaterThan(0);
+    expect(
+      bezier(
+        mid.cubics[mid.anchors.findIndex((a) => a.id === "lateral_bottom")]!,
+        0.5,
+      )[1],
+    ).toBe(0);
+  });
+  it.each(LOCAL_CROSS_SECTION_ANCHORS)(
+    "serializes independent %s point/handles without changing shared models or other sections",
+    (anchor) => {
+      const initial = buildLast2D(baseline),
+        before = resolveCrossSections(initial),
+        ball = before.find((s) => s.id === "ball")!,
+        point = ball.anchors.find((a) => a.id === anchor)!.point;
+      const target: Vec2 = [
+        point[0] * 0.9,
+        anchor.endsWith("shoulder")
+          ? point[1] + 0.02 * ball.height
+          : 0.1 * ball.height,
+      ];
+      const moved = buildLast2D(
+        editCrossSection(initial, "ball", { anchor, kind: "point" }, target),
+      );
+      expect(moved.models).toEqual(initial.models);
+      expect(moved.inputs.foot).toEqual(initial.inputs.foot);
+      expect(moved.inputs.centre_section).toEqual(
+        initial.inputs.centre_section,
+      );
+      expect(moved.inputs.last_outline).toEqual(initial.inputs.last_outline);
+      const section = resolveCrossSections(moved).find((s) => s.id === "ball")!,
+        a = section.anchors.find((a) => a.id === anchor)!;
+      a.point.forEach((v, i) => expect(v).toBeCloseTo(target[i]!, 8));
+      const incoming: Vec2 = a.incoming.map(
+        (v, i) => a.point[i]! + 0.7 * (v - a.point[i]!),
+      ) as Vec2;
+      const first = buildLast2D(
+          editCrossSection(
+            moved,
+            "ball",
+            { anchor, kind: "incoming" },
+            incoming,
+          ),
+        ),
+        afterFirst = resolveCrossSections(first)
+          .find((s) => s.id === "ball")!
+          .anchors.find((a) => a.id === anchor)!;
+      expect(afterFirst.outgoing).toEqual(a.outgoing);
+      const outgoing: Vec2 = afterFirst.outgoing.map(
+        (v, i) => a.point[i]! + 0.6 * (v - a.point[i]!),
+      ) as Vec2;
+      const final = buildLast2D(
+          editCrossSection(
+            first,
+            "ball",
+            { anchor, kind: "outgoing" },
+            outgoing,
+          ),
+        ),
+        sections = resolveCrossSections(final),
+        edited = sections
+          .find((s) => s.id === "ball")!
+          .anchors.find((a) => a.id === anchor)!;
+      expect(edited.incoming).toEqual(afterFirst.incoming);
+      edited.outgoing.forEach((v, i) => expect(v).toBeCloseTo(outgoing[i]!, 9));
+      expect(
+        parseFootFirstInput(JSON.parse(JSON.stringify(final.inputs))),
+      ).toEqual(final.inputs);
+      expect(final.models).toEqual(initial.models);
+      expect(sections.filter((s) => s.id !== "ball")).toEqual(
+        before.filter((s) => s.id !== "ball"),
+      );
+      expect(sections.find((s) => s.id === "ball")!.samples).not.toEqual(
+        ball.samples,
+      );
+    },
+  );
+  it("allows an independent lower handle to shape an arch between flat corner anchors", () => {
+    const initial = buildLast2D(baseline),
+      ball = resolveCrossSections(initial).find((s) => s.id === "ball")!,
+      corner = ball.anchors.find((a) => a.id === "lateral_bottom")!;
+    const next = buildLast2D(
+      editCrossSection(
+        initial,
+        "ball",
+        { anchor: "lateral_bottom", kind: "outgoing" },
+        [corner.outgoing[0], 0.1 * ball.height],
+      ),
+    );
+    const edited = resolveCrossSections(next).find((s) => s.id === "ball")!,
+      index = edited.anchors.findIndex((a) => a.id === "lateral_bottom");
+    expect(edited.anchors[index]!.point[1]).toBe(0);
+    expect(edited.anchors.find((a) => a.id === "plantar")!.point).toEqual([
+      0, 0,
+    ]);
+    expect(bezier(edited.cubics[index]!, 0.5)[1]).toBeGreaterThan(0);
+    expect(next.models).toEqual(initial.models);
+  });
+  it("rejects unknown, nonfinite, wrong-side and out-of-region local points", () => {
+    for (const points of [
+      { medial: [-0.5, 0.5] },
+      { unknown: [0.5, 0.5] },
+      { medial_bottom: [0.5, 0.1] },
+      { lateral_bottom: [1.1, 0] },
+      { medial_shoulder: [-0.5, NaN] },
+      { lateral_shoulder: [0.5, 1.1] },
+    ]) {
+      expect(() =>
+        parseFootFirstInput({
+          ...baseline,
+          cross_sections: { sections: { ball: { points } } },
+        }),
+      ).toThrow(InputError);
+    }
+    for (const points of [
+      { medial_shoulder: [-0.6, 0.1] },
+      { lateral_bottom: [0.7, 0.9] },
+      { medial_shoulder: [-0.6, 0.5] },
+      { lateral_bottom: [0.7, 0.5] },
+    ])
+      expect(() =>
+        buildLast2D({
+          ...baseline,
+          cross_sections: { sections: { ball: { points } } },
+        }),
+      ).toThrow(InputError);
+    const g = buildLast2D(baseline);
+    expect(() =>
+      editCrossSection(
+        g,
+        "ball",
+        { anchor: "medial_bottom", kind: "point" },
+        [1, 0],
+      ),
+    ).toThrow(InputError);
+    expect(() =>
+      editCrossSection(g, "ball", { anchor: "plantar", kind: "point" }, [0, 1]),
+    ).toThrow(InputError);
+  });
   it("continuously follows both descending rear caps without endpoint bands", () => {
     const g = buildLast2D(baseline),
       envelope = createCrossSectionEnvelope(g),
@@ -148,8 +346,14 @@ describe("shared authored cross sections", () => {
     ]);
     const m = g.models.top.points.medial_ball!,
       l = g.models.top.points.lateral_ball!;
-    expect(ball.anchors[0]!.point[0]).toBeCloseTo(m.x, 6);
-    expect(ball.anchors[2]!.point[0]).toBeCloseTo(l.x, 6);
+    expect(ball.anchors.find((a) => a.id === "medial")!.point[0]).toBeCloseTo(
+      m.x,
+      6,
+    );
+    expect(ball.anchors.find((a) => a.id === "lateral")!.point[0]).toBeCloseTo(
+      l.x,
+      6,
+    );
     const slope = (l.y - m.y) / (l.x - m.x);
     expect(ball.referenceStation + slope * m.x).toBeCloseTo(m.y, 7);
     expect(ball.referenceStation + slope * l.x).toBeCloseTo(l.y, 7);
@@ -161,7 +365,7 @@ describe("shared authored cross sections", () => {
   it("updates shared last width and profile height, not foot observations or ball stations", () => {
     const g = buildLast2D(baseline),
       ball = resolveCrossSections(g).find((s) => s.id === "ball")!,
-      p = ball.anchors[0]!.point;
+      p = ball.anchors.find((a) => a.id === "medial")!.point;
     const edited = editCrossSection(
         g,
         "ball",
@@ -225,7 +429,17 @@ describe("shared authored cross sections", () => {
     ).toThrow(InputError);
   });
   it("splits at the current shape with zero jump, retaining accumulated refinements", () => {
-    const g = buildLast2D(baseline),
+    const initial = buildLast2D(baseline),
+      mid = resolveCrossSections(initial).find((s) => s.id === "midfoot")!,
+      corner = mid.anchors.find((a) => a.id === "medial_bottom")!;
+    const g = buildLast2D(
+        editCrossSection(
+          initial,
+          "midfoot",
+          { anchor: "medial_bottom", kind: "point" },
+          [corner.point[0] * 0.95, mid.height * 0.2],
+        ),
+      ),
       m = resolveCrossSections(g).find((s) => s.id === "midfoot")!;
     const split = buildLast2D(splitMidfoot(g)),
       sections = resolveCrossSections(split);
@@ -278,6 +492,7 @@ describe("shared authored cross sections", () => {
         expect(upper[1]).toBeCloseTo(roof[0], 6);
         expect(upper[2]).toBeCloseTo(roof[1], 6);
         expect(lower[0]).toBeCloseTo(0, 7);
+        expect(lower).toEqual(env.pose(s, 0, 0, env.height(s)));
       }
       for (const section of state.display.crossSections!.filter(
         (s) => s.cubics.length,
@@ -327,7 +542,7 @@ describe("shared authored cross sections", () => {
     expect(long).not.toHaveProperty("foot");
     expect(state.inputs.foot).toEqual(input.foot);
   });
-  it("agrees with an independent rounded-ellipse perimeter estimate in a flat waist case", () => {
+  it("agrees with independent numerical integration of the authored waist curves", () => {
     const input = parseFootFirstInput(baseline);
     input.pose = { heel_height: 0, toe_spring: 0, seat_inclination_deg: 0 };
     const u = 100 / 260;
@@ -344,11 +559,76 @@ describe("shared authored cross sections", () => {
       },
     };
     const computed = buildLast(input).display.heelWraps![0]!.computed_mm!;
-    // Two half ellipses, horizontal radii 29/32 and vertical radius 55/2.
-    // Ramanujan approximation is independent of our cubic/path sampler.
-    const ellipse = (a: number, b: number) =>
-      Math.PI * (3 * (a + b) - Math.sqrt((3 * a + b) * (a + 3 * b)));
-    const expected = (ellipse(29, 27.5) + ellipse(32, 27.5)) / 2;
-    expect(Math.abs(computed - expected)).toBeLessThan(0.15);
+    // Explicit independent reference: 29/32 mm half-widths, 55 mm depth,
+    // medial arch corner 8.25 mm high. No production evaluator or sampler.
+    const curves: Vec2[][] = [
+      [
+        [-29, 27.5],
+        [-29, 37.95],
+        [-22.91, 40.04],
+        [-18.85, 48.4],
+      ],
+      [
+        [-18.85, 48.4],
+        [-11.31, 51.04],
+        [-7.54, 55],
+        [0, 55],
+      ],
+      [
+        [0, 55],
+        [8.32, 55],
+        [12.48, 51.04],
+        [20.8, 48.4],
+      ],
+      [
+        [20.8, 48.4],
+        [25.28, 40.04],
+        [32, 37.95],
+        [32, 27.5],
+      ],
+      [
+        [32, 27.5],
+        [32, 13.75],
+        [28.128, 0],
+        [24.96, 0],
+      ],
+      [
+        [24.96, 0],
+        [16.64, 0],
+        [8.32, 0],
+        [0, 0],
+      ],
+      [
+        [0, 0],
+        [-7.54, 0],
+        [-15.08, 8.25],
+        [-22.62, 8.25],
+      ],
+      [
+        [-22.62, 8.25],
+        [-25.491, 8.25],
+        [-29, 17.875],
+        [-29, 27.5],
+      ],
+    ];
+    const steps = 512;
+    const expected = curves.reduce((total, p) => {
+      const speed = (t: number) =>
+        Math.hypot(
+          ...[0, 1].map(
+            (k) =>
+              3 *
+              ((1 - t) ** 2 * (p[1]![k]! - p[0]![k]!) +
+                2 * (1 - t) * t * (p[2]![k]! - p[1]![k]!) +
+                t * t * (p[3]![k]! - p[2]![k]!)),
+          ),
+        );
+      let sum = speed(0) + speed(1);
+      for (let i = 1; i < steps; i++)
+        sum += (i % 2 === 0 ? 2 : 4) * speed(i / steps);
+      return total + sum / (3 * steps);
+    }, 0);
+    // The diagnostic deliberately retains its cheap 64-chord route sampling.
+    expect(Math.abs(computed - expected)).toBeLessThan(0.25);
   });
 });

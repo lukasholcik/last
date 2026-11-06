@@ -9,6 +9,8 @@ import {
 } from "./types";
 import {
   CROSS_SECTION_ANCHORS,
+  LOCAL_CROSS_SECTION_ANCHORS,
+  type LocalCrossSectionAnchorId,
   type CrossSectionId,
   type CrossSectionDefinition,
   type ResolvedCrossSection,
@@ -23,7 +25,6 @@ export type {
   ResolvedCrossSection,
 } from "./section-types";
 
-const K = 0.5522847498307936;
 const labels: Record<CrossSectionId, string> = {
   heel_width: "Heel width",
   midfoot: "Midfoot",
@@ -183,6 +184,70 @@ export function createCrossSectionEnvelope(g: Last2DGeometry) {
   };
   return { height, roof, pose, extent };
 }
+function authoredPoints(
+  lo: number,
+  hi: number,
+  h: number,
+  side: Vec2,
+  arch: boolean,
+): Vec2[] {
+  const m = side[0] * h,
+    l = side[1] * h;
+  return [
+    [lo, m],
+    [0.65 * lo, m + 0.76 * (h - m)],
+    [0, h],
+    [0.65 * hi, l + 0.76 * (h - l)],
+    [hi, l],
+    [0.78 * hi, 0],
+    [0, 0],
+    [0.78 * lo, arch ? 0.3 * m : 0],
+  ];
+}
+function curvesThroughPoints(points: Vec2[]): Cubic[] {
+  const [m, ms, d, ls, l, lb, p, mb] = points as [
+    Vec2,
+    Vec2,
+    Vec2,
+    Vec2,
+    Vec2,
+    Vec2,
+    Vec2,
+    Vec2,
+  ];
+  // Rounded shoulders, intentional independent sole corners, flat default sole
+  // spans. These are authored prototype controls, not subdivisions of an ellipse.
+  const incoming: Vec2[] = [
+    [m[0], m[1] - 0.5 * (m[1] - mb[1])],
+    [ms[0] - 0.4 * (ms[0] - m[0]), ms[1] - 0.4 * (ms[1] - m[1])],
+    [0.4 * ms[0], d[1]],
+    [0.6 * ls[0], ls[1] + 0.4 * (d[1] - ls[1])],
+    [l[0], l[1] + 0.5 * (ls[1] - l[1])],
+    [lb[0] + 0.45 * (l[0] - lb[0]), lb[1]],
+    [lb[0] / 3, p[1]],
+    [(mb[0] * 2) / 3, mb[1]],
+  ];
+  const outgoing: Vec2[] = [
+    [m[0], m[1] + 0.5 * (ms[1] - m[1])],
+    [0.6 * ms[0], ms[1] + 0.4 * (d[1] - ms[1])],
+    [0.4 * ls[0], d[1]],
+    [ls[0] + 0.4 * (l[0] - ls[0]), ls[1] - 0.4 * (ls[1] - l[1])],
+    [l[0], l[1] - 0.5 * (l[1] - lb[1])],
+    [(lb[0] * 2) / 3, lb[1]],
+    [mb[0] / 3, p[1]],
+    [mb[0] - 0.45 * (mb[0] - m[0]), mb[1]],
+  ];
+  return points.map((point, i): Cubic => [
+    point,
+    outgoing[i]!,
+    incoming[(i + 1) % points.length]!,
+    points[(i + 1) % points.length]!,
+  ]);
+}
+/** Symmetric eight-segment rear correspondence; the rear profile itself stays authoritative. */
+export function defaultRearCrossSectionCurves(): Cubic[] {
+  return curvesThroughPoints(authoredPoints(-1, 1, 1, [0.5, 0.5], false));
+}
 function localCurves(
   g: Last2DGeometry,
   id: CrossSectionId,
@@ -191,49 +256,83 @@ function localCurves(
   h: number,
 ): Cubic[] {
   const d = definition(g, id),
-    side = d.side_depth_ratios ?? [0.5, 0.5],
-    m = side[0] * h,
-    l = side[1] * h;
-  const points: Vec2[] = [
-    [lo, m],
-    [0, h],
-    [hi, l],
-    [0, 0],
-  ];
-  const incoming: Vec2[] = [
-    [lo, m * (1 - K)],
-    [lo * K, h],
-    [hi, l + K * (h - l)],
-    [hi * K, 0],
-  ];
-  const outgoing: Vec2[] = [
-    [lo, m + K * (h - m)],
-    [hi * K, h],
-    [hi, l * (1 - K)],
-    [lo * K, 0],
-  ];
-  for (let i = 0; i < 4; i++)
+    points = authoredPoints(
+      lo,
+      hi,
+      h,
+      d.side_depth_ratios ?? [0.5, 0.5],
+      id === "midfoot" || id === "waist" || id === "instep",
+    );
+  for (const anchor of LOCAL_CROSS_SECTION_ANCHORS) {
+    const v = d.points?.[anchor];
+    if (v) {
+      if (
+        !v.every(Number.isFinite) ||
+        (anchor.startsWith("medial")
+          ? !(v[0] > -1 && v[0] < 0)
+          : !(v[0] > 0 && v[0] < 1)) ||
+        v[1] < 0 ||
+        v[1] > 1
+      )
+        throw new InputError(
+          "Local section point leaves its shared half-width/depth bounds",
+        );
+      points[CROSS_SECTION_ANCHORS.indexOf(anchor)] = [
+        v[0] * Math.abs(anchor.startsWith("medial") ? lo : hi),
+        v[1] * h,
+      ];
+    }
+    const depth = points[CROSS_SECTION_ANCHORS.indexOf(anchor)]![1],
+      sideDepth =
+        points[
+          CROSS_SECTION_ANCHORS.indexOf(
+            anchor.startsWith("medial") ? "medial" : "lateral",
+          )
+        ]![1];
+    if (anchor.endsWith("shoulder") ? depth <= sideDepth : depth >= sideDepth)
+      throw new InputError(
+        "Shoulders and bottom corners must stay strictly above/below their side anchor to avoid overlapping boundaries",
+      );
+  }
+  const curves = curvesThroughPoints(points);
+  for (let i = 0; i < points.length; i++)
     for (const kind of ["incoming", "outgoing"] as const) {
       const v = d.handles?.[CROSS_SECTION_ANCHORS[i]!]?.[kind];
-      if (v)
-        (kind === "incoming" ? incoming : outgoing)[i] = [
+      if (v) {
+        const target: Vec2 = [
           points[i]![0] + v[0] * g.inputs.foot.width,
           points[i]![1] + v[1] * g.inputs.foot.length,
         ];
+        if (kind === "incoming")
+          curves[(i + points.length - 1) % points.length]![2] = target;
+        else curves[i]![1] = target;
+      }
     }
-  return points.map((p, i): Cubic => [
-    p,
-    outgoing[i]!,
-    incoming[(i + 1) % 4]!,
-    points[(i + 1) % 4]!,
-  ]);
+  return curves;
 }
 function validateCurves(curves: Cubic[], lo: number, hi: number, h: number) {
-  for (const p of curves) {
+  const medialDepth = curves[CROSS_SECTION_ANCHORS.indexOf("medial")]![0][1],
+    lateralDepth = curves[CROSS_SECTION_ANCHORS.indexOf("lateral")]![0][1];
+  for (const [i, p] of curves.entries()) {
+    const start = CROSS_SECTION_ANCHORS[i]!;
     const minX = Math.min(p[0][0], p[3][0]),
       maxX = Math.max(p[0][0], p[3][0]),
-      minH = Math.min(p[0][1], p[3][1]),
-      maxH = Math.max(p[0][1], p[3][1]);
+      upper = [
+        "medial",
+        "medial_shoulder",
+        "dorsal",
+        "lateral_shoulder",
+      ].includes(start),
+      sideDepth = [
+        "medial",
+        "medial_shoulder",
+        "plantar",
+        "medial_bottom",
+      ].includes(start)
+        ? medialDepth
+        : lateralDepth,
+      minH = upper ? sideDepth : 0,
+      maxH = upper ? h : sideDepth;
     for (const q of p)
       if (
         !q.every(Number.isFinite) ||
@@ -288,7 +387,7 @@ export function resolveCrossSections(
     if (!(H > 0)) throw new InputError("Section needs positive profile depth");
     validateCurves(cubics, lo, hi, H);
     const samples = cubics.flatMap((p) =>
-      Array.from({ length: 16 }, (_, i) => bezier(p, i / 16)),
+      Array.from({ length: 8 }, (_, i) => bezier(p, i / 8)),
     );
     const posedSamples = samples.map((p) =>
       env.pose(s + slope * p[0], p[0], p[1], H),
@@ -298,9 +397,9 @@ export function resolveCrossSections(
       u = env.pose(s, 0, H, H);
     const anchors = CROSS_SECTION_ANCHORS.map((anchor, i) => ({
       id: anchor,
-      label: anchor,
+      label: anchor.replaceAll("_", " "),
       point: cubics[i]![0],
-      incoming: cubics[(i + 3) % 4]![2],
+      incoming: cubics[(i + cubics.length - 1) % cubics.length]![2],
       outgoing: cubics[i]![1],
     }));
     const perimeter = samples.reduce(
@@ -348,9 +447,9 @@ export function resolveCrossSections(
     } else {
       const ps = station(g, previous.id).slope,
         cs = station(g, current.id).slope;
-      for (const side of [0, 2]) {
-        const px = previous.anchors[side]?.point[0] ?? 0,
-          cx = current.anchors[side]?.point[0] ?? 0;
+      for (const side of ["medial", "lateral"] as const) {
+        const px = previous.anchors.find((a) => a.id === side)?.point[0] ?? 0,
+          cx = current.anchors.find((a) => a.id === side)?.point[0] ?? 0;
         if (
           current.referenceStation + cs * cx <=
           previous.referenceStation + ps * px + 1e-7
@@ -394,6 +493,34 @@ export function editCrossSection(
       (target[0] - anchor.point[0]) / W,
       (target[1] - anchor.point[1]) / F,
     ];
+  } else if (
+    LOCAL_CROSS_SECTION_ANCHORS.includes(
+      control.anchor as LocalCrossSectionAnchorId,
+    )
+  ) {
+    const localId = control.anchor as LocalCrossSectionAnchorId,
+      medial = localId.startsWith("medial"),
+      sidePoint = resolved.anchors.find(
+        (a) => a.id === (medial ? "medial" : "lateral"),
+      )!.point;
+    const normalized: Vec2 = [
+      target[0] / Math.abs(sidePoint[0]),
+      target[1] / resolved.height,
+    ];
+    if (
+      (medial
+        ? !(normalized[0] > -1 && normalized[0] < 0)
+        : !(normalized[0] > 0 && normalized[0] < 1)) ||
+      normalized[1] < 0 ||
+      normalized[1] > 1 ||
+      (localId.endsWith("shoulder")
+        ? target[1] <= sidePoint[1]
+        : target[1] >= sidePoint[1])
+    )
+      throw new InputError(
+        "Local point must retain its side, envelope bounds and upper/lower region",
+      );
+    (d.points ?? (d.points = {}))[localId] = normalized;
   } else if (control.anchor === "medial" || control.anchor === "lateral") {
     if (
       (definition(g, id).station_offset_ratio ?? 0) !== 0 ||

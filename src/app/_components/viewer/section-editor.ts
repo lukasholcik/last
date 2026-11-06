@@ -26,9 +26,13 @@ export function referenceSectionLine(
     l = g.models.top.points[`lateral_${region}`]!;
   const tilt = g.inputs.cross_sections?.sections?.[section.id]?.tilt_deg ?? 0;
   const slope = (l.y - m.y) / (l.x - m.x) + Math.tan((tilt * Math.PI) / 180);
-  return [section.anchors[0]!.point, section.anchors[2]!.point].map(
-    ([x]) => [x, section.referenceStation + slope * x] as Vec2,
-  ) as [Vec2, Vec2];
+  return [
+    section.anchors.find((anchor) => anchor.id === "medial")!.point,
+    section.anchors.find((anchor) => anchor.id === "lateral")!.point,
+  ].map(([x]) => [x, section.referenceStation + slope * x] as Vec2) as [
+    Vec2,
+    Vec2,
+  ];
 }
 
 export const sectionName = (id: CrossSectionId) => id.replaceAll("_", " ");

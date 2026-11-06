@@ -12,15 +12,29 @@ export const CROSS_SECTION_IDS = [
 export type CrossSectionId = (typeof CROSS_SECTION_IDS)[number];
 export const CROSS_SECTION_ANCHORS = [
   "medial",
+  "medial_shoulder",
   "dorsal",
+  "lateral_shoulder",
   "lateral",
+  "lateral_bottom",
   "plantar",
+  "medial_bottom",
 ] as const;
 export type CrossSectionAnchorId = (typeof CROSS_SECTION_ANCHORS)[number];
+export const LOCAL_CROSS_SECTION_ANCHORS = [
+  "medial_shoulder",
+  "lateral_shoulder",
+  "lateral_bottom",
+  "medial_bottom",
+] as const;
+export type LocalCrossSectionAnchorId =
+  (typeof LOCAL_CROSS_SECTION_ANCHORS)[number];
 export interface CrossSectionDefinition {
   station_offset_ratio?: number;
   tilt_deg?: number;
   side_depth_ratios?: Vec2;
+  /** Signed transverse fraction of the corresponding shared half-width, depth/H. */
+  points?: Partial<Record<LocalCrossSectionAnchorId, Vec2>>;
   /** Independent vectors relative to the shared anchor, normalized by W/F. */
   handles?: Partial<
     Record<CrossSectionAnchorId, { incoming?: Vec2; outgoing?: Vec2 }>

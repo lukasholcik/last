@@ -14,7 +14,8 @@ Implementation source of truth: [approved scope](specs/section-editor-and-last-s
 
 - Schema 4 retains `last_outline` and `section_handles`; optional `cross_sections` stores normalized local refinements, frame offsets/tilt and separately declared heel-wrap routes.
 - Sections derive from the current **last** landmarks and the existing longitudinal centre profile. Ball retains independent medial/lateral stations. The foot remains reference data.
-- Initial sections use four semantic cubic anchors: medial, dorsal, lateral and plantar. Rounded starter curves are authored defaults, not reconstructed anatomy or girth fitting.
+- Sections use eight semantic cubic anchors: medial side/shoulder, dorsal, lateral shoulder/side/bottom corner, plantar centre and medial bottom corner. Each has independent incoming/outgoing handles; the four shoulder/corner points are local shape controls. Heel, ball and fore-toe start with genuinely flat lower spans. Midfoot (and split waist/instep) starts with raised medial arch relief and flat lateral support. These are authored prototype defaults, not reconstructed anatomy or girth fitting.
+- Optional `cross_sections.sections[id].points` stores shoulder/corner positions as signed fractions of the corresponding shared half-width and depth/H. Width-side and dorsal edits still drive the shared outline/profile; the plantar centre remains fixed to the shared bottom. Curve correspondence retains the original medial/dorsal/lateral/plantar route quarters and 64 samples per ring.
 - Frame offsets are bounded to ±0.2 foot length and additional orientation to ±30°. Frames are transported through the existing posture mapping; the posed section need not be planar.
 - Splitting midfoot initially creates coincident waist/instep sections with exactly the same shape. Separate their frame stations before independently shaping them.
 - The surface follows the continuous outline and centre seams, with normalized semantic curve interpolation and rear/topcut/toe closure. It is an inspection prototype, not manufacturing or fit validation.
@@ -24,7 +25,16 @@ Implementation source of truth: [approved scope](specs/section-editor-and-last-s
 
 The preview was not running at takeover; `pnpm dev` was started on the free port and is left running at **http://127.0.0.1:3000**. Start it again with `pnpm dev` if needed. The independent heel editor remains at `/heel`. Edits are page-local, not persisted.
 
-Actually run:
+### Eight-point shaping follow-up
+
+- Removed the transient “Preview retained.” footer without changing preview recovery or release validation. Selected-point labels now use readable shoulder/bottom names.
+- `pnpm check` passed. `pnpm exec vitest run tests-ts/geometry/cross-sections.test.ts tests-ts/geometry/two-dimensional.test.ts tests-ts/viewer/section-editor.test.ts tests-ts/viewer/editable-2d.test.ts tests-ts/viewer/drag-offset.test.ts` — **44 tests passed, 5 files, 5.49 s**. Geometry coverage includes flat lower spans, asymmetric arch relief, new point/handle serialization and independence, split preservation, low/high-heel topology and exact section/surface correspondence.
+- Short Chromium smoke: visually inspected all eight-point editors and flat/arch defaults; edited a ball bottom corner and shoulder; only that section changed, with the top-view foot/last paths unchanged and 3D revision frozen. During an invalid handle preview the section panel moved **0 px**, and no retained-preview notice appeared. Escape restored the accumulated accepted edits. Explicit Rebuild advanced revision 1 → 2 and cleared stale status; browser error collection was empty. Updated 3D screenshot capture timed out, so this follow-up does **not** claim a new visual inspection of the rebuilt mesh. The editor screenshot is ephemeral, outside the repository.
+- The preexisting profile-drag changes/test were preserved. No independent `/heel` paths changed.
+
+### Previous increment evidence
+
+Actually run before this follow-up (historical counts and wrap values below):
 
 - `pnpm check` — lint and TypeScript passed on the final code.
 - `pnpm exec vitest run tests-ts/geometry/cross-sections.test.ts tests-ts/geometry/two-dimensional.test.ts tests-ts/geometry/section.test.ts tests-ts/shaping/ tests-ts/viewer/editable-2d.test.ts tests-ts/viewer/section-editor.test.ts tests-ts/api/last.test.ts` — **76 tests passed, 8 files, 9.72 s** on the final code. An earlier run exposed an old assertion accepting a medial-waist landmark across the centre seam; that directly affected assertion now expects rejection, rather than weakening the shared model validation.
@@ -36,7 +46,7 @@ Actually run:
 ## Known prototype limits
 
 - **Off-axis toe termination remains unsupported by the new surface.** A last toe-tip lateral offset can still produce valid 2D geometry, but Rebuild rejects when the narrowing outline no longer spans the shared x=0 seam (confirmed at `toe_tip.side_offset_ratio: 0.2`, x=20 mm on the baseline). It retains the previous 3D checkpoint rather than clipping or silently changing the outline. Supporting that case needs an explicit off-axis seam-continuation rule. Pointed toes with an on-axis endpoint and asymmetric sides are separate from this limitation.
-- Plantar anchors follow the shared bottom profile; edit that profile instead. Toe end is a termination, not a circumference ring.
+- Plantar centre points follow the shared bottom profile; edit that profile instead. Their handles and the new bottom-corner points remain editable for sole/arch shaping. Toe end is a termination, not a circumference ring.
 - Width-point changes on additionally moved/tilted frames are rejected; restore the landmark-relative frame or edit local handles.
 - Dorsal dragging changes the nearest shared profile-height control; off-knot/oblique pointer correspondence is approximate.
 - A section whose across-span frame cannot cross both sides of the x=0 seam is rejected. This intentionally narrows the previous 2D-only freedom to drag a medial landmark entirely across that seam.

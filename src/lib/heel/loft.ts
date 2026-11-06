@@ -8,6 +8,7 @@ import type {
   Vec3,
 } from "./model";
 import { getHeelEditingBounds } from "./model";
+import { segmentsIntersect } from "../geometry/top";
 export { getHeelEditingBounds, getTipPositionBounds } from "./model";
 
 type Controls = [number, number, number, number];
@@ -70,6 +71,55 @@ function cubic(c: Controls, t: number): number {
   );
 }
 
+function attachment(seat: SeatGuide, theta: number): readonly [number, number] {
+  const u = ((((theta / (2 * Math.PI)) % 1) + 1) % 1) * SEGMENTS;
+  const i = Math.floor(u),
+    f = u - i;
+  const a = seat.topOutline![i]!,
+    b = seat.topOutline![(i + 1) % SEGMENTS]!;
+  return [a[0] + f * (b[0] - a[0]), a[1] + f * (b[1] - a[1])];
+}
+
+function validateOutline(seat: SeatGuide): void {
+  const a = seat.topOutline!;
+  if (
+    a.length !== SEGMENTS ||
+    a.some((p) => p.length !== 2 || !p.every(Number.isFinite))
+  )
+    fail("linked attachment requires exactly 64 finite ordered XY vertices.");
+  if (
+    Math.abs(Math.min(...a.map((p) => p[0])) - seat.leftX) > EPS ||
+    Math.abs(Math.max(...a.map((p) => p[0])) - seat.rightX) > EPS ||
+    Math.abs(Math.min(...a.map((p) => p[1]))) > EPS ||
+    Math.abs(Math.max(...a.map((p) => p[1])) - seat.length) > EPS
+  )
+    fail("linked attachment bounds must equal the full source box.");
+  const x = (seat.leftX + seat.rightX) / 2,
+    y = seat.length / 2;
+  for (let i = 0; i < SEGMENTS; i++) {
+    const p = a[i]!,
+      q = a[(i + 1) % SEGMENTS]!;
+    if ((p[0] - x) * (q[1] - y) - (p[1] - y) * (q[0] - x) <= EPS * EPS)
+      fail(
+        "linked attachment must have positive winding and a nondegenerate star-shaped cap fan about the source box center.",
+      );
+    for (let j = i + 2; j < SEGMENTS; j++) {
+      if (i === 0 && j === SEGMENTS - 1) continue;
+      if (
+        segmentsIntersect(
+          [...p],
+          [...q],
+          [...a[j]!],
+          [...a[(j + 1) % SEGMENTS]!],
+        )
+      )
+        fail(
+          "linked attachment polygon must be simple, without crossed edges.",
+        );
+    }
+  }
+}
+
 function validate(p: HeelParameters, seat: SeatGuide): BoundsControls {
   const values = [
     ...Object.values(p.top),
@@ -103,14 +153,27 @@ function validate(p: HeelParameters, seat: SeatGuide): BoundsControls {
   if (!(
     seat.length > EPS &&
     seat.length < seat.footLength &&
-    seat.leftX < 0 &&
-    seat.rightX > 0
+    (seat.topOutline
+      ? seat.leftX < seat.rightX
+      : seat.leftX < 0 && seat.rightX > 0)
   ))
     fail(
       "seat must be a positive heel-region guide with signed left/right widths.",
     );
   if (Math.abs(seat.pitchDeg) >= 80)
     fail("seat pitch must be within ±80 degrees.");
+  if (seat.topOutline) {
+    validateOutline(seat);
+    if (
+      p.top.backY !== 0 ||
+      p.top.frontY !== seat.length ||
+      p.top.leftX !== seat.leftX ||
+      p.top.rightX !== seat.rightX
+    )
+      fail(
+        "linked top edits conflict with the Last attachment; retain the full source box.",
+      );
+  }
   // The provisional outline is editable; only its containing source box and
   // the global source seat plane are fixed.
   if (p.top.frontY - p.top.backY <= EPS || p.top.rightX - p.top.leftX <= EPS)
@@ -161,6 +224,42 @@ function validate(p: HeelParameters, seat: SeatGuide): BoundsControls {
         );
     }
   }
+  if (seat.topOutline) {
+    // At every polygon direction D is linear in the scalar bounds. Replacing
+    // only its final Bernstein coefficient gives the actual nominal XY cubic.
+    // Check vertices and mid-edges (the front/rear angular join is included).
+    const standalone = { ...seat, topOutline: undefined };
+    for (let j = 0; j < SEGMENTS * 2; j++) {
+      const theta = (j * Math.PI) / SEGMENTS;
+      const xy = Array.from({ length: 4 }, (_, i) => {
+        const constant = Object.fromEntries(
+          BOUNDARIES.map((name) => [name, Array(4).fill(c[name][i])]),
+        ) as BoundsControls;
+        return point(p, standalone, constant, 0, theta, 0);
+      });
+      const end = attachment(seat, theta);
+      xy[3] = [end[0], end[1], 0];
+      for (let i = 0; i < 4; i++) {
+        const [x, y] = xy[i]!;
+        if (
+          x < box.leftX - EPS ||
+          x > box.rightX + EPS ||
+          y < box.backY - EPS ||
+          y > box.frontY + EPS
+        )
+          fail(
+            "linked nominal Bernstein controls exceed source overhang bounds.",
+          );
+        if (
+          seat.heelHeight - k * y <= EPS ||
+          seat.heelHeight - k * ((i + 1) * y - i * (xy[i - 1]?.[1] ?? 0)) <= EPS
+        )
+          fail(
+            "linked attachment exceeds the conservative monotone-height bound; reduce flare or pitch.",
+          );
+      }
+    }
+  }
   if (p.frontShoulderMm > 0) {
     const s = shoulder(p, seat);
     const minimumHalfDepth = Math.min(
@@ -191,6 +290,26 @@ function point(
   theta: number,
   trim = trimAt(shoulder(p, seat), t),
 ): Vec3 {
+  if (seat.topOutline) {
+    const standalone = { ...seat, topOutline: undefined };
+    const d = point(p, standalone, c, t, theta, 0);
+    const end = point(p, standalone, c, 1, theta, 0);
+    const a = attachment(seat, theta);
+    const x = t === 1 ? a[0] : d[0] + t ** 3 * (a[0] - end[0]);
+    const nominalY = t === 1 ? a[1] : d[1] + t ** 3 * (a[1] - end[1]);
+    const back = cubic(c.back, t),
+      front = cubic(c.front, t),
+      joint = (back + front) / 2;
+    const y =
+      nominalY <= joint
+        ? nominalY
+        : joint + (nominalY - joint) * (1 - trim / (front - joint));
+    return [
+      x,
+      y,
+      t * (seat.heelHeight - Math.tan((seat.pitchDeg * Math.PI) / 180) * y),
+    ];
+  }
   const left = cubic(c.left, t),
     right = cubic(c.right, t);
   const back = cubic(c.back, t),
@@ -333,6 +452,18 @@ export function buildHeel(p: HeelParameters, seat: SeatGuide): HeelMesh {
     for (let j = 0; j < SEGMENTS; j++) {
       const a = level * SEGMENTS + j,
         b = level * SEGMENTS + ((j + 1) % SEGMENTS);
+      if (seat.topOutline) {
+        const p = positions[a]!,
+          q = positions[b]!;
+        if (
+          (p[0] - center[0]) * (q[1] - center[1]) -
+            (p[1] - center[1]) * (q[0] - center[0]) <=
+          EPS * EPS
+        )
+          fail(
+            "linked actual cap has a folded or degenerate fan after shoulder warping.",
+          );
+      }
       triangles.push(level === 0 ? [index, b, a] : [index, a, b]);
     }
     return { boundary: sections[level]!.boundary, center: index };

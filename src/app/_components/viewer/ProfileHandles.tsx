@@ -19,8 +19,8 @@ import {
 } from "~/lib/shaping";
 import type { ShapeGesture } from "./editable-2d";
 import {
-  clientToModel,
   modelToSvg,
+  svgToModel,
   nudgeTarget,
   type GuideFrame,
 } from "./profile-pointer";
@@ -54,6 +54,8 @@ interface Drag extends ShapeGesture {
   element: SVGGElement;
   handle: ShapeHandle;
   frame: GuideFrame;
+  inverse: DOMMatrix;
+  start: Vec2;
 }
 interface Target {
   target: Vec2;
@@ -135,15 +137,18 @@ export function ProfileHandles({
   }, [cancel]);
 
   function update(event: PointerEvent<SVGGElement>, active: Drag): Target {
-    const svg = event.currentTarget.ownerSVGElement;
-    if (!svg) throw new Error("Drawing unavailable.");
-    const target = clientToModel(
-      svg,
-      event.clientX,
-      event.clientY,
+    const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(
+      active.inverse,
+    );
+    const pointer = svgToModel(
+      [point.x, point.y],
       active.handle.plane,
       active.frame,
     );
+    const target: Vec2 = [
+      active.handle.position[0] + (pointer[0] - active.start[0]),
+      active.handle.position[1] + (pointer[1] - active.start[1]),
+    ];
     try {
       return {
         target,
@@ -166,6 +171,13 @@ export function ProfileHandles({
     if (!enabled || drag.current || event.button !== 0) return;
     event.preventDefault();
     event.stopPropagation();
+    const matrix = event.currentTarget.ownerSVGElement?.getScreenCTM();
+    if (!matrix) return;
+    // Keep the gesture in its original drawing frame as live geometry relayouts.
+    const inverse = matrix.inverse();
+    const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(
+      inverse,
+    );
     const gesture = onBegin();
     if (!gesture) return;
     const freshHandles = shapeHandlesForMode(
@@ -190,6 +202,8 @@ export function ProfileHandles({
       element: event.currentTarget,
       handle: freshHandle,
       frame: { ...frame },
+      inverse,
+      start: svgToModel([point.x, point.y], freshHandle.plane, frame),
     };
   }
   function move(event: PointerEvent<SVGGElement>) {

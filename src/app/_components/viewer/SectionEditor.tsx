@@ -104,6 +104,9 @@ export function SectionEditor(props: Props) {
   const sections = resolveCrossSections(geometry),
     stable = resolveCrossSections(editable);
   const activeSection = sections.find((s) => s.id === selected);
+  const activeAnchor = activeSection?.anchors.find(
+    (anchor) => anchor.id === anchorId,
+  );
   const report = (error: unknown) =>
     onMessage(
       error instanceof Error ? error.message : "Section edit not applied.",
@@ -184,9 +187,15 @@ export function SectionEditor(props: Props) {
             <circle
               cx={p[0]}
               cy={bottom - p[1]}
-              r={kind === "point" ? 2 : 1.6}
+              r={kind === "point" ? 2.3 : 1.8}
               className={`${styles.control} ${kind !== "point" ? styles.handle : ""}`}
               data-section-control={`${section.id}:${anchor.id}:${kind}`}
+              data-selected={
+                section.id === selected &&
+                anchor.id === anchorId &&
+                kind === "point"
+              }
+              data-locked={locked}
               role="button"
               tabIndex={enabled ? 0 : -1}
               aria-disabled={!enabled || locked}
@@ -311,6 +320,10 @@ export function SectionEditor(props: Props) {
           </button>
         )}
       </div>
+      <p className={styles.hint}>
+        Eight points per section · shape shoulders and bottom corners · select a
+        point for its two handles
+      </p>
       <div className={styles.strip}>
         {/* eslint-disable-next-line react-hooks/refs -- controls only reads gesture refs inside event callbacks, not during render. */}
         {sections.map((section) => {
@@ -399,6 +412,11 @@ export function SectionEditor(props: Props) {
         })}
       </div>
       <div className={styles.footer}>
+        <output className={styles.pointLabel} aria-live="polite">
+          {activeAnchor
+            ? `${activeAnchor.label}${activeAnchor.id === "plantar" ? " · centre point fixed to bottom; handles editable" : " · incoming / outgoing handles"}`
+            : "Toe endpoint · edit top / profile"}
+        </output>
         {activeSection && activeSection.id !== "toe_end" ? (
           <>
             <span>
@@ -477,8 +495,8 @@ export function SectionEditor(props: Props) {
           <span>Toe termination is a boundary, not a circumference ring.</span>
         )}
         <small>
-          Equal axis scale · select a point for independent handles · arrows
-          nudge · Esc cancels
+          Equal axis scale · medial left, lateral right · arrows nudge · Esc
+          cancels
         </small>
       </div>
     </section>

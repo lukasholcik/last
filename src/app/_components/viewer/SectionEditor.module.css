@@ -1,6 +1,12 @@
 .panel {
   border-top: 1px solid var(--line);
 }
+.hint {
+  padding: 0 22px 14px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
 .strip {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
@@ -60,6 +66,14 @@
   outline: none;
   stroke: var(--bottom);
 }
+.control[data-selected="true"] {
+  fill: var(--bottom);
+  stroke: var(--bottom);
+}
+.control[data-locked="true"] {
+  cursor: default;
+  stroke-dasharray: 1 1;
+}
 .handle {
   fill: var(--section);
 }
@@ -84,6 +98,12 @@
 .footer > small {
   flex-basis: 100%;
   font-size: 10px;
+}
+.pointLabel {
+  flex-basis: 100%;
+  min-height: 1.5em;
+  color: var(--section);
+  font-weight: 600;
 }
 .frame {
   display: flex;

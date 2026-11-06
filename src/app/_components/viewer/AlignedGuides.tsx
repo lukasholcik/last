@@ -499,7 +499,6 @@ function Guides({
 export function AlignedGuides({
   result,
   editable,
-  previewError,
   construction,
   onConstruction,
   selection,
@@ -628,13 +627,6 @@ export function AlignedGuides({
           editing={editing}
         />
       </div>
-      {previewError && (
-        <div className="drawing-footer">
-          <p className="preview-warning" role="status" title={previewError}>
-            Preview retained.
-          </p>
-        </div>
-      )}
     </section>
   );
 }

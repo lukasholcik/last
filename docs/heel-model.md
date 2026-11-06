@@ -1,11 +1,42 @@
-# Isolated heel loft (provisional)
+# Heel loft (provisional)
 
-`/heel` uses `src/lib/heel` independently of the main last editor. Coordinates are
+The main workbench has retained Last / Heel tabs; `/heel` remains an independent
+study with its existing examples and source controls. Both use `src/lib/heel`. Coordinates are
 millimetres: x right/lateral, y forward, z up, ground z=0. This is a small explicit
 closed loft, **not** arbitrary CAD, anatomical reconstruction, fit prediction,
 structural analysis, a manufacturable heel, or a verified mating surface.
 
 ## Source and registration
+
+### Linked workbench
+
+Last drives Heel through `seatFromLast`, using only the already accepted, checked
+2D state—not provisional drags or the frozen Last 3D checkpoint. The shared
+attachment is the sampled authored **top outline** over reference stations
+0..seat_arc_length with a straight front chord, not the rear curve or a verified
+physical mating surface. Bottom rear/front endpoints still define the seat plane.
+`SeatGuide.topOutline` carries that nominal/untrimmed sampled perimeter.
+
+Height and top bounds are read-only in linked Heel, with an Edit in Last action.
+Body, tip, symmetry, roundness and front shoulder remain editable. Source changes,
+including Last Reset and Discard, rebase the current heel draft in normalized seat
+coordinates; they do not recreate defaults or rebuild Last 3D. Reset heel creates
+heel defaults against the **current** Last source. Tab changes retain both editors.
+
+The dashed plan outline shows the shared untrimmed Last attachment separately
+from the solid's actual seating cap. The shoulder stays available: its warp
+changes the actual cap, and curved sides may move outside the nominal outline.
+Do not treat either outline as a verified physical mating surface. The D-outline
+equations below describe the independent path; linked rings morph from the same
+body family to the sampled Last perimeter at the top.
+
+Unavailable sources never fall back to an illustrative seat. Failed linked builds
+retain the draft and last-valid mesh, marked out of date with Last when its source
+differs. Recovery retries the last-valid design on the current Last source and
+never rolls Last back. A first-build failure shows recoverable controls without a
+mesh. Last's explicit Rebuild 3D/checkpoint/session behavior remains unchanged.
+
+### Independent `/heel` study
 
 `getHeelSeat(heelHeight = 80, seatOffsetDeg = 2)` copies and parses the schema-v4
 `examples/foot-first-baseline.json`, replaces only those two pose fields, and calls
@@ -33,7 +64,7 @@ enough to recover a real seat perimeter.
 `createHeelParameters(seat, 'slender' | 'broad')` supplies two initial values for
 the same loft algorithm. Slender has a narrow lower shaft with a flared seat;
 broad has a near-full-width/depth footprint. These are not separate surface
-models or a preset catalogue. The initial top matches `SeatGuide`, but its four
+models or a preset catalogue. The initial top matches `SeatGuide`; in the independent study its four
 provisional outline extents are independently editable inside the source heel
 bounding box with strictly positive width and depth. The source seat plane stays
 fixed: moving top.backY never translates or flattens that plane. The authored top

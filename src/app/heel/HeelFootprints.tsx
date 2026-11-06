@@ -14,15 +14,18 @@ export function HeelFootprints({
   mesh,
   parameters,
   seat,
+  sharedSeat,
 }: {
   mesh: HeelMesh;
   parameters: HeelParameters;
   seat: SeatGuide;
+  sharedSeat?: SeatGuide;
 }) {
   const envelope = getTopEnvelope(parameters, seat);
+  const shared = sharedSeat?.topOutline?.map(([x, y]): Vec3 => [x, y, 0]);
   const top = boundaryVertices(mesh, mesh.caps.top.boundary);
   const bottom = boundaryVertices(mesh, mesh.caps.bottom.boundary);
-  const points = [...envelope, ...top, ...bottom];
+  const points = [...envelope, ...top, ...bottom, ...(shared ?? [])];
   const minX = Math.min(...points.map((p) => p[0])),
     maxX = Math.max(...points.map((p) => p[0]));
   const minY = Math.min(...points.map((p) => p[1])),
@@ -50,11 +53,6 @@ export function HeelFootprints({
           FRONT / +y ↑
         </text>
         <polygon
-          points={polygon(envelope)}
-          className={styles.envelopeGuide}
-          data-testid="top-envelope-guide"
-        />
-        <polygon
           points={polygon(top)}
           className={styles.planTop}
           data-testid="top-seat-outline"
@@ -64,6 +62,11 @@ export function HeelFootprints({
           className={styles.planBottom}
           data-testid="tip-footprint-outline"
         />
+        <polygon
+          points={polygon(shared ?? envelope)}
+          className={styles.envelopeGuide}
+          data-testid="top-envelope-guide"
+        />
         <text x="112" y="170" textAnchor="middle" className={styles.axisText}>
           REAR
         </text>
@@ -72,6 +75,11 @@ export function HeelFootprints({
         <span>Seating area</span>
         <span>Ground tip</span>
       </div>
+      <p className={styles.planGuideLabel}>
+        {shared
+          ? "Dashed: shared untrimmed Last outline"
+          : "Dashed: untrimmed top guide"}
+      </p>
     </figure>
   );
 }

@@ -19,6 +19,8 @@ import type { CrossSectionId } from "~/lib/geometry/section-types";
 import { is3DOutdated } from "./editable-2d";
 import { useEditable2D } from "./useEditable2D";
 import { RequestGate, passingResult, viewState, type Phase } from "./state";
+import { EditorTabs } from "./EditorTabs";
+import { LinkedHeelEditor } from "../../heel/LinkedHeelEditor";
 
 export function Workbench() {
   const defaults = api.last.defaults.useQuery(undefined, {
@@ -241,132 +243,142 @@ export function Workbench() {
         </div>
         <span className="edition">LOCAL EXPERIMENT · MM</span>
       </header>
-      <main className="workbench">
-        <nav className="mobile-nav" aria-label="Workbench sections">
-          <a href="#views">Inspect guides</a>
-          <a href="#controls">Edit dimensions ↓</a>
-        </nav>
-        <Controls
-          draft={state.draft}
-          result={result}
-          reference={
-            state.validated?.inputs.reference ?? defaults.data?.reference
-          }
-          busy={busy}
-          canReset={!!defaults.data}
-          canDiscard={!!result && (stale3D || !!shownError)}
-          onEdit={edit}
-          onResize={(length) => {
-            setRebuildError(null);
-            return session.resize(length);
-          }}
-          onSubmit={submit}
-          onReset={reset}
-          onDiscard={discard}
-        />
-        <section
-          className="workspace"
-          id="views"
-          data-state={phase}
-          data-2d-status={
-            state.dragging
-              ? "provisional"
-              : state.draftInvalid
-                ? "invalid-draft"
-                : state.error
-                  ? "rejected"
-                  : state.validated
-                    ? "validated"
-                    : "loading"
-          }
-          data-preview-ms={state.previewMs ?? undefined}
-          data-2d-version={state.version}
-          data-3d-revision={rebuildRevision}
-          data-3d-stale={stale3D}
-          aria-label="Geometry inspection"
-        >
-          <div className="state-bar" id="state-bar" data-state={phase}>
-            <span className="state-dot" aria-hidden="true" />
-            <div>
-              <strong id="state-title" role="status" aria-live="polite">
-                {title}
-              </strong>
-              <p id="state-detail">{detail}</p>
-            </div>
-          </div>
-          {shownError && (
-            <div
-              ref={errorElement}
-              id="error"
-              className="error"
-              role="alert"
-              tabIndex={-1}
+      <EditorTabs
+        heel={(onEditLast) => (
+          <LinkedHeelEditor
+            accepted={state.validated}
+            onEditLast={onEditLast}
+          />
+        )}
+        last={
+          <div className="workbench">
+            <nav className="mobile-nav" aria-label="Workbench sections">
+              <a href="#views">Inspect guides</a>
+              <a href="#controls">Edit dimensions ↓</a>
+            </nav>
+            <Controls
+              draft={state.draft}
+              result={result}
+              reference={
+                state.validated?.inputs.reference ?? defaults.data?.reference
+              }
+              busy={busy}
+              canReset={!!defaults.data}
+              canDiscard={!!result && (stale3D || !!shownError)}
+              onEdit={edit}
+              onResize={(length) => {
+                setRebuildError(null);
+                return session.resize(length);
+              }}
+              onSubmit={submit}
+              onReset={reset}
+              onDiscard={discard}
+            />
+            <section
+              className="workspace"
+              id="views"
+              data-state={phase}
+              data-2d-status={
+                state.dragging
+                  ? "provisional"
+                  : state.draftInvalid
+                    ? "invalid-draft"
+                    : state.error
+                      ? "rejected"
+                      : state.validated
+                        ? "validated"
+                        : "loading"
+              }
+              data-preview-ms={state.previewMs ?? undefined}
+              data-2d-version={state.version}
+              data-3d-revision={rebuildRevision}
+              data-3d-stale={stale3D}
+              aria-label="Geometry inspection"
             >
-              {shownError}
-            </div>
-          )}
-          <AlignedGuides
-            selectedSection={selectedSection}
-            result={geometry}
-            editable={state.validated}
-            construction={construction}
-            onConstruction={(value) => {
-              setConstruction(value);
-              setSelection(null);
-            }}
-            selection={selection}
-            onSelect={setSelection}
-            viewLabel={drawingLabel}
-            enabled={!!state.validated && !state.draftInvalid && !busy}
-            version={state.version}
-            dragging={state.dragging}
-            previewError={state.previewError}
-            onBegin={beginShape}
-            onPreview={session.queuePreview}
-            onFinish={finishShape}
-            onCancel={session.cancelGesture}
-            selectedId={selectedShapeId}
-            onChoose={chooseShape}
-            onResetPoint={resetPoint}
-          />
-          <SectionEditor
-            geometry={geometry}
-            editable={state.validated}
-            selected={selectedSection}
-            onSelect={setSelectedSection}
-            onMessage={setSelection}
-            enabled={!!state.validated && !state.draftInvalid && !busy}
-            dragging={state.dragging}
-            version={state.version}
-            onBegin={beginShape}
-            onPreview={session.queuePreview}
-            onFinish={finishShape}
-            onCancel={session.cancelGesture}
-          />
-          <Scene
-            display={result?.display}
-            viewLabel={checkpointLabel}
-            selectedSection={selectedSection}
-          />
-          <HeelWraps
-            result={result}
-            stale={stale3D}
-            geometry={state.validated}
-            enabled={
-              !!state.validated &&
-              !state.draftInvalid &&
-              !busy &&
-              !state.dragging
-            }
-            onApply={(input) => {
-              const accepted = session.applyInput(input);
-              setSelection(accepted ? null : session.getSnapshot().error);
-              return accepted;
-            }}
-          />
-          <Reports result={result} phase={checkpointPhase} />
-        </section>
-      </main>
+              <div className="state-bar" id="state-bar" data-state={phase}>
+                <span className="state-dot" aria-hidden="true" />
+                <div>
+                  <strong id="state-title" role="status" aria-live="polite">
+                    {title}
+                  </strong>
+                  <p id="state-detail">{detail}</p>
+                </div>
+              </div>
+              {shownError && (
+                <div
+                  ref={errorElement}
+                  id="error"
+                  className="error"
+                  role="alert"
+                  tabIndex={-1}
+                >
+                  {shownError}
+                </div>
+              )}
+              <AlignedGuides
+                selectedSection={selectedSection}
+                result={geometry}
+                editable={state.validated}
+                construction={construction}
+                onConstruction={(value) => {
+                  setConstruction(value);
+                  setSelection(null);
+                }}
+                selection={selection}
+                onSelect={setSelection}
+                viewLabel={drawingLabel}
+                enabled={!!state.validated && !state.draftInvalid && !busy}
+                version={state.version}
+                dragging={state.dragging}
+                previewError={state.previewError}
+                onBegin={beginShape}
+                onPreview={session.queuePreview}
+                onFinish={finishShape}
+                onCancel={session.cancelGesture}
+                selectedId={selectedShapeId}
+                onChoose={chooseShape}
+                onResetPoint={resetPoint}
+              />
+              <SectionEditor
+                geometry={geometry}
+                editable={state.validated}
+                selected={selectedSection}
+                onSelect={setSelectedSection}
+                onMessage={setSelection}
+                enabled={!!state.validated && !state.draftInvalid && !busy}
+                dragging={state.dragging}
+                version={state.version}
+                onBegin={beginShape}
+                onPreview={session.queuePreview}
+                onFinish={finishShape}
+                onCancel={session.cancelGesture}
+              />
+              <Scene
+                display={result?.display}
+                viewLabel={checkpointLabel}
+                selectedSection={selectedSection}
+              />
+              <HeelWraps
+                result={result}
+                stale={stale3D}
+                geometry={state.validated}
+                enabled={
+                  !!state.validated &&
+                  !state.draftInvalid &&
+                  !busy &&
+                  !state.dragging
+                }
+                onApply={(input) => {
+                  const accepted = session.applyInput(input);
+                  setSelection(accepted ? null : session.getSnapshot().error);
+                  return accepted;
+                }}
+              />
+              <Reports result={result} phase={checkpointPhase} />
+            </section>
+          </div>
+        }
+      />
     </>
   );
 }

@@ -20,7 +20,13 @@ not every newer odd-numbered release is supported by Vitest 5.
 The application is based on an actual [create-t3-app](https://create.t3.gg/en/installation) scaffold,
 adapted to **Next.js 16 App Router, React, TypeScript, Tailwind CSS, and tRPC**.
 Three.js **0.186.1** displays reference guides. Fonts use local system fallbacks; no font/CDN fetch or Python service is required.
-There is no authentication, database, or persistence layer.
+There is no authentication, database, or server-side persistence. The new `/studio` page autosaves its document to the browser's
+`localStorage` only.
+
+Other pages: **`/heel`** (independent heel study), **`/curve`** (generic Bezier curve lab: add and drag points, per-point handle modes
+including auto) and **`/studio`** (CAD-style workspace, a fresh document modelled one view at a time: top outline and side view with
+heel height and the flat-to-elevated pose so far). `/studio` does not use the schema described below; see the
+[studio model](docs/specs/studio-parametric-model.md) for its constraints, dependencies and limits.
 
 ```sh
 pnpm build && pnpm start

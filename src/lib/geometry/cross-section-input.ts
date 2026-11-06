@@ -3,6 +3,7 @@ import { record } from "./contour";
 import {
   CROSS_SECTION_IDS,
   CROSS_SECTION_ANCHORS,
+  LOCAL_CROSS_SECTION_ANCHORS,
   type CrossSectionsInput,
   type CrossSectionDefinition,
   type HeelWrapRoute,
@@ -52,6 +53,7 @@ export function parseCrossSections(value: unknown): CrossSectionsInput {
           "tilt_deg",
           "side_depth_ratios",
           "handles",
+          "points",
         ]),
         entry: CrossSectionDefinition = {};
       if (Object.hasOwn(source, "station_offset_ratio"))
@@ -68,6 +70,25 @@ export function parseCrossSections(value: unknown): CrossSectionsInput {
           throw new InputError(
             "Side anchors must be strictly inside the section depth",
           );
+      }
+      if (Object.hasOwn(source, "points")) {
+        const points = fields(source.points, LOCAL_CROSS_SECTION_ANCHORS);
+        entry.points = {};
+        for (const anchor of LOCAL_CROSS_SECTION_ANCHORS) {
+          if (!Object.hasOwn(points, anchor)) continue;
+          const v = vector(points[anchor]);
+          if (
+            (anchor.startsWith("medial")
+              ? !(v[0] > -1 && v[0] < 0)
+              : !(v[0] > 0 && v[0] < 1)) ||
+            v[1] < 0 ||
+            v[1] > 1
+          )
+            throw new InputError(
+              "Local section points must remain strictly inside their shared half-width and within depth [0,1]",
+            );
+          entry.points[anchor] = v;
+        }
       }
       if (Object.hasOwn(source, "handles")) {
         const handles = fields(source.handles, CROSS_SECTION_ANCHORS);

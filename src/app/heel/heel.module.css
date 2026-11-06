@@ -14,6 +14,49 @@
 .editor input {
   font: inherit;
 }
+.embedded {
+  min-height: 0;
+}
+.embedded .header {
+  height: 74px;
+}
+.headerTitle h2 {
+  font-size: 24px;
+}
+.controlFields {
+  display: contents;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.numberField input[readonly] {
+  background: transparent;
+  border-style: dashed;
+  color: #607267;
+}
+.editLast {
+  padding: 7px 10px;
+  font-size: 10px !important;
+}
+.waiting {
+  padding: 48px 32px;
+}
+.waiting p {
+  margin: 12px 0 20px;
+  color: var(--h-muted);
+}
+.emptyMesh {
+  padding: 48px 24px;
+  border: 1px dashed var(--h-line);
+  line-height: 1.7;
+}
+.planGuideLabel {
+  text-align: center;
+  margin: 7px 8px 0;
+  color: #607267;
+  font-size: 8px;
+}
 .editor button {
   border-radius: 3px;
 }

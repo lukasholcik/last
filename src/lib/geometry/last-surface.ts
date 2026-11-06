@@ -13,6 +13,7 @@ import type {
 import {
   createCrossSectionEnvelope,
   resolveCrossSections,
+  defaultRearCrossSectionCurves,
 } from "./cross-sections";
 import { bezier } from "./math";
 
@@ -34,13 +35,21 @@ export function createLastSurfaceEvaluator(
             [
               q[0] /
                 Math.abs(
-                  q[0] < 0 ? s.anchors[0]!.point[0] : s.anchors[2]!.point[0],
+                  s.anchors.find(
+                    (a) => a.id === (q[0] < 0 ? "medial" : "lateral"),
+                  )!.point[0],
                 ),
               q[1] / s.height,
             ] as Vec2,
         ) as Cubic,
     );
   const curves = sections.map(normalized);
+  const rearCurves = defaultRearCrossSectionCurves();
+  const sample = (cubics: Cubic[], v: number): Vec2 => {
+    const part = Math.min(cubics.length - 1, Math.floor(v * cubics.length)),
+      t = v === 1 ? 1 : v * cubics.length - part;
+    return bezier(cubics[part]!, t);
+  };
   const at = (u: number, v: number): Vec3 => {
     if (
       !Number.isFinite(u) ||
@@ -59,7 +68,7 @@ export function createLastSurfaceEvaluator(
       return envelope.pose(
         0,
         g.models.top.points.heel_tip!.x,
-        (H * (1 + Math.sin(2 * Math.PI * v))) / 2,
+        H * sample(rearCurves, v)[1],
         H,
       );
     }
@@ -80,12 +89,17 @@ export function createLastSurfaceEvaluator(
                 (sb.referenceStation - sa.referenceStation),
             ),
           );
-    const w = raw * raw * (3 - 2 * raw),
-      part = Math.min(3, Math.floor(v * 4)),
-      t = v === 1 ? 1 : v * 4 - part;
-    const pa = bezier(curves[a]![part]!, t),
-      pb = bezier(curves[b]![part]!, t);
+    const w = raw * raw * (3 - 2 * raw);
+    const pa = sample(curves[a]!, v),
+      pb = sample(curves[b]!, v);
     const q: Vec2 = [pa[0] * (1 - w) + pb[0] * w, pa[1] * (1 - w) + pb[1] * w];
+    if (s < sections[0]!.referenceStation) {
+      const t = s / sections[0]!.referenceStation,
+        w = t * t * (3 - 2 * t),
+        rear = sample(rearCurves, v);
+      q[0] = rear[0] * (1 - w) + q[0] * w;
+      q[1] = rear[1] * (1 - w) + q[1] * w;
+    }
     const slopeOf = (section: ResolvedCrossSection) => {
       const r =
         section.id === "heel_width"
@@ -147,13 +161,13 @@ export function buildLastSurface(
     positions.push(...p);
   };
   const rear: number[] = [],
-    rearVertices = new Map<number, number>();
+    rearVertices = new Map<string, number>();
   for (let j = 0; j < radial; j++) {
-    const mirror = (radial / 2 - j + radial) % radial,
-      key = Math.min(j, mirror);
+    const point = at(0, j / radial),
+      key = point.map((v) => Math.round(v * 1e8)).join(":");
     if (!rearVertices.has(key)) {
       rearVertices.set(key, positions.length / 3);
-      push(at(0, j / radial));
+      push(point);
     }
     rear.push(rearVertices.get(key)!);
   }
@@ -164,7 +178,8 @@ export function buildLastSurface(
   push(at(1, 0));
   for (let j = 0; j < radial; j++) {
     const k = (j + 1) % radial;
-    indices.push(rear[j]!, rear[k]!, first + j, rear[k]!, first + k, first + j);
+    if (rear[j] !== rear[k]) indices.push(rear[j]!, rear[k]!, first + j);
+    indices.push(rear[k]!, first + k, first + j);
   }
   for (let i = 0; i < longitudinal - 2; i++)
     for (let j = 0; j < radial; j++) {

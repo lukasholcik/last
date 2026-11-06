@@ -1,5 +1,47 @@
 # Heel editor handoff — U outline, tip placement and front shoulder
 
+## Main workbench integration
+
+The main `/` workbench now has accessible Last / Heel tabs, not route navigation.
+Last remains mounted; Heel initializes lazily from accepted Last 2D and then stays
+mounted across switches. The linked source is the sampled Last **top attachment
+outline**, not its rear curve or the old 3D checkpoint. Last still rebuilds 3D and
+reports only through its existing explicit action.
+
+Linked height/top bounds are read-only; Edit in Last returns to that tab. Heel
+body/tip controls and front shoulder remain available. The dashed plan guide is
+the shared **untrimmed** attachment; the actual seating cap is separate and can
+change with shoulder warp. This is not a physical mating-surface claim.
+
+Source edits, Last Reset and Discard transport the current normalized heel draft
+without resetting it. Reset heel uses the current source. Failed builds retain
+the draft/last-valid mesh and label source-stale geometry; recovery retries on the
+current Last, never restores an old Last source. Missing/unsupported initial
+sources show a recoverable state, never an illustrative fallback. `/heel` and
+`/heel?example=broad` retain the independent source controls and behavior below.
+
+Viewer regression coverage is `tests-ts/viewer/heel-integration.test.ts`.
+Integration validation: combined `pnpm check` passed; **108 viewer tests** and
+**47 heel tests** passed. Real-browser state checks confirmed keyboard tabs,
+retained heel edits, accepted Last 2D source/outline updates without a 3D rebuild,
+read-only shared controls, retained meshes on failure, current-source recovery,
+Reset/Discard behavior, and editable standalone 80 mm controls. No captured page
+or console errors occurred.
+
+**Rendering limitation:** painted appearance and canvas resizing are not
+certified. After closing the smoke browser and opening a fresh isolated session
+on standalone `/heel` only, `document.visibilityState` was `visible`, but the
+canvas buffer stayed at 300×150 against a 473×548 host; screenshot capture timed
+out after 15 seconds. The same standalone failure bounds this as a baseline/browser
+rendering limitation rather than an integration-only failure; no speculative fix
+was made. Both test browser sessions were closed; the dev service was untouched.
+Evidence is outside the repository in the session temporary directory:
+`heel-browser-smoke.md`, `heel-browser-state.log`, `heel-browser-console.log`,
+`heel-browser-errors.log`, `heel-render-baseline.log`, `heel-final-check.log`, and
+`heel-final-viewer.log`.
+
+The older preview/check results below describe the **previous standalone increment**.
+
 ## Preview
 
 - <http://127.0.0.1:3020/heel> — slender example.
@@ -95,7 +137,8 @@ actual sole/shank, full-perimeter/three-way corner blend, steel core or bores,
 heel-tip hardware, export, persistence, strength analysis or fit/manufacturing
 certification. Lateral shoulder corners retain sharp edges. Some geometrically
 plausible edits are conservatively rejected. Source posture is copied through
-the read-only adapter and is not live-synchronized with the main last viewer.
+the read-only adapter in standalone `/heel`; the main workbench now follows its
+accepted Last 2D source as described above.
 
 Next sensible slice remains a trustworthy heel-seat perimeter/attachment frame;
 then design the actual sole-to-heel junction as a separate, explicit capability.

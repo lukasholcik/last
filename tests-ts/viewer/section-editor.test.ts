@@ -34,8 +34,12 @@ describe("compact section editor", () => {
         6,
       );
     expect(line[0][1]).not.toBeCloseTo(line[1][1], 3);
+    expect(line.map(([x]) => x)).toEqual([
+      ball.anchors.find((anchor) => anchor.id === "medial")!.point[0],
+      ball.anchors.find((anchor) => anchor.id === "lateral")!.point[0],
+    ]);
   });
-  it("renders five equal-scale editors, independent selected handles, and an honest endpoint", () => {
+  it("renders eight shaping points in each non-endpoint editor, independent selected handles, and an honest endpoint", () => {
     const geometry = buildLast2D(baseline);
     const html = renderToStaticMarkup(
       createElement(SectionEditor, {
@@ -54,6 +58,23 @@ describe("compact section editor", () => {
       }),
     );
     expect(html.match(/equal scale local face-on view/g)).toHaveLength(5);
+    for (const section of ["heel_width", "midfoot", "ball", "fore_toe"]) {
+      expect(
+        html.match(
+          new RegExp(`data-section-control="${section}:[a-z_]+:point"`, "g"),
+        ),
+      ).toHaveLength(8);
+      for (const anchor of [
+        "medial_shoulder",
+        "lateral_shoulder",
+        "lateral_bottom",
+        "medial_bottom",
+      ]) {
+        expect(html).toContain(
+          `data-section-control="${section}:${anchor}:point"`,
+        );
+      }
+    }
     expect(html).toContain('data-section-control="ball:dorsal:incoming"');
     expect(html).toContain('data-section-control="ball:dorsal:outgoing"');
     expect(html).not.toContain(
@@ -61,6 +82,8 @@ describe("compact section editor", () => {
     );
     expect(html).not.toContain('data-section-control="toe_end:');
     expect(html).toContain("Endpoint · edit top / profile");
+    expect(html).toContain("Eight points per section");
+    expect(html).toContain("incoming / outgoing handles");
   });
   it("does not silently configure wraps or infer foot comparisons", () => {
     const geometry = buildLast2D(baseline);
